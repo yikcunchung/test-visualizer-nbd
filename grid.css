@@ -1,0 +1,35 @@
+/* ============================================================
+   VW ID.7 Visualizer — Grid System
+   24-column fluid grid, 3-column margin at 2560px+
+   ============================================================ */
+
+/*
+  RULE: margin = 1 column (100vw / 24) at all viewports
+  EXCEPTION: 3 columns (100vw / 8) at ≥2560px
+
+  Viewport  | Col width | Margin
+  ----------+-----------+-------
+  375px     | 15.6px    | 15.6px
+  440px     | 18.3px    | 18.3px
+  768px     | 32px      | 32px
+  960px     | 40px      | 40px
+  1280px    | 53.3px    | 53.3px
+  1440px    | 60px      | 60px
+  1600px    | 66.7px    | 66.7px
+  1920px    | 80px      | 80px
+  2560px    | 106.7px   | 320px  ← 3 cols
+*/
+
+.grid-container {
+  width: 100%;
+  padding-left: calc(100vw / 24);
+  padding-right: calc(100vw / 24);
+  box-sizing: border-box;
+}
+
+@media (min-width: 2560px) {
+  .grid-container {
+    padding-left: calc(100vw / 8);   /* = 320px at 2560px */
+    padding-right: calc(100vw / 8);
+  }
+}

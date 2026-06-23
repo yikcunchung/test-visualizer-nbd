@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Volkswagen Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"><style>
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #1b2236; }
+
+/* VW Fonts (local fallback to Inter) */
+@font-face {
+  font-family: 'VW Head';
+  src: url('assets/fonts/vwhead-bold.woff2') format('woff2'), local('VW Head Bold'), local('VWHead-Bold');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'VW Text';
+  src: url('assets/fonts/vwtext-regular.woff2') format('woff2'), local('VW Text Regular'), local('VWText-Regular');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'VW Text';
+  src: url('assets/fonts/vwtext-bold.woff2') format('woff2'), local('VW Text Bold'), local('VWText-Bold');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+/* Scrollbar hide */
+.scrollbar-hide { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+.scrollbar-hide::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+
+/* App shell */
+#app {
+  width: 100%; height: 100vh; height: 100dvh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* TOP BAR */
+#topbar {
+  background: white;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 8px 0;
+  height: 64px;
+  width: 100%;
+  flex-shrink: 0;
+  position: relative; z-index: 10;
+}
+
+.topbar-container {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+  padding: 0 calc(100vw / 24);
+  box-sizing: border-box;
+}
+@media (min-width: 2560px) {
+  .topbar-container { padding: 0 calc(100vw / 24); }
+}
+
+/* Logo column */
+.topbar-left {
+  display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+}
+.topbar-logo-col {
+  display: flex; align-items: center; gap: 20px;
+  min-height: 40px; flex-shrink: 0;
+}
+.topbar-logo-col svg {
+  display: block; width: 32px; height: 32px;
+}
+
+/* Tabs column — flex-[1_0_0] */
+.topbar-tabs-col {
+  display: flex; align-items: center; min-height: 40px;
+}
+.topbar-tabs {
+  display: flex; gap: 20px; align-items: center; flex-shrink: 0;
+}
+.topbar-tab {
+  display: flex; align-items: center; justify-content: center;
+  padding: 8px 0; flex-shrink: 0;
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 700; font-style: normal;
+  font-size: 16px; line-height: 1.2;
+  color: #293043; white-space: nowrap;
+  word-break: break-word;
+  cursor: pointer;
+}
+@media (max-width: 959px) {
+  .topbar-tab { display: none; }
+}
+
+/* Actions column — flex-[1_0_0] items-end */
+.topbar-actions-col {
+  display: flex; flex-direction: column;
+  align-items: flex-end; justify-content: center;
+  min-height: 40px; flex-shrink: 0;
+}
+.topbar-actions {
+  display: flex; gap: 16px; align-items: center; flex-shrink: 0;
+}
+@media (max-width: 959px) {
+  .topbar-actions { gap: 12px; }
+}
+.topbar-dealer {
+  display: flex; align-items: center; max-width: 150px; flex-shrink: 0;
+}
+.topbar-dealer-text {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 400; font-style: normal;
+  font-size: 14px; line-height: 1.2;
+  color: #293043; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  flex: 1 0 0; min-width: 1px;
+}
+@media (max-width: 959px) {
+  .topbar-dealer-text { display: none; }
+}
+.topbar-cta {
+  width: 32px; height: 32px; flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.topbar-cta svg {
+  width: 24px; height: 24px; display: block; flex-shrink: 0;
+}
+
+/* VISUALIZER */
+#visualizer {
+  flex: 1 1 0; min-height: 0;
+  position: relative; overflow: hidden;
+  background: #1b2236;
+  animation: visFadeIn 0.3s ease 0s both;
+}
+@media (max-width: 959px) and (min-height: 560px) {
+  #visualizer { flex: 0 0 70dvh; max-height: 70dvh; }
+}
+#visualizer::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 40%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.90)  0%,
+    rgba(0, 0, 0, 0.90) 12%,
+    rgba(0, 0, 0, 0.80) 28%,
+    rgba(0, 0, 0, 0.56) 50%,
+    rgba(0, 0, 0, 0.25) 72%,
+    rgba(0, 0, 0, 0.08) 88%,
+    rgba(0, 0, 0, 0.02) 95%,
+    transparent         100%
+  );
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, black 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+@keyframes visFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Car image */
+#car-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  display: none;
+}
+#car-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  user-select: none; -webkit-user-drag: none;
+  transform-origin: center center;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
+  image-rendering: auto;
+  opacity: 1;
+  isolation: isolate;
+}
+#visualizer.static-mode #car-video { opacity: 0; }
+#visualizer.static-mode #car-img   { opacity: 1; }
+#car-img.draggable { cursor: grab; }
+#car-img.dragging  { cursor: grabbing; }
+
+/* ZOOM CONTROLLERS */
+#zoom-ctrl {
+  position: absolute; bottom: 20px; right: calc(100vw / 24);
+  display: flex; flex-direction: column; gap: 8px;
+  align-items: center; z-index: 5;
+}
+#dpad {
+  display: none; /* hidden below 960px */
+}
+.zoom-btn {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border: none; background: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.zoom-btn svg { display: block; width: 32px; height: 32px; }
+#zoom-out {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+/* Disabled state — WCAG 2.2 AA: opacity 0.3 + cursor + aria-disabled */
+.zoom-btn[aria-disabled="true"] {
+  opacity: 0.5 !important;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ROTATE PILL */
+#rotate-pill {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: #1b2236;
+  display: flex; gap: 8px; align-items: center;
+  padding: 8px 16px; border-radius: 100px;
+  white-space: nowrap; z-index: 5;
+  pointer-events: auto;
+}
+#rotate-pill.hidden { display: none; }
+.rot-btn {
+  cursor: pointer; border: none; background: none; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.15s;
+}
+.rot-btn:hover { opacity: 0.7; }
+.rot-btn .chevron-lg {
+  position: relative; width: 24px; height: 24px; flex-shrink: 0;
+}
+.rot-btn .chevron-lg svg {
+  position: absolute; display: block;
+}
+/* ChevronLeftIcon */
+#rot-left .chevron-lg svg {
+  top: 50%; transform: translateY(-50%); left: 20.99%; right: 35.25%; width: auto; height: 21px;
+}
+/* ChevronRightIcon: top-1/2 -translate-y-1/2 h-[21px] left-[35.41%] right-[20.84%] */
+#rot-right .chevron-lg svg {
+  top: 50%; transform: translateY(-50%); left: 35.41%; right: 20.84%;
+  width: auto; height: 21px;
+}
+.rotate-label {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 400; font-style: normal;
+  font-size: 16px; line-height: 1.5;
+  color: white; text-align: center;
+}
+
+/* VW drag-btn-anim: chevrons nudge outward and back */
+@keyframes drag-btn-anim-left {
+  0%   { transform: translateX(0);    opacity: 1; }
+  30%  { transform: translateX(-10px); opacity: 1; }
+  80%  { transform: translateX(-10px); opacity: 0; }
+  100% { transform: translateX(-10px); opacity: 0; }
+}
+@keyframes drag-btn-anim-right {
+  0%   { transform: translateX(0);  opacity: 1; }
+  30%  { transform: translateX(10px); opacity: 1; }
+  80%  { transform: translateX(10px); opacity: 0; }
+  100% { transform: translateX(10px); opacity: 0; }
+}
+#rot-left  .chevron-lg { animation: drag-btn-anim-left  1.3s ease-in-out 0s infinite; }
+#rot-right .chevron-lg { animation: drag-btn-anim-right 1.3s ease-in-out 0s infinite; }
+#rotate-pill.hidden #rot-left  .chevron-lg,
+#rotate-pill.hidden #rot-right .chevron-lg { animation: none; }
+
+/* CONFIG PANEL — V2 LAYOUT */
+
+/* Model selection panel — bottom-left */
+#model-panel {
+  position: absolute;
+  bottom: 24px; left: calc(100vw / 24);
+  background: transparent; border-radius: 12px; padding: 0;
+  display: flex; align-items: flex-start; gap: 8px; z-index: 4;
+}
+.select-wrap  { height: 55px; transition: width 0.3s; position: relative; }
+#model-panel .select-wrap { width: 260px; flex-shrink: 0; }
+
+/* Native <select> styled to match dark design */
+.select-native {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; height: 100%;
+  padding: 28px 40px 8px 16px;
+  background: transparent;
+  border: 1px solid #d0d1d5; border-radius: 8px;
+  color: white;
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-size: 16px; line-height: 1.2; font-weight: 400;
+  cursor: pointer;
+  outline: none;
+}
+.select-label {
+  position: absolute; left: 16px; top: 8px;
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-size: 12px; line-height: 1.5;
+  color: white;
+  pointer-events: none; z-index: 1;
+}
+.select-native:focus {
+  border-color: #fff;
+  outline: none;
+}
+.select-native option {
+  background: #1b2236;
+  color: white;
+  font-size: 16px;
+}
+/* Custom chevron overlay */
+.select-chevron-icon {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.select-chevron-icon svg {
+  display: block; width: 22px; height: auto;
+}
+
+/* Info / Fullscreen icons */
+.info-btn {
+  cursor: pointer; border: none; background: none;
+  transition: opacity 0.15s; flex-shrink: 0;
+  width: 24px; height: 24px; position: relative; padding: 0;
+}
+.info-btn:hover { opacity: 0.7; }
+.info-btn svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
+.fullscreen-btn {
+  cursor: pointer; border: none; background: none;
+  transition: opacity 0.15s; flex-shrink: 0;
+  width: 24px; height: 24px; position: relative; margin-left: 8px;
+}
+.fullscreen-btn:hover { opacity: 0.7; }
+.fullscreen-btn svg { position: absolute; display: block; inset: 4.17% 4.17% 4.15% 4.17%; width: auto; height: auto; }
+
+/* Options area — centred above switcher */
+#variant-selector {
+  position: absolute; bottom: 77px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  z-index: 4; max-width: 742px; width: calc(100% - 32px);
+  overflow: visible;
+}
+
+/* Color name pill */
+/* #color-name-wrapper removed — #variant-area is direct child of #variant-selector */
+
+/* Content switcher pill */
+#content-switcher {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: flex-start; flex-shrink: 0;
+  z-index: 5;
+}
+
+/* Thumbnail scroller (shared) */
+#variant-area {
+  display: flex; flex-direction: column; gap: 8px; width: 100%;
+  overflow: visible; align-items: center;
+  will-change: opacity;
+}
+#variant-track { position: relative; overflow: visible; }
+#variant-track.narrow { width: 100%; }
+#variant-track.medium { min-width: 320px; max-width: calc(100% - 640px); width: 100%; }
+#variant-track.wide   { width: 100%; }
+#variant-scroll {
+  display: flex; gap: 8px; align-items: center;
+  overflow-x: auto; overflow-y: visible;
+  padding: 4px 0 2px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+#variant-selector #variant-scroll { justify-content: center; }
+
+.variant-fade { position: absolute; top: 0; bottom: 0; width: 46px; pointer-events: none; z-index: 30; display: none; }
+.variant-fade.show  { display: block; }
+.variant-fade.left  { left: 0;  background: none; }
+.variant-fade.right { right: 0; background: none; }
+.variant-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  border-radius: 100px; width: 32px; height: 32px; cursor: pointer; pointer-events: auto; border: none;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.variant-fade.left  .variant-arrow { left: 4.04px; }
+.variant-fade.right .variant-arrow { right: 9.51px; }
+.variant-arrow svg { display: block; width: 6px; height: 12px; }
+
+.variant-btn { position: relative; width: 46px; height: 46px; flex-shrink: 0; cursor: pointer; overflow: visible; border: none; background: none; padding: 0; }
+.variant-ring { position: absolute; border-radius: 100%; border: 3px solid #997f67; inset: -4.35%; z-index: 10; pointer-events: none; display: none; }
+.variant-btn.selected .variant-ring { display: block; }
+.variant-img-wrap  { position: absolute; inset: 0; border-radius: 100%; }
+.variant-img-inner { position: absolute; inset: 0; border-radius: 100%; overflow: hidden; }
+#wheel-variant-scroll .variant-img-inner,
+#wheel-variant-scroll-mobile .variant-img-inner { background: #fff; }
+.variant-img       { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.variant-border    { position: absolute; inset: 0; border-radius: 100%; border: 2px solid white; pointer-events: none; }
+.variant-check { position: absolute; z-index: 20; pointer-events: none; top: -13.04%; right: -17.39%; bottom: 60.87%; left: 65.22%; display: none; }
+.variant-btn.selected .variant-check { display: block; }
+.variant-check-inner { position: absolute; inset: 8.33%; }
+.variant-check-inner svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
+.variant-checkmark   { position: absolute; inset: 34.71% 26.82% 35.13% 30.54%; }
+.variant-checkmark svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
+
+#color-name {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.2;
+  color: white; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* TAB BAR */
+#content-switcher-mobile { display: flex; align-items: flex-start; flex-shrink: 0; }
+.config-tab {
+  position: relative; min-width: 80px; width: 100px; height: 32.797px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 8px 16px; cursor: pointer; border: none; background: none; transition: opacity 0.15s;
+}
+.config-tab:hover { opacity: 0.9; }
+.config-tab:first-child { border-radius: 4px 0 0 4px; }
+.config-tab:last-child  { border-radius: 0 4px 4px 0; }
+.config-tab.active { background: #d9cdbd; }
+.tab-border {
+  position: absolute; inset: 0; pointer-events: none;
+  border-top: 1px solid rgba(255,255,255,0.6); border-bottom: 1px solid rgba(255,255,255,0.6);
+}
+.config-tab:first-child .tab-border { border-left:  1px solid #d9cdbd; border-radius: 4px 0 0 4px; }
+.config-tab:last-child  .tab-border { border-right: 1px solid #d9cdbd; border-radius: 0 4px 4px 0; }
+.config-tab.active .tab-border { display: none; }
+.tab-divider {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 16px; background: #e7e8ea; pointer-events: none; display: none;
+}
+.tab-divider.show { display: block; }
+.tab-label {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-style: normal; font-size: 14px; line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; z-index: 1;
+}
+.config-tab.active     .tab-label { color: #1b2236; font-weight: 700; }
+.config-tab:not(.active) .tab-label { color: #ffffff; font-weight: 400; }
+
+/* MOBILE PANEL (<960px) */
+#config-panel {
+  display: none; position: absolute; bottom: 0; left: 0; right: 0;
+  flex-direction: column; border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom)) 20px; gap: 20px;
+  background: transparent; z-index: 4;
+}
+#config-panel.narrow { display: flex; align-items: flex-start; padding-bottom: env(safe-area-inset-bottom, 0px); }
+#config-panel.wide   { display: none; }
+
+#mobile-top-row { display: none; align-items: center; justify-content: space-between; width: 100%; }
+#mobile-top-row.show { display: flex; }
+.mobile-top-left { display: flex; gap: 8px; align-items: center; min-width: 0; }
+#mobile-select-wrap { min-width: 160px; width: fit-content; max-width: calc(100vw - 120px); }
+
+#config-content { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+#config-panel.narrow #config-content { align-items: flex-start; }
+#config-panel.wide   #config-content { align-items: center; }
+
+/* Thumbnail area — mobile (exact v1 #variant-area / #variant-track / #variant-scroll) */
+#variant-area-mobile {
+  display: flex; flex-direction: column; gap: 8px; width: 100%; overflow: visible;
+}
+#config-panel.wide   #variant-area-mobile { align-items: center; padding: 0 20px; }
+#config-panel.narrow #variant-area-mobile { align-items: flex-start; }
+
+#variant-track-mobile {
+  position: relative; overflow: visible;
+}
+#variant-track-mobile.medium { min-width: 320px; max-width: calc(100% - 640px); width: 100%; }
+#variant-track-mobile.wide   { width: 100%; }
+#variant-track-mobile.narrow { width: calc(100% + 20px); }
+
+#variant-scroll-mobile {
+  display: flex; gap: 8px; align-items: center;
+  overflow-x: auto; overflow-y: visible;
+  padding: 10px 4px 8px 4px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+#config-panel.wide   #variant-scroll-mobile { justify-content: center; }
+#config-panel.narrow #variant-scroll-mobile         { justify-content: flex-start; }
+#config-panel.narrow #wheel-variant-scroll-mobile    { justify-content: flex-start; }
+#config-panel.narrow #interior-variant-scroll-mobile { justify-content: flex-start; }
+
+#color-name-mobile {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.2;
+  color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#config-panel.narrow #color-name-mobile { text-align: left; }
+
+
+
+/* D-pad nav controls */
+/* #dpad shown via @media above 960px */
+.dpad-row {
+  display: flex; align-items: center; gap: 4px;
+}
+.dpad-btn {
+  width: 32px; height: 32px;
+  border: none; background: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.dpad-btn[aria-disabled="true"] {
+  opacity: 0.5 !important;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.dpad-btn svg { display: block; width: 32px; height: 32px; }
+.dpad-spacer { width: 32px; height: 32px; } /* centre placeholder */
+/* ENTRY ANIMATIONS — above 960px only */
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUpFadeCenter {
+  from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes slideRightFade {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleFade {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* options-area: fixed bottom, no float */
+@media (min-width: 960px) {
+  #model-panel {
+    animation: slideUpFade 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+  }
+  #content-switcher {
+    animation: slideUpFadeCenter 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both;
+  }
+  #variant-selector {
+    animation: slideUpFadeCenter 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both;
+    animation-play-state: paused;
+  }
+  #variant-selector.ready {
+    animation-play-state: running;
+  }
+  /* #variant-area and #color-name-wrapper ride with #variant-selector */
+  #zoom-ctrl {
+    animation: slideUpFade 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+  }
+  #dpad {
+    animation: slideUpFade 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+  }
+  #rotate-pill {
+    animation: scaleFade 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+  }
+}
+
+
+@media (min-width: 960px) {
+  #dpad {
+    display: flex;
+    position: absolute; bottom: 24px; right: calc(3 * 100vw / 24);
+    flex-direction: column; align-items: center; gap: 4px;
+    z-index: 5;
+  }
+}
+/* Mobile: asset takes 75% of viewport height, remainder is dark background */
+@media (max-width: 959px) {
+  #visualizer::after { height: 60%; }
+  #car-img, #car-video {
+    bottom: auto;
+    height: 75dvh;
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+  #rotate-pill {
+    top: 30%;
+  }
+}
+/* Short mobile screens: constrain asset so UI panels have room */
+@media (max-width: 959px) and (max-height: 1280px) {
+  #car-img, #car-video { height: 50dvh; }
+}
+#visualizer.interior-mode #rotate-pill  { display: none; }
+#visualizer.interior-mode               { background: #000; }
+/* Interior 360° panorama canvas */
+#pano-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  cursor: grab;
+  touch-action: none;
+  z-index: 2;
+}
+#visualizer.interior-mode #pano-canvas  { display: block; }
+#visualizer.interior-mode #car-img,
+#visualizer.interior-mode #car-video    { opacity: 0; pointer-events: none; }
+#pano-canvas.dragging { cursor: grabbing; }
+/* Wheel variant scroll areas */
+#wheel-variant-scroll         { display: none; flex-direction: row; gap: 8px; justify-content: center; align-items: center; padding: 4px 0 2px; }
+#wheel-variant-scroll-mobile  { display: none; flex-direction: row; gap: 8px; justify-content: center; align-items: center; padding: 10px 4px 8px 4px; }
+.wheels-active #variant-scroll         { display: none !important; }
+.wheels-active #variant-scroll-mobile  { display: none !important; }
+.wheels-active #wheel-variant-scroll        { display: flex !important; }
+.wheels-active #wheel-variant-scroll-mobile { display: flex !important; }
+/* Interior variant scroll areas */
+#interior-variant-scroll         { display: none; flex-direction: row; gap: 8px; justify-content: center; align-items: center; padding: 4px 0 2px; }
+#interior-variant-scroll-mobile  { display: none; flex-direction: row; gap: 8px; justify-content: center; align-items: center; padding: 10px 4px 8px 4px; }
+.interior-active #variant-scroll         { display: none !important; }
+.interior-active #variant-scroll-mobile  { display: none !important; }
+.interior-active #wheel-variant-scroll        { display: none !important; }
+.interior-active #wheel-variant-scroll-mobile { display: none !important; }
+.interior-active #interior-variant-scroll        { display: flex !important; }
+.interior-active #interior-variant-scroll-mobile { display: flex !important; }
+.interior-active #color-name        { display: none; }
+.interior-active #color-name-mobile { display: none; }
+
+/* Hide v2 overlays at <960px */
+@media (max-width: 959px) {
+  #variant-scroll-mobile { justify-content: flex-start; }
+  #model-panel    { display: none !important; }
+  #variant-selector   { display: none !important; }
+  #content-switcher { display: none !important; }
+  #zoom-ctrl      { display: none !important; }
+}
+
+/* ── NBA Bar ── */
+#nba-bar {
+  height: 76px; flex-shrink: 0;
+  background: #fff;
+  display: flex; align-items: center;
+  border-top: 1px solid rgba(41,48,67,0.12);
+}
+.nba-inner {
+  display: flex; align-items: center; justify-content: flex-end;
+  width: 100%; padding: 0 calc(100vw / 24); gap: 32px;
+}
+.nba-links {
+  display: flex; align-items: center; gap: 32px;
+}
+.nba-link {
+  display: flex; align-items: center; gap: 4px;
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-size: 16px; font-weight: 400; color: #293043;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+}
+.nba-link svg { flex-shrink: 0; }
+.nba-link-label {
+  line-height: 1.2;
+  border-bottom: 1px solid #293043;
+}
+.nba-cta-btn {
+  display: flex; align-items: center; gap: 4px;
+  background: #293043; color: #fff;
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-size: 16px; font-weight: 400; line-height: 1.2;
+  border: none; padding: 8px 32px; height: 44px;
+  border-radius: 100px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+.nba-cta-btn svg { flex-shrink: 0; }
+@media (max-width: 959px) {
+  #nba-bar { display: none; }
+}
+
+/* ── Accessibility Button ── */
+#accessibility-btn {
+  position: absolute; top: 20px; left: calc(100vw / 24);
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: #fff; border: none;
+  border-radius: 100px;
+  cursor: pointer; padding: 0;
+  display: none;
+  align-items: center; justify-content: center;
+  overflow: hidden; z-index: 5;
+  transition: background 0.2s, opacity 0.15s;
+}
+#accessibility-btn:hover { opacity: 0.7; }
+#accessibility-btn.active            { background: #293043; }
+#accessibility-btn.active svg path   { fill: #fff; }
+@media (max-width: 959px) {
+  #accessibility-btn { display: flex; }
+}
+
+/* ── Touch Controls Bar — mobile a11y mode ── */
+#touch-ctrl-bar {
+  position: absolute; top: 20px; left: calc(100vw / 24 + 52px);
+  display: none; gap: 20px; align-items: center; z-index: 5;
+  pointer-events: none;
+}
+@media (max-width: 959px) { #touch-ctrl-bar { display: flex; } }
+#touch-ctrl-bar.visible { pointer-events: auto; }
+.tc-group {
+  display: flex; gap: 8px; align-items: center;
+  opacity: 0; transform: translateX(-8px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+#touch-ctrl-bar.visible .tc-group:nth-child(1) { opacity: 1; transform: translateX(0); }
+#touch-ctrl-bar.visible .tc-group:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 80ms; }
+.touch-ctrl-btn {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border: none; background: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.touch-ctrl-btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+/* ── Mobile NBA Bar ── */
+#nba-bar-mobile {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-top: 1px solid #c2cacf;
+  padding: 17px 16px calc(16px + env(safe-area-inset-bottom));
+  z-index: 20;
+}
+@media (max-width: 959px) {
+  #nba-bar-mobile { display: flex; }
+  #config-panel { bottom: 20px; }
+}
+.nba-mobile-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+}
+.nba-mobile-menu {
+  display: flex; align-items: center; gap: 4px;
+  background: none; border: none; cursor: pointer; padding: 0;
+  flex-shrink: 0;
+}
+.nba-mobile-menu-label {
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+.nba-mobile-menu-text {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-size: 16px; font-weight: 400; line-height: 1.2;
+  color: #293043; white-space: nowrap;
+}
+.nba-mobile-menu-stroke { height: 1px; background: #293043; width: 100%; }
+</style>
+</head>
+<body>
+<!-- SVG symbol defs — referenced via <use href="#..."> throughout the document -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="icon-check-outer" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
+    <path d="M10 0C15.81 0 20 4.18994 20 10C20 15.8101 15.81 20 10 20C4.19 20 0 15.8101 0 10C0 4.18994 4.19 0 10 0ZM9.00391 12.2207C9.00391 12.2207 8.98684 12.2363 8.96484 12.2373C8.94336 12.2391 8.91346 12.2084 8.91211 12.207L6.2959 9.43164L5.33496 10.3633L7.93262 13.1299L7.93359 13.1309C8.20455 13.4168 8.5709 13.5751 8.96582 13.5752C9.32882 13.5752 9.67448 13.4385 9.93848 13.1895L15.5693 7.24316L14.5693 6.33496L9.00391 12.2207Z" fill="#997F67"/>
+  </symbol>
+  <symbol id="icon-check-inner" fill="none" preserveAspectRatio="none" viewBox="0 0 10.234 7.24">
+    <path clip-rule="evenodd" fill-rule="evenodd" d="M3.631 7.24C3.236 7.24 2.87 7.082 2.599 6.796L2.598 6.795L0 4.028L0.961 3.097L3.577 5.872C3.577 5.872 3.608 5.904 3.63 5.902C3.652 5.901 3.669 5.886 3.669 5.886L9.234 0L10.234 0.908L4.603 6.854C4.339 7.103 3.994 7.24 3.631 7.24Z" fill="white"/>
+  </symbol>
+  <symbol id="icon-arrow-left" fill="none" viewBox="0 0 6 12">
+    <path d="M6.00238 0.94L1.39238 5.76C1.27452 5.89829 1.27452 6.10171 1.39238 6.24L6.00238 11.06L5.07238 12L0.472381 7.18C-0.15746 6.5194 -0.15746 5.4806 0.472381 4.82L5.07238 0L6.00238 0.94Z" fill="#1B2236"/>
+  </symbol>
+  <symbol id="icon-arrow-right" fill="none" viewBox="0 0 6 12">
+    <path d="M6 6C6.00168 6.43928 5.83324 6.86217 5.53 7.18L0.93 12L0 11.06L4.61 6.24C4.73223 6.10334 4.73223 5.89666 4.61 5.76L0 0.94L0.93 0L5.53 4.82C5.83148 5.13896 5.99962 5.56111 6 6Z" fill="#1B2236"/>
+  </symbol>
+  <symbol id="icon-chevron-left" fill="none" preserveAspectRatio="none" viewBox="0 0 10.5024 21">
+    <path d="M10.5024 20.06L9.57238 21L0.472381 11.68C-0.15746 11.0194 -0.15746 9.9806 0.472381 9.32L9.57238 0L10.5024 0.94L1.41238 10.26C1.28016 10.3927 1.28016 10.6073 1.41238 10.74L10.5024 20.06Z" fill="white"/>
+  </symbol>
+  <symbol id="icon-chevron-right" fill="none" preserveAspectRatio="none" viewBox="0 0 10.5 21">
+    <path d="M10.5 10.5C10.4996 10.9389 10.3315 11.361 10.03 11.68L0.93 21L0 20.06L9.09 10.74C9.22222 10.6073 9.22222 10.3927 9.09 10.26L0 0.94L0.93 0L10.03 9.32C10.3332 9.63783 10.5017 10.0607 10.5 10.5Z" fill="white"/>
+  </symbol>
+</svg>
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="topbar-container">
+      <!-- Left group: Logo + Tabs -->
+      <div class="topbar-left">
+      <!-- Logo -->
+      <div class="topbar-logo-col">
+        <div style="width:32px;height:32px;flex-shrink:0;">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.9998 0.666626C24.4877 0.666626 31.3336 7.51169 31.3337 15.9996C31.3337 24.4877 24.4879 31.3336 15.9998 31.3336C7.51181 31.3334 0.666748 24.4876 0.666748 15.9996C0.666923 7.5118 7.51192 0.6668 15.9998 0.666626ZM20.8738 26.8971C20.7643 27.1161 20.6544 27.2809 20.3806 27.2809C20.1071 27.2807 19.9979 27.116 19.8884 26.8971L16.1648 18.7379C16.11 18.6832 16.1093 18.5739 15.9998 18.5739C15.9451 18.5741 15.8903 18.6287 15.8357 18.7379L12.1667 26.8971C12.0572 27.1161 11.9474 27.2809 11.6736 27.2809C11.4 27.2808 11.2909 27.1161 11.1814 26.8971L3.29565 11.5641C2.80283 12.9878 2.52909 14.4664 2.52905 15.9996C2.52905 23.3924 8.60705 29.5258 15.9998 29.526C23.3926 29.526 29.4714 23.3925 29.5261 15.9996C29.5261 14.4117 29.2523 12.933 28.7595 11.5641L20.8738 26.8971ZM17.6433 14.6862C17.5338 14.905 17.4237 14.9596 17.2595 14.9596H14.741C14.5768 14.9596 14.4666 14.9049 14.3572 14.6862L9.48315 4.17151C7.45707 5.3215 5.70447 6.96481 4.49976 8.93616L11.4001 22.1881C11.4548 22.2429 11.4549 22.3521 11.5642 22.3522C11.6736 22.3522 11.6737 22.2429 11.7283 22.1881L14.3572 16.3834C14.4667 16.1644 14.5767 16.109 14.741 16.109H17.2595C17.4238 16.109 17.5338 16.1644 17.6433 16.3834L20.2712 22.1881C20.326 22.2429 20.3268 22.3522 20.4363 22.3522C20.4909 22.3519 20.5457 22.2973 20.6003 22.1881L27.4451 8.93616C26.2403 6.96473 24.4879 5.32151 22.4617 4.17151L17.6433 14.6862ZM15.9998 2.47424C14.4665 2.47428 12.9878 2.74802 11.6189 3.24084L15.8357 12.3307C15.8904 12.3854 15.8906 12.4945 15.9998 12.4948C16.1093 12.4948 16.11 12.3855 16.1648 12.3307L20.3806 3.24084C19.0116 2.74804 17.533 2.47424 15.9998 2.47424Z" fill="#293043"/>
+</svg>
+        </div>
+        </div>
+      <!-- Tabs -->
+      <div class="topbar-tabs-col">
+        <div class="topbar-tabs">
+          <div class="topbar-tab">Menu</div>
+          <div class="topbar-tab">Models</div>
+          <div class="topbar-tab">Configure</div>
+          <div class="topbar-tab">Stock cars</div>
+        </div>
+      </div><!-- /topbar-tabs-col -->
+      </div><!-- /topbar-left -->
+      <!-- Actions -->
+      <div class="topbar-actions-col">
+        <div class="topbar-actions">
+          <!-- Select dealer + pin -->
+          <div class="topbar-dealer">
+            <p class="topbar-dealer-text">Select dealer</p>
+            <div class="topbar-cta" style="width:32px;height:32px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.0002 0.961914C14.3662 0.96195 16.63 1.67121 18.3206 3.09082C20.0308 4.52704 21.093 6.64221 21.093 9.29102C21.093 10.7275 20.5566 12.2315 19.8274 13.623C19.0905 15.0293 18.1107 16.4049 17.1213 17.6064C16.1305 18.8098 15.1114 19.8615 14.2786 20.6191C13.864 20.9963 13.4826 21.3131 13.1643 21.542C13.0068 21.6552 12.8464 21.7607 12.6936 21.8418C12.5896 21.897 12.3202 22.0371 12.0002 22.0371C11.6766 22.0371 11.4053 21.8935 11.302 21.8379C11.149 21.7556 10.9887 21.6488 10.8313 21.5342C10.5132 21.3026 10.1314 20.9826 9.71704 20.6016C8.88492 19.8363 7.86617 18.7761 6.87622 17.5674C5.88774 16.3604 4.90939 14.9821 4.1731 13.582C3.44539 12.1982 2.9075 10.7053 2.90747 9.29102C2.90747 6.64221 3.96972 4.52704 5.67993 3.09082C7.37049 1.67129 9.63428 0.961914 12.0002 0.961914ZM12.0002 2.96191C10.0166 2.96191 8.23432 3.558 6.96606 4.62305C5.71742 5.67165 4.90747 7.22117 4.90747 9.29102C4.90751 10.2359 5.28052 11.3905 5.9436 12.6514C6.59819 13.896 7.49062 15.16 8.42407 16.2998C9.35607 17.4378 10.3105 18.43 11.0715 19.1299C11.4504 19.4783 11.7687 19.7429 12.0032 19.9141C12.2373 19.7452 12.5546 19.4838 12.9329 19.1396C13.6932 18.4479 14.6464 17.4666 15.5774 16.3359C16.51 15.2033 17.4019 13.9432 18.0559 12.6953C18.7175 11.4328 19.093 10.2639 19.093 9.29102C19.093 7.22127 18.283 5.67165 17.0344 4.62305C15.7662 3.55801 13.9838 2.96195 12.0002 2.96191ZM12.0002 5.98145C13.6627 5.98147 15.0236 7.32096 15.0237 8.98926C15.0237 10.6576 13.6627 11.997 12.0002 11.9971C10.3377 11.9971 8.97681 10.6576 8.97681 8.98926C8.97684 7.32095 10.3378 5.98145 12.0002 5.98145ZM12.0002 7.98145C11.4281 7.98145 10.9768 8.43972 10.9768 8.98926C10.9768 9.53882 11.428 9.99707 12.0002 9.99707C12.5724 9.99705 13.0237 9.53881 13.0237 8.98926C13.0236 8.43973 12.5724 7.98147 12.0002 7.98145Z" fill="#293043"/>
+</svg>
+            
+            </div>
+          </div>
+          <!-- Search -->
+          <div class="topbar-cta" style="width:32px;height:32px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.7715 21.6013L17.18 15.6221C18.4045 14.0058 19.0513 12.0254 19.017 9.99796C19.0555 8.80563 18.8491 7.61807 18.4105 6.50869C17.9719 5.39931 17.3103 4.3917 16.4668 3.54815C15.6232 2.70461 14.6156 2.04307 13.5062 1.60443C12.3969 1.16579 11.2093 0.959379 10.017 0.997955C8.82374 0.955887 7.63463 1.15991 6.52367 1.59731C5.4127 2.03472 4.40368 2.69614 3.55942 3.5404C2.71515 4.38467 2.05373 5.39369 1.61632 6.50465C1.17892 7.61562 0.9749 8.80473 1.01697 9.99796C0.973574 11.1915 1.17668 12.3812 1.61362 13.4928C2.05056 14.6044 2.71194 15.6139 3.55647 16.4585C4.40101 17.303 5.41057 17.9644 6.52214 18.4013C7.6337 18.8382 8.8234 19.0414 10.017 18.998C12.1035 19.0237 14.1365 18.338 15.7811 17.0537L21.3102 22.9665L22.7715 21.6013ZM10.0173 16.998C9.08657 17.0411 8.15711 16.8895 7.28832 16.553C6.41952 16.2164 5.6305 15.7023 4.97169 15.0435C4.31288 14.3847 3.79878 13.5957 3.46225 12.7269C3.12572 11.8581 2.97416 10.9287 3.01727 9.99796C2.97416 9.06726 3.12572 8.1378 3.46225 7.269C3.79878 6.40021 4.31288 5.61119 4.97169 4.95238C5.6305 4.29357 6.41952 3.77947 7.28832 3.44293C8.15711 3.1064 9.08657 2.95485 10.0173 2.99796C10.948 2.95485 11.8774 3.1064 12.7462 3.44293C13.615 3.77947 14.404 4.29357 15.0628 4.95238C15.7217 5.61119 16.2358 6.40021 16.5723 7.269C16.9088 8.1378 17.0604 9.06726 17.0173 9.99796C17.0604 10.9287 16.9088 11.8581 16.5723 12.7269C16.2358 13.5957 15.7217 14.3848 15.0629 15.0436C14.4041 15.7024 13.615 16.2165 12.7462 16.553C11.8774 16.8895 10.948 17.0411 10.0173 16.998V16.998Z" fill="#293043"/>
+</svg>
+            
+            </div>
+          <!-- Login -->
+          <div class="topbar-cta" style="width:32px;height:32px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.9996 0.999756C18.3736 0.999756 22.9996 5.62576 22.9996 11.9998C22.9996 18.3738 18.3736 22.9998 11.9996 22.9998C5.62563 22.9998 0.999634 18.3738 0.999634 11.9998C0.999634 5.62576 5.62563 0.999756 11.9996 0.999756ZM11.9996 2.99976C6.70163 2.99976 2.99963 6.70076 2.99963 11.9998C2.99963 13.8766 3.4714 15.5475 4.30725 16.9294C5.04526 15.7615 6.5176 15.1295 8.29358 14.3835L8.93616 14.1121L9.71936 15.9519L9.06897 16.2273C7.05497 17.0723 5.99674 17.5542 5.82874 18.3992C5.80678 18.505 5.78818 18.6107 5.76721 18.7156C7.33721 20.1576 9.48563 20.9998 11.9996 20.9998C14.5136 20.9998 16.6621 20.1585 18.2321 18.7175C18.2111 18.6107 18.1925 18.506 18.1705 18.3992C18.0025 17.5552 16.9443 17.0733 14.9313 16.2273L14.2789 15.9519L15.0612 14.1121L15.7057 14.3835C17.4826 15.1295 18.954 15.7615 19.693 16.9304C20.5278 15.5475 20.9996 13.8766 20.9996 11.9998C20.9996 6.70076 17.2986 2.99976 11.9996 2.99976ZM11.9996 4.99976C14.5646 4.99976 16.4995 6.93486 16.4996 9.49976C16.4996 12.0648 14.5646 13.9998 11.9996 13.9998C9.43483 13.9996 7.49963 12.0646 7.49963 9.49976C7.49973 6.93499 9.4349 4.99996 11.9996 4.99976ZM11.9996 6.99976C10.5279 6.99994 9.49973 8.028 9.49963 9.49976C9.49963 10.9716 10.5278 11.9996 11.9996 11.9998C13.4716 11.9998 14.4996 10.9718 14.4996 9.49976C14.4995 8.02786 13.4716 6.99976 11.9996 6.99976Z" fill="#293043"/>
+</svg>
+            
+            </div>
+          <!-- Cart -->
+          <div class="topbar-cta" style="width:32px;height:32px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.7998 21C10.6282 21 11.2998 21.6716 11.2998 22.5C11.2998 23.3284 10.6282 24 9.7998 24C8.97149 23.9999 8.2998 23.3283 8.2998 22.5C8.2998 21.6717 8.97149 21.0001 9.7998 21ZM18.7998 21C19.6282 21 20.2998 21.6716 20.2998 22.5C20.2998 23.3284 19.6282 24 18.7998 24C17.9715 23.9999 17.2998 23.3283 17.2998 22.5C17.2998 21.6717 17.9715 21.0001 18.7998 21ZM4.7002 4H22.2998C22.6997 4 22.9999 4.39987 23 4.7998V4.90039L21.2002 14.4004C21.1001 14.7003 20.7999 15 20.5 15H7.09961L7.7998 18H20V20H6.2002L2.40039 3H0V1H4L4.7002 4ZM6.7002 13H19.4004L20.7002 6H5.09961L6.7002 13ZM10 11H8V8H10V11ZM14 11H12V8H14V11ZM18 11H16V8H18V11Z" fill="#293043"/>
+</svg>
+            
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUALIZER -->
+  <div id="visualizer">
+    <video id="car-video" autoplay loop muted playsinline style="pointer-events:none;">
+      <source src="assets/media/id7/exterior/id7-sequence.mp4" type="video/mp4">
+    </video>
+    <img id="car-img" alt="VW ID.7" draggable="false" src="assets/media/id7/exterior/rotation-black/frame-00.webp">
+
+    <!-- Zoom controller — vertical centre right -->
+    <div id="zoom-ctrl">
+      <button class="zoom-btn" id="zoom-in" title="Zoom in">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip-zoom-in)">
+<path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/>
+<path d="M15.25 10C18.4618 9.9998 20.5 12.3505 20.5 15.25C20.5 16.4764 20.1336 17.6034 19.4697 18.4971L22 21.0303L21.5303 21.501L21.0596 21.9707L18.5381 19.4463C17.6768 20.1076 16.5615 20.4999 15.25 20.5C12.0384 20.5002 10.0001 18.1503 10 15.251C10 12.3515 12.0382 10.0002 15.25 10ZM15.25 11.3301C12.8248 11.3302 11.3301 13.0329 11.3301 15.251C11.3303 17.4689 12.825 19.1701 15.25 19.1699C17.6752 19.1698 19.1699 17.4681 19.1699 15.25C19.1699 13.0319 17.6752 11.3299 15.25 11.3301ZM15.8994 14.5801H17.665V15.9102H15.8994V17.6758H14.5693V15.9102H12.835V14.5801H14.5693V12.8457H15.8994V14.5801Z" fill="#1B2236"/>
+</g>
+<defs>
+<clipPath id="clip-zoom-in">
+<path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+      </button>
+      <button class="zoom-btn" id="zoom-out" title="Zoom out" aria-disabled="true">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip-zoom-out)">
+<path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/>
+<path d="M15.25 10C18.4618 9.9998 20.5 12.3505 20.5 15.25C20.5 16.4764 20.1336 17.6034 19.4697 18.4971L22 21.0303L21.5303 21.501L21.0596 21.9707L18.5381 19.4463C17.6768 20.1076 16.5615 20.4999 15.25 20.5C12.0384 20.5002 10.0001 18.1503 10 15.251C10 12.3515 12.0382 10.0002 15.25 10ZM15.25 11.3301C12.8248 11.3302 11.3301 13.0329 11.3301 15.251C11.3303 17.4689 12.825 19.1701 15.25 19.1699C17.6752 19.1698 19.1699 17.4681 19.1699 15.25C19.1699 13.0319 17.6752 11.3299 15.25 11.3301ZM12.835 14.5801H17.665V15.9102H12.835V14.5801Z" fill="#1B2236"/>
+</g>
+<defs>
+<clipPath id="clip-zoom-out">
+<path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+      </button>
+    </div>
+
+    <!-- D-pad navigation -->
+    <div id="dpad">
+      <div class="dpad-row">
+        <button class="dpad-btn" id="dpad-up" title="Pan up" aria-label="Tilt up" aria-disabled="true"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip-ch-up)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20.7837 19.0923L16.0371 14.1304L15.9941 14.0845L15.9546 14.1255L11.2168 19.0913L10.2549 18.1733L14.9888 13.2114C15.2384 12.906 15.606 12.721 16 12.7026C16.3929 12.7213 16.7586 12.9085 17.0034 13.2163L21.7446 18.1723L20.7837 19.0923Z" fill="#1B2236"/></g><defs><clipPath id="clip-ch-up"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
+      </div>
+      <div class="dpad-row">
+        <button class="dpad-btn" id="dpad-left" title="Rotate left" aria-label="Rotate left"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip-ch-left)"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 6.26248e-07 24.8366 1.39876e-06 16C2.17128e-06 7.16344 7.16345 6.26248e-07 16 1.39876e-06C24.8366 2.17128e-06 32 7.16345 32 16Z" fill="white"/><path d="M12 16C11.9983 15.5607 12.1668 15.1378 12.47 14.82L17.07 10L18 10.94L13.39 15.76C13.2678 15.8967 13.2678 16.1033 13.39 16.24L18 21.06L17.07 22L12.47 17.18C12.1685 16.861 12.0004 16.4389 12 16Z" fill="#1B2236"/></g><defs><clipPath id="clip-ch-left"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 6.26248e-07 24.8366 1.39876e-06 16C2.17128e-06 7.16344 7.16345 6.26248e-07 16 1.39876e-06C24.8366 2.17128e-06 32 7.16345 32 16Z" fill="white"/></clipPath></defs></svg></button>
+        <div class="dpad-spacer"></div>
+        <button class="dpad-btn" id="dpad-right" title="Rotate right" aria-label="Rotate right"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip-ch-right)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20 16C20.0017 16.4393 19.8332 16.8622 19.53 17.18L14.93 22L14 21.06L18.61 16.24C18.7322 16.1033 18.7322 15.8967 18.61 15.76L14 10.94L14.93 10L19.53 14.82C19.8315 15.139 19.9996 15.5611 20 16Z" fill="#1B2236"/></g><defs><clipPath id="clip-ch-right"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
+      </div>
+      <div class="dpad-row">
+        <button class="dpad-btn" id="dpad-down" title="Pan down" aria-label="Tilt down" aria-disabled="true"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip-ch-down)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M11.2158 12.8052L15.9624 17.7671L16.0054 17.813L16.045 17.772L20.7827 12.8062L21.7447 13.7242L17.0107 18.686C16.7611 18.9914 16.3935 19.1764 15.9995 19.1948C15.6066 19.1761 15.2409 18.9889 14.9961 18.6811L10.2549 13.7251L11.2158 12.8052Z" fill="#1B2236"/></g><defs><clipPath id="clip-ch-down"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
+      </div>
+    </div>
+
+    <!-- Rotate pill — centred in visualizer -->
+    <canvas id="pano-canvas"></canvas>
+    <div id="rotate-pill">
+      <button class="rot-btn" id="rot-left"><div class="chevron-lg"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></div></button>
+      <span class="rotate-label">Drag Left / Right</span>
+      <button class="rot-btn" id="rot-right"><div class="chevron-lg"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></div></button>
+    </div>
+
+    <!-- Touch controls bar — slides in when a11y btn is active, mobile only -->
+    <div id="touch-ctrl-bar">
+      <div class="tc-group">
+        <button class="touch-ctrl-btn" id="tc-zoom-in" title="Zoom in" aria-label="Zoom in">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#tc-clip-zoom-in)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M15.25 10C18.4618 9.9998 20.5 12.3505 20.5 15.25C20.5 16.4764 20.1336 17.6034 19.4697 18.4971L22 21.0303L21.5303 21.501L21.0596 21.9707L18.5381 19.4463C17.6768 20.1076 16.5615 20.4999 15.25 20.5C12.0384 20.5002 10.0001 18.1503 10 15.251C10 12.3515 12.0382 10.0002 15.25 10ZM15.25 11.3301C12.8248 11.3302 11.3301 13.0329 11.3301 15.251C11.3303 17.4689 12.825 19.1701 15.25 19.1699C17.6752 19.1698 19.1699 17.4681 19.1699 15.25C19.1699 13.0319 17.6752 11.3299 15.25 11.3301ZM15.8994 14.5801H17.665V15.9102H15.8994V17.6758H14.5693V15.9102H12.835V14.5801H14.5693V12.8457H15.8994V14.5801Z" fill="#1B2236"/></g><defs><clipPath id="tc-clip-zoom-in"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg>
+        </button>
+        <button class="touch-ctrl-btn" id="tc-zoom-out" title="Zoom out" aria-label="Zoom out">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#tc-clip-zoom-out)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M15.25 10C18.4618 9.9998 20.5 12.3505 20.5 15.25C20.5 16.4764 20.1336 17.6034 19.4697 18.4971L22 21.0303L21.5303 21.501L21.0596 21.9707L18.5381 19.4463C17.6768 20.1076 16.5615 20.4999 15.25 20.5C12.0384 20.5002 10.0001 18.1503 10 15.251C10 12.3515 12.0382 10.0002 15.25 10ZM15.25 11.3301C12.8248 11.3302 11.3301 13.0329 11.3301 15.251C11.3303 17.4689 12.825 19.1701 15.25 19.1699C17.6752 19.1698 19.1699 17.4681 19.1699 15.25C19.1699 13.0319 17.6752 11.3299 15.25 11.3301ZM12.835 14.5801H17.665V15.9102H12.835V14.5801Z" fill="#1B2236"/></g><defs><clipPath id="tc-clip-zoom-out"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg>
+        </button>
+      </div>
+      <div class="tc-group">
+        <button class="touch-ctrl-btn" id="tc-tilt-up" title="Tilt up" aria-label="Tilt up" aria-disabled="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#tc-clip-up)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20.7837 19.0923L16.0371 14.1304L15.9941 14.0845L15.9546 14.1255L11.2168 19.0913L10.2549 18.1733L14.9888 13.2114C15.2384 12.906 15.606 12.721 16 12.7026C16.3929 12.7213 16.7586 12.9085 17.0034 13.2163L21.7446 18.1723L20.7837 19.0923Z" fill="#1B2236"/></g><defs><clipPath id="tc-clip-up"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg>
+        </button>
+        <button class="touch-ctrl-btn" id="tc-tilt-down" title="Tilt down" aria-label="Tilt down" aria-disabled="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#tc-clip-down)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M11.2158 12.8052L15.9624 17.7671L16.0054 17.813L16.045 17.772L20.7827 12.8062L21.7447 13.7242L17.0107 18.686C16.7611 18.9914 16.3935 19.1764 15.9995 19.1948C15.6066 19.1761 15.2409 18.9889 14.9961 18.6811L10.2549 13.7251L11.2158 12.8052Z" fill="#1B2236"/></g><defs><clipPath id="tc-clip-down"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg>
+        </button>
+        <button class="touch-ctrl-btn" id="tc-rot-left" title="Rotate left" aria-label="Rotate left">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#tc-clip-left)"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 6.26248e-07 24.8366 1.39876e-06 16C2.17128e-06 7.16344 7.16345 6.26248e-07 16 1.39876e-06C24.8366 2.17128e-06 32 7.16345 32 16Z" fill="white"/><path d="M12 16C11.9983 15.5607 12.1668 15.1378 12.47 14.82L17.07 10L18 10.94L13.39 15.76C13.2678 15.8967 13.2678 16.1033 13.39 16.24L18 21.06L17.07 22L12.47 17.18C12.1685 16.861 12.0004 16.4389 12 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-clip-left"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 6.26248e-07 24.8366 1.39876e-06 16C2.17128e-06 7.16344 7.16345 6.26248e-07 16 1.39876e-06C24.8366 2.17128e-06 32 7.16345 32 16Z" fill="white"/></clipPath></defs></svg>
+        </button>
+        <button class="touch-ctrl-btn" id="tc-rot-right" title="Rotate right" aria-label="Rotate right">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#tc-clip-right)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20 16C20.0017 16.4393 19.8332 16.8622 19.53 17.18L14.93 22L14 21.06L18.61 16.24C18.7322 16.1033 18.7322 15.8967 18.61 15.76L14 10.94L14.93 10L19.53 14.82C19.8315 15.139 19.9996 15.5611 20 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-clip-right"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Accessibility button — top right, mobile only -->
+    <button id="accessibility-btn" title="Accessibility" aria-label="Accessibility">
+      <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.90893 13.1252L5.87754 19.19C5.8276 19.342 5.75008 19.4816 5.64952 19.6008C5.54896 19.72 5.4274 19.8163 5.29195 19.884C5.08849 19.9871 4.86129 20.0226 4.63915 19.986C4.417 19.9494 4.20991 19.8424 4.04412 19.6785C3.87833 19.5146 3.76131 19.3012 3.70788 19.0653C3.65445 18.8295 3.66703 18.5818 3.74401 18.3537L5.16031 14.116C5.2727 13.7971 5.3615 13.4691 5.42587 13.135C5.4831 12.7959 5.52401 12.4537 5.54843 12.1099C5.6029 11.4895 5.64149 10.8175 5.67099 10.1725C5.7005 9.52756 5.72093 8.9022 5.73682 8.38474C5.75724 7.73976 5.59609 7.69807 5.11718 7.57545L5.01732 7.55093L0.931832 6.71957C0.784897 6.69157 0.644514 6.63253 0.518717 6.54584C0.39292 6.45916 0.284179 6.34652 0.198715 6.21437C0.071751 6.01419 0.00261927 5.77779 7.29618e-05 5.53513C-0.00247335 5.29246 0.0616804 5.05444 0.184411 4.85119C0.307142 4.64795 0.482929 4.48862 0.689516 4.39339C0.896103 4.29815 1.1242 4.2713 1.34492 4.31622L5.73455 5.20644C5.90931 5.2236 6.07954 5.24568 6.25885 5.26775C6.79903 5.34772 7.34331 5.39113 7.8885 5.39772C8.56716 5.38341 9.24457 5.32855 9.91763 5.23341C10.1219 5.20889 10.3148 5.18191 10.5078 5.16229L14.65 4.32358C14.9438 4.25773 15.2499 4.32034 15.5011 4.4977C15.6256 4.58873 15.7322 4.7056 15.8146 4.8415C15.8969 4.97741 15.9535 5.12964 15.9809 5.28936C16.0084 5.44908 16.0062 5.6131 15.9745 5.7719C15.9428 5.93069 15.8822 6.0811 15.7962 6.21437C15.7119 6.34735 15.6041 6.46107 15.4791 6.54902C15.3541 6.63697 15.2143 6.69742 15.0676 6.72692L11.1092 7.53131C10.9776 7.56319 10.8596 7.58526 10.7552 7.60243C10.3421 7.67845 10.1378 7.71769 10.1628 8.35286C10.1809 8.81637 10.2331 9.37061 10.3012 9.94937C10.3806 10.6287 10.4851 11.3497 10.594 12.0094C10.6644 12.4435 10.7302 12.7917 10.821 13.1252C10.9118 13.4588 11.0003 13.7996 11.1365 14.2092L12.5233 18.3537C12.6002 18.5818 12.6128 18.8295 12.5594 19.0653C12.506 19.3012 12.3889 19.5146 12.2231 19.6785C12.0574 19.8424 11.8503 19.9494 11.6281 19.986C11.406 20.0226 11.1788 19.9871 10.9753 19.884C10.8399 19.8163 10.7183 19.72 10.6177 19.6008C10.5172 19.4816 10.4397 19.342 10.3897 19.19L8.35153 13.1375L8.12455 12.6887L7.89758 13.1252H7.90893ZM7.99745 1.15441e-06C8.46114 -0.000424776 8.91063 0.172891 9.26931 0.490414C9.62799 0.807937 9.87367 1.25002 9.96449 1.74133C10.0553 2.23264 9.98565 2.74278 9.76738 3.18481C9.5491 3.62685 9.19572 3.97343 8.76745 4.16549C8.33919 4.35756 7.86253 4.38323 7.41871 4.23812C6.97489 4.09302 6.59137 3.78612 6.3335 3.36973C6.07563 2.95334 5.95937 2.45321 6.00452 1.95458C6.04968 1.45594 6.25347 0.989656 6.58115 0.635172C6.76678 0.433598 6.98749 0.2737 7.23057 0.164689C7.47364 0.0556774 7.73427 -0.000293123 7.99745 1.15441e-06Z" fill="#1B2236"/></svg>
+    </button>
+
+    <!-- Model selection panel — bottom left -->
+    <div id="model-panel">
+      <div class="select-wrap">
+        <span class="select-label" id="model-label-desktop">ID.7</span>
+        <select class="select-native" id="model-select-desktop" aria-label="Select model">
+          <optgroup label="ID.7">
+            <option value="id7-pro-match-plus" selected>Pro Match Plus</option>
+            <option value="id7-pro-s-match-plus">Pro S Match Plus</option>
+            <option value="id7-gtx-plus-4motion">GTX Plus 4Motion</option>
+          </optgroup>
+          <optgroup label="ID. Polo">
+            <option value="idpolo-trend">Trend</option>
+          </optgroup>
+        </select>
+        <div class="select-chevron-icon">
+          <svg fill="none" preserveAspectRatio="none" viewBox="0 0 21.95 11.427">
+            <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="white"/>
+          </svg>
+        </div>
+      </div>
+      <button class="info-btn" title="Info">
+            <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12C1 18.075 5.925 23 12 23C18.075 23 23 18.075 23 12C23 5.925 18.075 1 12 1ZM12 2.33C17.338 2.33 21.67 6.662 21.67 12C21.67 17.338 17.338 21.67 12 21.67C6.662 21.67 2.33 17.338 2.33 12C2.33 6.662 6.662 2.33 12 2.33Z"/><ellipse cx="12.000" cy="7.304" rx="0.774" ry="0.811" fill="white"/><path fill="white" d="M12.783 15.656 L12.783 10.007 L9.414 10.007 L9.414 11.337 L11.453 11.337 L11.453 15.656 L8.419 15.656 L8.419 16.986 L15.386 16.985 L15.386 15.655 Z"/></svg>
+          </button>
+    </div>
+
+    <!-- Options area: thumbnails + colour name -->
+    <div id="variant-selector">
+      <div id="variant-area">
+        <div id="variant-track" class="wide">
+          <div class="variant-fade left" id="fade-left"><button class="variant-arrow" id="scroll-left"><svg width="6" height="12"><use href="#icon-arrow-left"/></svg></button></div>
+          <div id="variant-scroll" class="scrollbar-hide"></div>
+          <div id="wheel-variant-scroll" class="scrollbar-hide"></div>
+          <div id="interior-variant-scroll" class="scrollbar-hide"></div>
+          <div class="variant-fade right" id="fade-right"><button class="variant-arrow" id="scroll-right"><svg width="6" height="12"><use href="#icon-arrow-right"/></svg></button></div>
+        </div>
+        <p id="color-name">Grenadilla Black Metallic</p>
+      </div>
+    </div>
+
+    <!-- Content switcher — bottom centre -->
+    <div id="content-switcher">
+      <button class="config-tab active" data-tab="Colour"><div class="tab-border"></div><span class="tab-label">Colour</span></button>
+      <button class="config-tab" data-tab="Wheels"><div class="tab-border"></div><div class="tab-divider" id="divider-wheels"></div><span class="tab-label">Wheels</span></button>
+      <button class="config-tab" data-tab="Interior"><div class="tab-border"></div><div class="tab-divider" id="divider-interior"></div><span class="tab-label">Interior</span></button>
+    </div>
+
+    <!-- Mobile panel (<960px) -->
+    <div id="config-panel">
+
+      <div id="mobile-top-row">
+        <div class="mobile-top-left">
+          <div class="select-wrap" id="mobile-select-wrap">
+            <span class="select-label" id="model-label-mobile">ID.7</span>
+            <select class="select-native" id="model-select-mobile" aria-label="Select model">
+              <optgroup label="ID.7">
+                <option value="id7-pro-match-plus" selected>Pro Match Plus</option>
+                <option value="id7-pro-s-match-plus">Pro S Match Plus</option>
+                <option value="id7-gtx-plus-4motion">GTX Plus 4Motion</option>
+              </optgroup>
+              <optgroup label="ID. Polo">
+                <option value="idpolo-trend">Trend</option>
+              </optgroup>
+            </select>
+            <div class="select-chevron-icon">
+              <svg fill="none" preserveAspectRatio="none" viewBox="0 0 21.95 11.427">
+                <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="white"/>
+              </svg>
+            </div>
+          </div>
+          <button class="info-btn" title="Info">
+            <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12C1 18.075 5.925 23 12 23C18.075 23 23 18.075 23 12C23 5.925 18.075 1 12 1ZM12 2.33C17.338 2.33 21.67 6.662 21.67 12C21.67 17.338 17.338 21.67 12 21.67C6.662 21.67 2.33 17.338 2.33 12C2.33 6.662 6.662 2.33 12 2.33Z"/><ellipse cx="12.000" cy="7.304" rx="0.774" ry="0.811" fill="white"/><path fill="white" d="M12.783 15.656 L12.783 10.007 L9.414 10.007 L9.414 11.337 L11.453 11.337 L11.453 15.656 L8.419 15.656 L8.419 16.986 L15.386 16.985 L15.386 15.655 Z"/></svg>
+          </button>
+        </div>
+        <button class="fullscreen-btn" title="Fullscreen">
+          <svg fill="none" preserveAspectRatio="none" viewBox="0 0 22 22.0039">
+            <path d="M1.33105 20.6738H7.6123V22.0039H0.860352C0.386362 22.0039 0.000993376 21.6175 0.000976562 21.1445V14.2549H1.33105V20.6738ZM21.998 21.1445C21.998 21.6175 21.6136 22.0038 21.1396 22.0039H14.249V20.6738H20.6689V14.2529H21.998V21.1445ZM7.74902 1.33105H1.33105L1.33008 7.75488H0L0.000976562 0.860352C0.00105715 0.38642 0.387401 0.00195312 0.860352 0.00195312H7.74902V1.33105ZM21.1406 0C21.6136 0 22 0.385375 22 0.859375L21.999 7.75293H20.6689L20.6699 1.33008H14.251V0H21.1406Z" fill="white"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="config-content">
+        <div id="variant-area-mobile">
+          <div id="variant-track-mobile">
+            <div class="variant-fade left" id="fade-left-mobile"><button class="variant-arrow" id="scroll-left-mobile"><svg width="6" height="12"><use href="#icon-arrow-left"/></svg></button></div>
+            <div id="variant-scroll-mobile" class="scrollbar-hide"></div>
+            <div id="wheel-variant-scroll-mobile" class="scrollbar-hide"></div>
+            <div id="interior-variant-scroll-mobile" class="scrollbar-hide"></div>
+            <div class="variant-fade right" id="fade-right-mobile"><button class="variant-arrow" id="scroll-right-mobile"><svg width="6" height="12"><use href="#icon-arrow-right"/></svg></button></div>
+          </div>
+          <p id="color-name-mobile">Grenadilla Black Metallic</p>
+        </div>
+
+        <div id="content-switcher-mobile">
+          <button class="config-tab active" data-tab="Colour"><div class="tab-border"></div><span class="tab-label">Colour</span></button>
+          <button class="config-tab" data-tab="Wheels"><div class="tab-border"></div><div class="tab-divider" id="divider-wheels-m"></div><span class="tab-label">Wheels</span></button>
+          <button class="config-tab" data-tab="Interior"><div class="tab-border"></div><div class="tab-divider" id="divider-interior-m"></div><span class="tab-label">Interior</span></button>
+        </div>
+      </div>
+
+    </div><!-- /config-panel -->
+
+  </div><!-- /visualizer -->
+
+  <!-- NBA Bar -->
+  <div id="nba-bar">
+    <div class="nba-inner">
+      <div class="nba-links">
+        <a class="nba-link" href="#">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.4542 2.21484C22.003 8.96172 20.8323 13.4731 19.6212 16.5527C18.4146 19.6205 17.151 21.2848 16.6426 22.166L16.4512 22.499H3.02448L2.87702 22.0352L1.42194 17.4404C1.15604 16.6009 1.59866 15.5922 2.58112 15.4004C4.55542 15.0151 6.4526 15.4095 8.18855 15.7041C9.80453 15.9783 11.3188 16.1751 12.8829 15.7969V15.0586C12.8831 14.4112 13.1642 13.7586 13.4844 13.1543C13.8007 12.5575 14.2564 11.8347 14.6485 11.1455C15.4705 9.70068 16.2402 8.03909 16.2403 6.03418C16.2403 5.04248 16.1874 4.04551 16.1368 3.31934C16.0696 2.35479 16.8274 1.50592 17.8155 1.50586H22.501L22.4542 2.21484ZM17.8155 2.83594C17.6196 2.836 17.4481 3.01 17.463 3.22656C17.5147 3.96929 17.5704 5.00003 17.5704 6.03418C17.5703 8.38989 16.6602 10.2974 15.8038 11.8027C15.3567 12.5884 14.9733 13.1866 14.6602 13.7773C14.3513 14.3603 14.2131 14.7624 14.213 15.0586V16.792L13.7481 16.9385C11.6845 17.5894 9.74668 17.3178 7.96589 17.0156C6.14585 16.7068 4.52012 16.3764 2.83601 16.7051C2.77932 16.7161 2.73574 16.7483 2.70612 16.8037C2.67407 16.8638 2.66217 16.9496 2.6905 17.0391L3.99909 21.1689H15.6925C16.3158 20.1658 17.3464 18.7043 18.3839 16.0664C19.496 13.2385 20.5978 9.0722 21.0733 2.83594H17.8155Z" fill="#293043"/></svg>
+          <span class="nba-link-label">Book a test drive</span>
+        </a>
+        <a class="nba-link" href="#">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.91992 6.33008H6.7998C6.20538 6.39612 5.66904 6.7172 5.33008 7.20996L4.20996 9.73047C6.11985 9.95046 8.0298 10.1103 9.92969 10.1104V11.4697C7.83991 11.4097 5.74017 11.2597 3.65039 11.0098L2.91992 12.6699V12.7598L2.83984 12.8604C2.55296 13.3379 2.35321 13.8627 2.25 14.4102C3.78999 14.6202 5.39028 14.8002 7.03027 14.9102L6.91992 16.2197C5.28008 16.0997 3.69025 15.9297 2.15039 15.7197V21.3896C2.15039 21.4639 2.17991 21.5354 2.23242 21.5879C2.28484 21.6402 2.35561 21.6698 2.42969 21.6699H4.42969C4.59155 21.67 4.72507 21.5417 4.73047 21.3799V19.5703H18.9102V21.3896C18.9102 21.4639 18.9397 21.5354 18.9922 21.5879C19.0447 21.6404 19.1162 21.6699 19.1904 21.6699H21.1904C21.3449 21.6697 21.4697 21.5441 21.4697 21.3896V15.6904C19.9698 15.9004 18.4095 16.0704 16.8096 16.1904L16.71 14.8701C18.3199 14.7501 19.8799 14.5703 21.3799 14.3604C21.2846 13.8215 21.0877 13.3052 20.7998 12.8398L20.75 12.7598V12.6699L20.5098 12.1299H21.9697C22.5376 13.0533 22.8389 14.1162 22.8398 15.2002V21.4004C22.8342 22.287 22.117 23.0041 21.2305 23.0098H19.2305C18.3414 23.0098 17.6203 22.2894 17.6201 21.4004V20.9102H6.08008V21.3896C6.07458 22.2859 5.34644 23.0097 4.4502 23.0098H2.4502C1.56115 23.0098 0.840055 22.2894 0.839844 21.4004V15.21C0.840813 14.1259 1.14206 13.063 1.70996 12.1396L2.29004 10.8496C1.52004 10.7396 0.759995 10.63 0 10.5L0.0595703 9.83984L0.169922 9.17969H0.230469C1.09696 9.33298 1.96669 9.46677 2.83984 9.58008L4.16016 6.58008C4.72099 5.67414 5.67837 5.0878 6.74023 5H9.91992V6.33008ZM12.0195 14.9502C12.5718 14.9502 13.0195 15.3979 13.0195 15.9502C13.0194 16.5024 12.5718 16.9502 12.0195 16.9502C11.4675 16.9499 11.0196 16.5022 11.0195 15.9502C11.0195 15.3981 11.4675 14.9504 12.0195 14.9502ZM15.4697 4.4502H18.0303V1H19.3604V4.4502H21.5V5.83008H20.6797V8.83008C20.6665 9.59822 20.3483 10.3294 19.7949 10.8623C19.2415 11.3951 18.4985 11.6859 17.7305 11.6699H15.7305C14.1437 11.6866 12.8423 10.4167 12.8203 8.83008V5.78027H12V4.4502H14.1396V1H15.4697V4.4502ZM14.1904 8.83008C14.2123 9.68205 14.9175 10.3564 15.7695 10.3398H17.7695C18.6218 10.3566 19.3277 9.68221 19.3496 8.83008L19.3896 5.83008H14.1904V8.83008Z" fill="#293043"/></svg>
+          <span class="nba-link-label">Electric &amp; hybrid</span>
+        </a>
+        <a class="nba-link" href="#">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.8207 13.4502C20.6444 13.8303 21.2178 14.6036 21.3432 15.502L22.0326 20.4424C22.1274 21.1216 21.617 21.7383 20.9282 21.7666C19.4059 21.8291 15.026 21.9974 12.0004 21.9971C8.99144 21.9967 4.60821 21.829 3.07855 21.7666C2.38571 21.7383 1.87312 21.115 1.97503 20.4316L2.71429 15.4766C2.84624 14.5924 3.41302 13.8332 4.22308 13.4551L7.21527 12.0586L7.77777 13.2637L4.78558 14.6602C4.37985 14.8496 4.09585 15.23 4.02972 15.6729L3.31683 20.4443C4.98985 20.5116 9.13399 20.6667 12.0004 20.667C14.8823 20.6673 19.0234 20.5117 20.6899 20.4443L20.0258 15.6855C19.9629 15.2356 19.6757 14.8485 19.2631 14.6582L16.2397 13.2627L16.7963 12.0557L19.8207 13.4502ZM12.0004 2C14.7618 2.00009 17.0004 3.99016 17.0004 7C17.0004 10.0098 14.7618 11.9999 12.0004 12C9.239 12 7.00042 10.0099 7.00042 7C7.00042 3.99009 9.239 2 12.0004 2ZM12.0004 3.33008C9.92937 3.33008 8.3305 4.76803 8.3305 7C8.3305 9.23197 9.92937 10.6699 12.0004 10.6699C14.0714 10.6698 15.6703 9.2319 15.6703 7C15.6703 4.7681 14.0714 3.33017 12.0004 3.33008Z" fill="#293043"/></svg>
+          <span class="nba-link-label">myVolkswagen</span>
+        </a>
+        <a class="nba-link" href="#">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.99994 6V7.33008H6.87982C6.28275 7.38811 5.74326 7.7111 5.4101 8.20996L4.29974 10.7305C6.21308 10.9105 8.12045 11.0329 10.0204 11.0996V12.46C7.9305 12.4 5.83013 12.24 3.74017 12L2.99994 13.6699V13.75L2.90033 13.8301C2.61242 14.3071 2.4127 14.8321 2.31049 15.3799C3.85027 15.5998 5.45003 15.7697 7.08978 15.8896L6.99994 17.21C5.3601 17.1 3.77027 16.9199 2.23041 16.71V22.3896C2.23558 22.542 2.35741 22.6646 2.5097 22.6699H4.5097C4.67156 22.67 4.80509 22.5417 4.81049 22.3799V20.5703H18.9902V22.3896C18.9953 22.5421 19.118 22.6647 19.2704 22.6699H21.2704C21.4227 22.6645 21.5446 22.542 21.5497 22.3896V16.6797C20.0498 16.8897 18.4895 17.0704 16.8896 17.1904L16.79 15.8604C18.4 15.7404 19.9599 15.5696 21.4599 15.3496C21.3611 14.8119 21.1644 14.2969 20.8798 13.8301L20.83 13.75V13.6699L20.5898 13.1201H21.9999L22.0497 13.1299C22.6201 14.0522 22.9215 15.1158 22.9199 16.2002V22.3896C22.9144 23.2764 22.1972 23.9943 21.3105 24H19.3105C18.8835 24 18.4737 23.8302 18.1718 23.5283C17.8699 23.2264 17.7001 22.8166 17.7001 22.3896V21.9004H6.1601V22.3799C6.1546 23.2761 5.42646 23.9999 4.53021 24H2.53021C1.64103 24 0.919861 23.2788 0.919861 22.3896V16.2002C0.921906 15.1227 1.22331 14.0669 1.78998 13.1504L2.37006 11.8496C1.60006 11.7496 0.84001 11.6398 0.0800171 11.5098L0.139587 10.8398L0.249939 10.1904H0.310486C1.18026 10.3404 2.05008 10.4601 2.91986 10.5801L4.24017 7.58008C4.7975 6.67064 5.75686 6.08306 6.82025 6H9.99994ZM11.9199 15.8604C12.4721 15.8604 12.9199 16.3081 12.9199 16.8604C12.9197 17.4125 12.4721 17.8604 11.9199 17.8604C11.3677 17.8603 10.92 17.4125 10.9199 16.8604C10.9199 16.3081 11.3676 15.8604 11.9199 15.8604ZM23.9199 5.73047L22.9804 6.62988L20.9296 4.62988V7C20.9354 8.90923 19.6444 10.579 17.7949 11.0527C15.9453 11.5263 14.0102 10.6828 13.0976 9.00586C12.1851 7.3288 12.5275 5.24602 13.9296 3.9502L14.3701 3.52051L15.3105 4.45996L14.8495 4.91016C14.2672 5.44955 13.934 6.20623 13.9296 7C13.8671 8.05303 14.3939 9.0542 15.2968 9.59961C16.1997 10.1449 17.3305 10.1449 18.2333 9.59961C19.1363 9.0542 19.6621 8.05303 19.5995 7V4.66992L17.5497 6.66992L16.6103 5.73047L20.2704 2.08008L23.9199 5.73047Z" fill="#293043"/></svg>
+          <span class="nba-link-label">Find a used car</span>
+        </a>
+      </div>
+      <button class="nba-cta-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.1004 6.41992H6.99985C6.39099 6.47466 5.83785 6.79705 5.49008 7.2998L4.29965 9.82031C6.19952 10.0403 8.10974 10.2002 10.0096 10.2002V11.5596C7.91983 11.4996 5.8201 11.3496 3.73032 11.0996L2.99985 12.7598V12.9297C2.71064 13.4134 2.51095 13.9455 2.41 14.5C3.95 14.71 5.55028 14.89 7.19028 15L7.07993 16.3096C5.44008 16.1896 3.85026 16.0195 2.31039 15.8096V21.4805C2.31065 21.6348 2.43535 21.7596 2.58969 21.7598H4.58969C4.75155 21.7599 4.88508 21.6315 4.89047 21.4697V19.6602H19.0702V21.4805C19.0704 21.6349 19.1959 21.7598 19.3504 21.7598H21.3504C21.5025 21.7544 21.6243 21.6325 21.6297 21.4805V15.7803C20.1298 15.9903 18.5695 16.1603 16.9696 16.2803L16.87 14.96C18.4799 14.84 20.0399 14.6602 21.5399 14.4502C21.4446 13.9114 21.2477 13.395 20.9598 12.9297L20.91 12.8496V12.7598L20.6698 12.2197H22.1297C22.6976 13.1431 22.9989 14.206 22.9998 15.29V21.4805C22.9996 22.3709 22.2809 23.0939 21.3905 23.0996H19.3905C18.5014 23.0996 17.7802 22.3793 17.7801 21.4902V21H6.24008V21.4697C6.23458 22.366 5.50644 23.0898 4.6102 23.0898H2.6102C1.72118 23.0898 1.0001 22.3694 0.999847 21.4805V15.29C1.00265 14.2095 1.30397 13.1509 1.86996 12.2305L2.45004 10.9404C1.68004 10.8304 0.920004 10.7198 0.160004 10.5898L0.219574 9.92969L0.329926 9.26953H0.390472C1.25697 9.42283 2.12669 9.55351 2.99985 9.66016L4.32016 6.66992C4.88305 5.76135 5.84455 5.17457 6.91 5.08984H10.1004V6.41992ZM11.9998 14.9502C12.5521 14.9502 12.9998 15.3979 12.9998 15.9502C12.9997 16.5024 12.5521 16.9502 11.9998 16.9502C11.4477 16.9501 11 16.5023 10.9998 15.9502C10.9998 15.398 11.4476 14.9503 11.9998 14.9502ZM23.9998 11H12.9998V0H23.9998V11ZM14.3299 9.66992H22.6698V1.33008H14.3299V9.66992ZM22.0702 3.94043L17.6004 8.41016L15.1297 5.94043L16.0702 5L17.6004 6.53027L21.1297 3L22.0702 3.94043Z" fill="white"/></svg>
+        Configure now
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile NBA Bar (<960px) -->
+  <div id="nba-bar-mobile">
+    <div class="nba-mobile-inner">
+      <button class="nba-mobile-menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 17C3.55228 17 4 17.4477 4 18C4 18.5523 3.55228 19 3 19C2.44772 19 2 18.5523 2 18C2 17.4477 2.44772 17 3 17ZM21.5 18.665H6V17.335H21.5V18.665ZM3 11C3.55228 11 4 11.4477 4 12C4 12.5523 3.55228 13 3 13C2.44772 13 2 12.5523 2 12C2 11.4477 2.44772 11 3 11ZM21.5 12.665H6V11.335H21.5V12.665ZM3 5C3.55228 5 4 5.44772 4 6C4 6.55228 3.55228 7 3 7C2.44772 7 2 6.55228 2 6C2 5.44772 2.44772 5 3 5ZM21.5 6.66504H6V5.33496H21.5V6.66504Z" fill="#293043"/></svg>
+        <span class="nba-mobile-menu-label">
+          <span class="nba-mobile-menu-text">Menu</span>
+          <span class="nba-mobile-menu-stroke"></span>
+        </span>
+      </button>
+      <button class="nba-cta-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.1006 6.41992H7C6.39114 6.47466 5.838 6.79705 5.49023 7.2998L4.2998 9.82031C6.19967 10.0403 8.10989 10.2002 10.0098 10.2002V11.5596C7.91999 11.4996 5.82025 11.3496 3.73047 11.0996L3 12.7598V12.9297C2.71079 13.4134 2.5111 13.9455 2.41016 14.5C3.95016 14.71 5.55043 14.89 7.19043 15L7.08008 16.3096C5.44023 16.1896 3.85041 16.0195 2.31055 15.8096V21.4805C2.3108 21.6348 2.4355 21.7596 2.58984 21.7598H4.58984C4.7517 21.7599 4.88523 21.6315 4.89062 21.4697V19.6602H19.0703V21.4805C19.0706 21.6349 19.1961 21.7598 19.3506 21.7598H21.3506C21.5027 21.7544 21.6245 21.6325 21.6299 21.4805V15.7803C20.13 15.9903 18.5696 16.1603 16.9697 16.2803L16.8701 14.96C18.4801 14.84 20.0401 14.6602 21.54 14.4502C21.4447 13.9114 21.2478 13.395 20.96 12.9297L20.9102 12.8496V12.7598L20.6699 12.2197H22.1299C22.6978 13.1431 22.999 14.206 23 15.29V21.4805C22.9998 22.3709 22.281 23.0939 21.3906 23.0996H19.3906C18.5015 23.0996 17.7804 22.3793 17.7803 21.4902V21H6.24023V21.4697C6.23474 22.366 5.5066 23.0898 4.61035 23.0898H2.61035C1.72133 23.0898 1.00025 22.3694 1 21.4805V15.29C1.00281 14.2095 1.30412 13.1509 1.87012 12.2305L2.4502 10.9404C1.6802 10.8304 0.920156 10.7198 0.160156 10.5898L0.219727 9.92969L0.330078 9.26953H0.390625C1.25712 9.42283 2.12684 9.55351 3 9.66016L4.32031 6.66992C4.8832 5.76135 5.84471 5.17457 6.91016 5.08984H10.1006V6.41992ZM12 14.9502C12.5523 14.9502 13 15.3979 13 15.9502C12.9999 16.5024 12.5522 16.9502 12 16.9502C11.4479 16.9501 11.0001 16.5023 11 15.9502C11 15.398 11.4478 14.9503 12 14.9502ZM24 11H13V0H24V11ZM14.3301 9.66992H22.6699V1.33008H14.3301V9.66992ZM22.0703 3.94043L17.6006 8.41016L15.1299 5.94043L16.0703 5L17.6004 6.53027L21.1299 3L22.0703 3.94043Z" fill="white"/></svg>
+        Configure now
+      </button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── Data ──
+const THUMBS = [
+  {"name": "Grenadilla Black Metallic",       "src": "assets/media/id7/exterior/variants-colours/0E0E.webp"},
+  {"name": "Scale Silver Metallic",            "src": "assets/media/id7/exterior/variants-colours/1T1T.webp"},
+  {"name": "Scale Silver Metallic Black",      "src": "assets/media/id7/exterior/variants-colours/1TA1.webp"},
+  {"name": "Glacier White Metallic",           "src": "assets/media/id7/exterior/variants-colours/2Y2Y.webp"},
+  {"name": "Glacier White Metallic Black",     "src": "assets/media/id7/exterior/variants-colours/2YA1.webp"},
+  {"name": "Stonewashed Blue Metallic",        "src": "assets/media/id7/exterior/variants-colours/5Y5Y.webp"},
+  {"name": "Stonewashed Blue Metallic Black",  "src": "assets/media/id7/exterior/variants-colours/5YA1.webp"},
+  {"name": "Aquamarine Blue Metallic",         "src": "assets/media/id7/exterior/variants-colours/8H8H.webp"},
+  {"name": "Aquamarine Blue Metallic Black",   "src": "assets/media/id7/exterior/variants-colours/8HA1.webp"},
+  {"name": "Moonstone Grey Black",             "src": "assets/media/id7/exterior/variants-colours/C2A1.webp"},
+  {"name": "Moonstone Grey",                   "src": "assets/media/id7/exterior/variants-colours/C2C2.webp"},
+  {"name": "Kings Red Premium Metallic Black", "src": "assets/media/id7/exterior/variants-colours/P8A1.webp"},
+  {"name": "Kings Red Metallic",               "src": "assets/media/id7/exterior/variants-colours/P8P8.webp"}
+];
+const POLO_THUMBS = [
+  {"name": "Python Yellow Metallic",   "src": "assets/media/idpolo/exterior/variants-colours/a19b17031a2f0e9906f6e0d298bca3aa.webp"},
+  {"name": "Grenadilla Black Metallic","src": "assets/media/idpolo/exterior/variants-colours/89bf9b76e164f0be53c684433023e491.webp"},
+  {"name": "Celestial Blue Metallic",  "src": "assets/media/idpolo/exterior/variants-colours/efa6862cfe551af8bc28402a48ae7289.webp"},
+  {"name": "Candy White",              "src": "assets/media/idpolo/exterior/variants-colours/3bfeaff0f064617a5f18b4f779d2fdcd.webp"},
+  {"name": "Oyster Silver Metallic",   "src": "assets/media/idpolo/exterior/variants-colours/5bc839aef1732be4f78ee9e27f5ee62b.webp"},
+  {"name": "Magnetic Gray Metallic",   "src": "assets/media/idpolo/exterior/variants-colours/e0923111f74c7455af80b4ed42d276b8.webp"}
+];
+const POLO_ROT_FRAMES = [
+  "assets/media/idpolo/exterior/rotation-yellow/frame-00.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-01.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-02.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-03.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-04.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-05.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-06.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-07.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-08.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-09.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-10.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-11.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-12.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-13.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-14.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-15.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-16.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-17.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-18.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-19.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-20.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-21.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-22.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-23.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-24.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-25.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-26.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-27.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-28.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-29.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-30.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-31.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-32.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-33.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-34.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-35.png",
+];
+let activeModel = 'id7'; // 'id7' | 'idpolo'
+
+const ROT_FRAMES = [
+  "assets/media/id7/exterior/rotation-black/frame-00.webp",
+  "assets/media/id7/exterior/rotation-black/frame-01.webp",
+  "assets/media/id7/exterior/rotation-black/frame-02.webp",
+  "assets/media/id7/exterior/rotation-black/frame-03.webp",
+  "assets/media/id7/exterior/rotation-black/frame-04.webp",
+  "assets/media/id7/exterior/rotation-black/frame-05.webp",
+  "assets/media/id7/exterior/rotation-black/frame-06.webp",
+  "assets/media/id7/exterior/rotation-black/frame-07.webp",
+  "assets/media/id7/exterior/rotation-black/frame-08.webp",
+  "assets/media/id7/exterior/rotation-black/frame-09.webp",
+  "assets/media/id7/exterior/rotation-black/frame-10.webp",
+  "assets/media/id7/exterior/rotation-black/frame-11.webp",
+  "assets/media/id7/exterior/rotation-black/frame-12.webp",
+  "assets/media/id7/exterior/rotation-black/frame-13.webp",
+  "assets/media/id7/exterior/rotation-black/frame-14.webp",
+  "assets/media/id7/exterior/rotation-black/frame-15.webp",
+  "assets/media/id7/exterior/rotation-black/frame-16.webp",
+  "assets/media/id7/exterior/rotation-black/frame-17.webp",
+  "assets/media/id7/exterior/rotation-black/frame-18.webp",
+  "assets/media/id7/exterior/rotation-black/frame-19.webp",
+  "assets/media/id7/exterior/rotation-black/frame-20.webp",
+  "assets/media/id7/exterior/rotation-black/frame-21.webp",
+  "assets/media/id7/exterior/rotation-black/frame-22.webp",
+  "assets/media/id7/exterior/rotation-black/frame-23.webp",
+  "assets/media/id7/exterior/rotation-black/frame-24.webp",
+  "assets/media/id7/exterior/rotation-black/frame-25.webp",
+  "assets/media/id7/exterior/rotation-black/frame-26.webp",
+  "assets/media/id7/exterior/rotation-black/frame-27.webp",
+  "assets/media/id7/exterior/rotation-black/frame-28.webp",
+  "assets/media/id7/exterior/rotation-black/frame-29.webp",
+  "assets/media/id7/exterior/rotation-black/frame-30.webp",
+  "assets/media/id7/exterior/rotation-black/frame-31.webp",
+  "assets/media/id7/exterior/rotation-black/frame-32.webp",
+  "assets/media/id7/exterior/rotation-black/frame-33.webp",
+  "assets/media/id7/exterior/rotation-black/frame-34.webp",
+  "assets/media/id7/exterior/rotation-black/frame-35.webp"
+];
+const WHEEL_THUMBS = [
+  {"name": "Alloy wheels 21\" 'Mataro', Black, diamond-turned",                          "src": "assets/media/id7/exterior/variants-wheels/MRAD55L.webp"},
+  {"name": "Exterior Styling package Black Style with self-aligning Volkswagen logo",     "src": "assets/media/id7/exterior/variants-wheels/MRAD64Q.webp"},
+  {"name": "Leichtmetallräder 8 1/2J x 20 vorn, mit 9 1/2J x 20 hinten",               "src": "assets/media/id7/exterior/variants-wheels/MRAD64R.webp"},
+  {"name": "Alloy wheels 19\" 'Hudson', Black, diamond-turned",                          "src": "assets/media/id7/exterior/variants-wheels/MRADV95.webp"}
+];
+
+// ── State ──
+let selectedColor  = 0;
+let rotFrame       = 0;
+let rotation       = 0;
+let isDragging     = false;
+let startX         = 0;
+let startY         = 0;
+let pillDismissed  = false;
+
+// ── Elements ──
+const carImg         = document.getElementById('car-img');
+const rotatePill     = document.getElementById('rotate-pill');
+const colorName      = document.getElementById('color-name');
+const colorNameMob   = document.getElementById('color-name-mobile');
+const variantScroll    = document.getElementById('variant-scroll');
+const variantTrack     = document.getElementById('variant-track');
+const fadeLeft       = document.getElementById('fade-left');
+const fadeRight      = document.getElementById('fade-right');
+const variantScrollMob = document.getElementById('variant-scroll-mobile');
+const variantTrackMob  = document.getElementById('variant-track-mobile');
+const fadeLeftMob    = document.getElementById('fade-left-mobile');
+const fadeRightMob   = document.getElementById('fade-right-mobile');
+const configPanel    = document.getElementById('config-panel');
+const mobileRow      = document.getElementById('mobile-top-row');
+const mobileSel      = document.getElementById('mobile-select-wrap');
+const visualizer     = document.getElementById('visualizer');
+
+// ── Responsive layout ──
+function applyLayout() {
+  const w = window.innerWidth;
+  const isNarrow = w < 960;
+  // v1 panel: shown at <960 via class; v2 overlays hidden via CSS media query
+  const wasInteriorActive = configPanel.classList.contains('interior-active');
+  configPanel.className = isNarrow ? 'narrow' : 'wide';
+  if (wasInteriorActive) configPanel.classList.add('interior-active');
+  mobileRow.className   = isNarrow ? 'show' : '';
+  if (mobileSel) mobileSel.style.width = w < 400 ? '100%' : '312px';
+  const trackClass = isNarrow ? 'narrow' : 'wide';
+  if (variantTrack)    variantTrack.className    = trackClass;
+  if (variantTrackMob) variantTrackMob.className = trackClass;
+  carImg.className = selectedColor === 0 ? 'draggable' : '';
+  requestAnimationFrame(updateArrows);
+}
+
+// ── Thumbnail arrows ──
+function updateArrows() {
+  const w = window.innerWidth;
+
+  // Use the currently visible desktop scroll container
+  const el = [variantScroll, wheelScroll, interiorScroll].find(s => s && s.offsetParent !== null) || variantScroll;
+  const over = el.scrollWidth > el.clientWidth + 1;
+  const left = el.scrollLeft > 1;
+  const right = el.scrollLeft < el.scrollWidth - el.clientWidth - 54;
+  const showArrows = over && w < 1600;
+
+  // When overflowing, justify-content:center puts first swatch off-screen (negative offset)
+  el.style.justifyContent = over ? 'flex-start' : '';
+  fadeLeft.classList.toggle('show',  showArrows && left);
+  fadeRight.classList.toggle('show', showArrows && right);
+  el.style.paddingLeft  = '4px';
+  el.style.paddingRight = (showArrows && right) ? '52px' : '16px';
+  const lm = showArrows && left, rm = showArrows && right;
+  const mask = lm && rm ? 'linear-gradient(90deg,transparent 0,black 46px,black calc(100% - 46px),transparent 100%)'
+             : lm       ? 'linear-gradient(90deg,transparent 0,black 46px,black 100%)'
+             : rm       ? 'linear-gradient(90deg,black 0%,black calc(100% - 46px),transparent 100%)'
+             : 'none';
+  el.style.webkitMaskImage = mask;
+  el.style.maskImage = mask;
+
+  // Use the currently visible mobile scroll container
+  const em = [variantScrollMob, wheelScrollMob, interiorScrollMob].find(s => s && s.offsetParent !== null);
+  if (em) {
+    const mo = em.scrollWidth > em.clientWidth + 1;
+    const ml = em.scrollLeft > 1;
+    const mr = em.scrollLeft < em.scrollWidth - em.clientWidth - 54;
+    em.style.justifyContent = mo ? 'flex-start' : '';
+    if (fadeLeftMob)  fadeLeftMob.classList.toggle('show',  mo && ml);
+    if (fadeRightMob) fadeRightMob.classList.toggle('show', mo && mr);
+    em.style.paddingLeft  = '4px';
+    em.style.paddingRight = (mo && mr) ? '52px' : '16px';
+    const mlm = mo && ml, mrm = mo && mr;
+    const maskM = mlm && mrm ? 'linear-gradient(90deg,transparent 0,black 46px,black calc(100% - 46px),transparent 100%)'
+               : mlm         ? 'linear-gradient(90deg,transparent 0,black 46px,black 100%)'
+               : mrm         ? 'linear-gradient(90deg,black 0%,black calc(100% - 46px),transparent 100%)'
+               : 'none';
+    em.style.webkitMaskImage = maskM;
+    em.style.maskImage = maskM;
+  } else {
+    if (fadeLeftMob)  fadeLeftMob.classList.remove('show');
+    if (fadeRightMob) fadeRightMob.classList.remove('show');
+  }
+}
+
+// ── Build thumbnails ──
+function buildThumbs() {
+  variantScroll.innerHTML = '';
+  if (variantScrollMob) variantScrollMob.innerHTML = '';
+  activeThumbs().forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'variant-btn' + (i === 0 ? ' selected' : '');
+    btn.innerHTML = `
+      <div class="variant-ring"></div>
+      <div class="variant-img-wrap">
+        <div class="variant-img-inner">
+          <img class="variant-img" src="${t.src}" alt="${t.name}" loading="eager" decoding="sync">
+        </div>
+        <div class="variant-border"></div>
+      </div>
+      <div class="variant-check">
+        <div class="variant-check-inner">
+          <svg fill="none" preserveAspectRatio="none" viewBox="0 0 20 20"><use href="#icon-check-outer"/></svg>
+        </div>
+        <div class="variant-checkmark">
+          <svg fill="none" preserveAspectRatio="none" viewBox="0 0 10.234 7.24"><use href="#icon-check-inner"/></svg>
+        </div>
+      </div>`;
+    btn.addEventListener('click', () => selectColor(i));
+    variantScroll.appendChild(btn);
+    if (variantScrollMob) {
+      const clone = btn.cloneNode(true);
+      clone.addEventListener('click', () => selectColor(i));
+      variantScrollMob.appendChild(clone);
+    }
+  });
+}
+
+// ── Color selection ──
+function selectColor(idx) {
+  selectedColor = idx;
+
+  // Update desktop thumbs (first 13)
+  const allThumbs = document.querySelectorAll('#variant-scroll .variant-btn');
+  allThumbs.forEach((b, i) =>
+    b.className = 'variant-btn' + (i === idx ? ' selected' : ''));
+  // Update mobile thumbs (second set)
+  const mobThumbs = document.querySelectorAll('#variant-scroll-mobile .variant-btn');
+  mobThumbs.forEach((b, i) =>
+    b.className = 'variant-btn' + (i === idx ? ' selected' : ''));
+  colorName.textContent = activeThumbs()[idx].name;
+  if (colorNameMob) colorNameMob.textContent = activeThumbs()[idx].name;
+  updateCarImage();
+
+  // Rotate pill: hidden only once rotation has been detected
+
+  carImg.className = idx === 0 ? 'draggable' : '';
+}
+
+function activeFrames()  { return activeModel === 'idpolo' ? POLO_ROT_FRAMES : ROT_FRAMES; }
+function activeThumbs()  { return activeModel === 'idpolo' ? POLO_THUMBS : THUMBS; }
+function frameCount()    { return activeFrames().length; }
+function getCarImage() {
+  if (selectedColor !== 0) {
+    const name = activeThumbs()[selectedColor]?.name;
+    if (activeModel === 'idpolo' && name === 'Grenadilla Black Metallic')
+      return 'assets/media/idpolo/exterior/rotation-black/frame-00.webp';
+    if (activeModel === 'id7' && name === 'Scale Silver Metallic')
+      return 'assets/media/id7/exterior/rotation-silver/frame-00.webp';
+    if (activeModel === 'id7' && name === 'Glacier White Metallic')
+      return 'assets/media/id7/exterior/rotation-white/frame-00.webp';
+  }
+  return activeFrames()[rotFrame];
+}
+
+function updateCarImage() {
+  const src = getCarImage();
+  if (!carImg.src.endsWith(src)) carImg.src = src;
+}
+
+// ── Drag to rotate ──
+function startDrag(clientX, clientY) {
+  isDragging = true;
+  startX = clientX;
+  startY = clientY;
+  if (selectedColor === 0) carImg.className = 'dragging';
+}
+function moveDrag(clientX, clientY) {
+  if (!isDragging) return;
+  const delta  = clientX - startX;
+  const deltaY = clientY - startY;
+  startX = clientX;
+  startY = clientY;
+  if (visualizer.classList.contains('interior-mode')) {
+    const w = pano.canvas.offsetWidth  || 375;
+    const h = pano.canvas.offsetHeight || 667;
+    const sens = pano.fov / Math.max(w, h);
+    pano.pan(-delta * sens, deltaY * sens);
+    return;
+  }
+  const sensitivity = 0.8;
+  rotation += delta * sensitivity;
+  const norm = ((rotation % 360) + 360) % 360;
+  const newFrame = Math.round((norm / 360) * frameCount()) % frameCount();
+  if (selectedColor === 0 && newFrame !== rotFrame) {
+    rotFrame = newFrame;
+    rotatePill.classList.add('hidden'); pillDismissed = true;
+    pillDismissed = true;
+    visualizer.classList.add('static-mode');
+  } else {
+    rotFrame = newFrame;
+  }
+  updateCarImage();
+}
+function endDrag() {
+  if (!isDragging) return;
+  isDragging = false;
+  pano.canvas.classList.remove('dragging');
+  if (selectedColor === 0) carImg.className = 'draggable';
+}
+
+visualizer.addEventListener('mousedown',  e => { if (e.target.closest('#variant-selector, #config-panel')) return; startDrag(e.clientX, e.clientY); });
+visualizer.addEventListener('touchstart', e => { if (e.target.closest('#variant-selector, #config-panel')) return; startDrag(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+window.addEventListener('mousemove',  e => moveDrag(e.clientX, e.clientY));
+window.addEventListener('touchmove',  e => moveDrag(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
+window.addEventListener('mouseup',   endDrag);
+window.addEventListener('touchend',  endDrag);
+
+// ── Rotate pill buttons ──
+document.getElementById('rot-left').addEventListener('click', () => {
+  if (visualizer.classList.contains('interior-mode')) {
+    pano.pan(-pano.STEP, 0); return;
+  }
+  if (selectedColor !== 0) return;
+  rotFrame = ((rotFrame - 1) + frameCount()) % frameCount();
+  rotation -= 360/frameCount();
+  updateCarImage();
+  rotatePill.classList.add('hidden'); pillDismissed = true;
+  visualizer.classList.add('static-mode');
+});
+document.getElementById('rot-right').addEventListener('click', () => {
+  if (visualizer.classList.contains('interior-mode')) {
+    pano.pan(pano.STEP, 0); return;
+  }
+  if (selectedColor !== 0) return;
+  rotFrame = (rotFrame + 1) % frameCount();
+  rotation += 360/frameCount();
+  updateCarImage();
+  rotatePill.classList.add('hidden'); pillDismissed = true;
+  visualizer.classList.add('static-mode');
+});
+
+// ── Active scroll-container helpers ──
+function activeScrollEl() {
+  return [variantScroll, wheelScroll, interiorScroll].find(s => s && s.offsetParent !== null) || variantScroll;
+}
+function activeScrollElMob() {
+  return [variantScrollMob, wheelScrollMob, interiorScrollMob].find(s => s && s.offsetParent !== null) || variantScrollMob;
+}
+
+// ── Thumbnail scroll arrows (pointerdown = instant on touch; click catches keyboard) ──
+function wireArrow(btn, dir, getEl) {
+  let didPointer = false;
+  function doScroll() {
+    const el = getEl();
+    const max = el.scrollWidth - el.clientWidth;
+    const target = dir > 0 ? Math.min(max, el.scrollLeft + 200) : Math.max(0, el.scrollLeft - 200);
+    el.scrollTo({ left: target, behavior: 'smooth' });
+  }
+  btn.addEventListener('pointerdown', () => { didPointer = true; doScroll(); });
+  btn.addEventListener('click',       () => { if (didPointer) { didPointer = false; return; } doScroll(); });
+}
+wireArrow(document.getElementById('scroll-left'),  -1, activeScrollEl);
+wireArrow(document.getElementById('scroll-right'),  1, activeScrollEl);
+
+// ── Interior panorama (WebGL rectilinear) ──
+const pano = (() => {
+  const CVS = document.getElementById('pano-canvas');
+  const FOV_BASE = 1.7453, FOV_STEP = 1.2, FOV_MAX_CLICKS = 3;
+  const LAT_MIN = -0.70, LAT_MAX = 0.70, STEP = 0.1745;
+  let lon = -0.327, lat = 0.10, curFov = FOV_BASE, fovClicks = 0;
+  let targetFov = FOV_BASE, fovAnimStart = null, fovAnimFrom = FOV_BASE;
+  let targetLon = -0.327, targetLat = 0.10, lonAnimFrom = -0.327, latAnimFrom = 0.10, panAnimStart = null;
+  let ctx = null;
+
+  const ANIM_MS = 400;
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animateFov() {
+    const t = Math.min(1, (performance.now() - fovAnimStart) / ANIM_MS);
+    curFov = fovAnimFrom + (targetFov - fovAnimFrom) * easeOutCubic(t);
+    draw();
+    if (t < 1) requestAnimationFrame(animateFov);
+  }
+  function setFov(newFov) {
+    fovAnimFrom = curFov;
+    targetFov = newFov;
+    fovAnimStart = performance.now();
+    requestAnimationFrame(animateFov);
+  }
+
+  function animatePan() {
+    const t = Math.min(1, (performance.now() - panAnimStart) / ANIM_MS);
+    const e = easeOutCubic(t);
+    lon = lonAnimFrom + (targetLon - lonAnimFrom) * e;
+    lat = Math.max(LAT_MIN, Math.min(LAT_MAX, latAnimFrom + (targetLat - latAnimFrom) * e));
+    draw();
+    if (t < 1) requestAnimationFrame(animatePan);
+  }
+  function setPanTarget(newLon, newLat) {
+    lonAnimFrom = lon;
+    latAnimFrom = lat;
+    targetLon = newLon;
+    targetLat = Math.max(LAT_MIN, Math.min(LAT_MAX, newLat));
+    panAnimStart = performance.now();
+    requestAnimationFrame(animatePan);
+  }
+
+  function syncZoomClasses() {
+    const viz = document.getElementById('visualizer');
+    viz.classList.remove('zoom-1', 'zoom-2', 'zoom-3');
+    if (fovClicks > 0 && window.innerWidth >= 960) viz.classList.add(`zoom-${fovClicks}`);
+  }
+  const img = new Image();
+  img.src = 'assets/media/id7/interior/id7-interior-view.webp';
+
+  function draw() {
+    if (!ctx || !img.complete || !img.naturalWidth) return;
+    const viz = document.getElementById('visualizer');
+    const cw = CVS.offsetWidth || viz.offsetWidth || 0;
+    const ch = CVS.offsetHeight || viz.offsetHeight || 0;
+    if (!cw || !ch) return;
+    if (CVS.width !== cw || CVS.height !== ch) { CVS.width = cw; CVS.height = ch; }
+
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    // Horizontal slice: curFov radians of the full 2π
+    const sw = iw * (curFov / (2 * Math.PI));
+    // Vertical slice: proportional to viewport aspect
+    const vfov = curFov * ch / cw;
+    const sh = Math.min(ih, ih * (vfov / Math.PI));
+    let sx = iw * ((lon + Math.PI) / (2 * Math.PI)) - sw / 2;
+    const sy = Math.max(0, Math.min(ih - sh, ih * (0.5 - lat / Math.PI) - sh / 2));
+
+    ctx.clearRect(0, 0, cw, ch);
+    if (sx < 0) {
+      // Wrap: draw tail from right side of image, then head from left
+      const wrapW = -sx, wrapDw = cw * (wrapW / sw);
+      ctx.drawImage(img, iw + sx, sy, wrapW, sh, 0,      0, wrapDw,      ch);
+      ctx.drawImage(img, 0,       sy, sw - wrapW, sh, wrapDw, 0, cw - wrapDw, ch);
+    } else if (sx + sw > iw) {
+      // Wrap: draw to end of image, then continue from left
+      const normW = iw - sx, normDw = cw * (normW / sw);
+      ctx.drawImage(img, sx, sy, normW,      sh, 0,      0, normDw,      ch);
+      ctx.drawImage(img, 0,  sy, sw - normW, sh, normDw, 0, cw - normDw, ch);
+    } else {
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    }
+  }
+
+  return {
+    start() {
+      if (!ctx) ctx = CVS.getContext('2d');
+      if (img.complete && img.naturalWidth > 0) requestAnimationFrame(draw);
+      else img.addEventListener('load', () => requestAnimationFrame(draw), { once: true });
+    },
+    draw,
+    pan(dLon, dLat) {
+      lon += dLon; targetLon = lon;
+      lat = Math.max(LAT_MIN, Math.min(LAT_MAX, lat + dLat)); targetLat = lat;
+      draw();
+    },
+    step(dLon, dLat) {
+      setPanTarget(targetLon + dLon, targetLat + dLat);
+    },
+    zoomIn() {
+      if (fovClicks >= FOV_MAX_CLICKS) return;
+      fovClicks++;
+      setFov(FOV_BASE / Math.pow(FOV_STEP, fovClicks));
+      syncZoomClasses();
+    },
+    zoomOut() {
+      if (fovClicks <= 0) return;
+      fovClicks--;
+      setFov(FOV_BASE / Math.pow(FOV_STEP, fovClicks));
+      syncZoomClasses();
+    },
+    get atMaxZoom() { return fovClicks >= FOV_MAX_CLICKS; },
+    get atMinZoom()  { return fovClicks <= 0; },
+    get fov()        { return curFov; },
+    reset() {
+      lon = -0.327; lat = 0.10; curFov = FOV_BASE; fovClicks = 0;
+      targetFov = FOV_BASE; targetLon = -0.327; targetLat = 0.10;
+      const viz = document.getElementById('visualizer');
+      viz.classList.remove('zoom-1', 'zoom-2', 'zoom-3');
+    },
+    get canvas() { return CVS; },
+    STEP
+  };
+})();
+
+// ── Interior material variants ──
+const MATERIAL_IMGS = [
+  'assets/media/id7/interior/variants-materials/material-1.webp',
+  'assets/media/id7/interior/variants-materials/material-2.webp',
+  'assets/media/id7/interior/variants-materials/material-3.webp'
+];
+let interiorIdx = 0;
+const interiorScroll    = document.getElementById('interior-variant-scroll');
+const interiorScrollMob = document.getElementById('interior-variant-scroll-mobile');
+
+function buildInteriorThumbs() {
+  [interiorScroll, interiorScrollMob].forEach(container => {
+    if (!container) return;
+    container.innerHTML = '';
+    MATERIAL_IMGS.forEach((src, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'variant-btn' + (i === 0 ? ' selected' : '');
+      btn.innerHTML = `
+        <div class="variant-ring"></div>
+        <div class="variant-img-wrap">
+          <div class="variant-img-inner">
+            <img class="variant-img" src="${src}" alt="Material ${i+1}" loading="eager" decoding="sync">
+          </div>
+          <div class="variant-border"></div>
+        </div>
+        <div class="variant-check">
+          <div class="variant-check-inner">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 20 20"><use href="#icon-check-outer"/></svg>
+          </div>
+          <div class="variant-checkmark">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 10.234 7.24"><use href="#icon-check-inner"/></svg>
+          </div>
+        </div>`;
+      btn.addEventListener('click', () => selectInterior(i));
+      container.appendChild(btn);
+    });
+  });
+}
+
+function selectInterior(idx) {
+  interiorIdx = idx;
+  [interiorScroll, interiorScrollMob].forEach(container => {
+    if (!container) return;
+    container.querySelectorAll('.variant-btn').forEach((b, i) =>
+      b.className = 'variant-btn' + (i === idx ? ' selected' : ''));
+  });
+}
+
+buildInteriorThumbs();
+
+// ── Wheel variants ──
+let wheelIdx = 0;
+const wheelScroll    = document.getElementById('wheel-variant-scroll');
+const wheelScrollMob = document.getElementById('wheel-variant-scroll-mobile');
+
+function buildWheelThumbs() {
+  [wheelScroll, wheelScrollMob].forEach(container => {
+    if (!container) return;
+    container.innerHTML = '';
+    WHEEL_THUMBS.forEach((t, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'variant-btn' + (i === 0 ? ' selected' : '');
+      btn.innerHTML = `
+        <div class="variant-ring"></div>
+        <div class="variant-img-wrap">
+          <div class="variant-img-inner">
+            <img class="variant-img" src="${t.src}" alt="${t.name}" loading="eager" decoding="sync">
+          </div>
+          <div class="variant-border"></div>
+        </div>
+        <div class="variant-check">
+          <div class="variant-check-inner">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 20 20"><use href="#icon-check-outer"/></svg>
+          </div>
+          <div class="variant-checkmark">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 10.234 7.24"><use href="#icon-check-inner"/></svg>
+          </div>
+        </div>`;
+      btn.addEventListener('click', () => selectWheel(i));
+      container.appendChild(btn);
+    });
+  });
+}
+
+function selectWheel(idx) {
+  wheelIdx = idx;
+  [wheelScroll, wheelScrollMob].forEach(container => {
+    if (!container) return;
+    container.querySelectorAll('.variant-btn').forEach((b, i) =>
+      b.className = 'variant-btn' + (i === idx ? ' selected' : ''));
+  });
+  if (colorName)    colorName.textContent    = WHEEL_THUMBS[idx].name;
+  if (colorNameMob) colorNameMob.textContent = WHEEL_THUMBS[idx].name;
+}
+
+// ── Scroll listeners for all desktop containers ──
+// (placed here so wheelScroll + interiorScroll are already declared)
+variantScroll.addEventListener('scroll', updateArrows);
+if (wheelScroll)    wheelScroll.addEventListener('scroll', updateArrows);
+if (interiorScroll) interiorScroll.addEventListener('scroll', updateArrows);
+
+buildWheelThumbs();
+
+// ── Tabs ──
+const tabs = ['Colour','Wheels','Interior'];
+document.querySelectorAll('.config-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const name = tab.dataset.tab;
+    document.querySelectorAll('.config-tab').forEach((t, i) => {
+      const tname = t.dataset.tab;
+      const isActive = tname === name;
+      t.classList.toggle('active', isActive);
+
+      // Dividers handled by syncDividers after loop
+    });
+    syncDividers(document.getElementById('content-switcher'));
+    syncDividers(document.getElementById('content-switcher-mobile'));
+    // sync mobile active state too
+    document.querySelectorAll('#content-switcher-mobile .config-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === name));
+    // tab-specific panel state
+    const varSel    = document.getElementById('variant-selector');
+    const cfgPanel  = document.getElementById('config-panel');
+    if (name === 'Interior') {
+      pano.reset();
+      visualizer.classList.add('interior-mode');
+      varSel  && varSel.classList.remove('wheels-active');
+      varSel  && varSel.classList.add('interior-active');
+      cfgPanel && cfgPanel.classList.remove('wheels-active');
+      cfgPanel && cfgPanel.classList.add('interior-active');
+      if (dpadUp)   dpadUp.setAttribute('aria-disabled', 'false');
+      if (dpadDown) dpadDown.setAttribute('aria-disabled', 'false');
+      zoomIn.setAttribute('aria-disabled', 'false');
+      zoomOut.setAttribute('aria-disabled', 'true');
+      pano.start();
+    } else if (name === 'Wheels') {
+      visualizer.classList.remove('interior-mode');
+      varSel  && varSel.classList.add('wheels-active');
+      varSel  && varSel.classList.remove('interior-active');
+      cfgPanel && cfgPanel.classList.add('wheels-active');
+      cfgPanel && cfgPanel.classList.remove('interior-active');
+      if (dpadUp)   dpadUp.setAttribute('aria-disabled', 'true');
+      if (dpadDown) dpadDown.setAttribute('aria-disabled', 'true');
+      applyZoom();
+      if (colorName)    colorName.textContent    = WHEEL_THUMBS[wheelIdx].name;
+      if (colorNameMob) colorNameMob.textContent = WHEEL_THUMBS[wheelIdx].name;
+    } else {
+      visualizer.classList.remove('interior-mode');
+      varSel  && varSel.classList.remove('wheels-active');
+      varSel  && varSel.classList.remove('interior-active');
+      cfgPanel && cfgPanel.classList.remove('wheels-active');
+      cfgPanel && cfgPanel.classList.remove('interior-active');
+      if (dpadUp)   dpadUp.setAttribute('aria-disabled', 'true');
+      if (dpadDown) dpadDown.setAttribute('aria-disabled', 'true');
+      applyZoom();
+      if (colorName)    colorName.textContent    = activeThumbs()[selectedColor].name;
+      if (colorNameMob) colorNameMob.textContent = activeThumbs()[selectedColor].name;
+    }
+    requestAnimationFrame(updateArrows);
+  });
+});
+
+// ── Zoom ──
+let zoomScale = 1;
+const zoomIn  = document.getElementById('zoom-in');
+const zoomOut = document.getElementById('zoom-out');
+
+const MAX_CLICKS = 3;   // 3 zoom-in clicks max
+const ZOOM_STEP  = 1.2; // 120% per click
+let   zoomClicks = 0;   // current click count (0 = idle, 4 = max)
+
+function applyZoom() {
+  carImg.style.transform = `scale(${zoomScale})`;
+
+  const atMax = zoomClicks >= MAX_CLICKS;
+  const atMin = zoomClicks <= 0;
+
+  zoomIn.setAttribute('aria-disabled',  atMax ? 'true' : 'false');
+  zoomOut.setAttribute('aria-disabled', atMin ? 'true' : 'false');
+
+  // Above 960px: progressive hide at zoom levels 3 and 4
+  if (window.innerWidth >= 960) {
+    visualizer.classList.remove('zoom-1','zoom-2','zoom-3');
+    if (zoomClicks >= 1) visualizer.classList.add(`zoom-${zoomClicks}`);
+  }
+}
+
+zoomIn.addEventListener('click', () => {
+  if (visualizer.classList.contains('interior-mode')) {
+    pano.zoomIn();
+    zoomIn.setAttribute('aria-disabled',  pano.atMaxZoom ? 'true' : 'false');
+    zoomOut.setAttribute('aria-disabled', pano.atMinZoom ? 'true' : 'false');
+    return;
+  }
+  if (zoomClicks >= MAX_CLICKS) return;
+  zoomClicks++;
+  zoomScale = Math.round(zoomScale * ZOOM_STEP * 100) / 100;
+  applyZoom();
+});
+zoomOut.addEventListener('click', () => {
+  if (visualizer.classList.contains('interior-mode')) {
+    pano.zoomOut();
+    zoomIn.setAttribute('aria-disabled',  pano.atMaxZoom ? 'true' : 'false');
+    zoomOut.setAttribute('aria-disabled', pano.atMinZoom ? 'true' : 'false');
+    return;
+  }
+  if (zoomClicks <= 0) return;
+  zoomClicks--;
+  zoomScale = Math.round((zoomScale / ZOOM_STEP) * 100) / 100;
+  if (zoomClicks === 0) zoomScale = 1;
+  applyZoom();
+});
+
+// Initial state: zoom-out visible but disabled
+zoomIn.setAttribute('aria-label',  'Zoom in');
+zoomOut.setAttribute('aria-label', 'Zoom out');
+applyZoom();
+
+// ── D-pad: left/right rotate one frame per click ──
+const dpadLeft  = document.getElementById('dpad-left');
+const dpadRight = document.getElementById('dpad-right');
+
+const dpadUp   = document.getElementById('dpad-up');
+const dpadDown = document.getElementById('dpad-down');
+if (dpadUp)   dpadUp.addEventListener('click',   () => { if (visualizer.classList.contains('interior-mode')) pano.step(0,  pano.STEP); });
+if (dpadDown) dpadDown.addEventListener('click', () => { if (visualizer.classList.contains('interior-mode')) pano.step(0, -pano.STEP); });
+
+if (dpadLeft) {
+  dpadLeft.addEventListener('click', () => {
+    if (visualizer.classList.contains('interior-mode')) { pano.step(-pano.STEP, 0); return; }
+    if (selectedColor !== 0) return;
+    rotFrame = ((rotFrame - 1) + frameCount()) % frameCount();
+    rotation -= 360 / frameCount();
+    updateCarImage();
+    rotatePill.classList.add('hidden'); pillDismissed = true;
+    visualizer.classList.add('static-mode');
+  });
+  dpadLeft.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dpadLeft.click(); }
+  });
+}
+if (dpadRight) {
+  dpadRight.addEventListener('click', () => {
+    if (visualizer.classList.contains('interior-mode')) { pano.step(pano.STEP, 0); return; }
+    if (selectedColor !== 0) return;
+    rotFrame = (rotFrame + 1) % frameCount();
+    rotation += 360 / frameCount();
+    updateCarImage();
+    rotatePill.classList.add('hidden'); pillDismissed = true;
+    visualizer.classList.add('static-mode');
+  });
+  dpadRight.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dpadRight.click(); }
+  });
+}
+
+// ── Arrow key navigation for interior panorama ──
+document.addEventListener('keydown', e => {
+  if (!visualizer.classList.contains('interior-mode')) return;
+  const map = { ArrowLeft: [-pano.STEP, 0], ArrowRight: [pano.STEP, 0], ArrowUp: [0, pano.STEP], ArrowDown: [0, -pano.STEP] };
+  const delta = map[e.key];
+  if (!delta) return;
+  e.preventDefault();
+  pano.step(delta[0], delta[1]);
+});
+
+// ── Mobile scroll arrows ──
+const elScrollLeftMob  = document.getElementById('scroll-left-mobile');
+const elScrollRightMob = document.getElementById('scroll-right-mobile');
+if (elScrollLeftMob)  wireArrow(elScrollLeftMob,  -1, activeScrollElMob);
+if (elScrollRightMob) wireArrow(elScrollRightMob,  1, activeScrollElMob);
+
+// ── Scroll listeners for all mobile containers ──
+if (variantScrollMob)  variantScrollMob.addEventListener('scroll', updateArrows);
+if (wheelScrollMob)    wheelScrollMob.addEventListener('scroll', updateArrows);
+if (interiorScrollMob) interiorScrollMob.addEventListener('scroll', updateArrows);
+
+// ── Mobile tabs ──
+document.querySelectorAll('#content-switcher-mobile .config-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const name = tab.dataset.tab;
+    // update active state in mobile tab bar
+    document.querySelectorAll('#content-switcher-mobile .config-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === name));
+    syncDividers(document.getElementById('content-switcher-mobile'));
+    // sync desktop tabs + their dividers
+    document.querySelectorAll('#content-switcher .config-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === name));
+    syncDividers(document.getElementById('content-switcher'));
+    // interior panorama
+    if (name === 'Interior') {
+      pano.reset();
+      visualizer.classList.add('interior-mode');
+      document.getElementById('variant-selector') && document.getElementById('variant-selector').classList.add('interior-active');
+      document.getElementById('variant-selector') && document.getElementById('variant-selector').classList.remove('wheels-active');
+      document.getElementById('config-panel') && document.getElementById('config-panel').classList.add('interior-active');
+      document.getElementById('config-panel') && document.getElementById('config-panel').classList.remove('wheels-active');
+      if (dpadUp)   dpadUp.setAttribute('aria-disabled', 'false');
+      if (dpadDown) dpadDown.setAttribute('aria-disabled', 'false');
+      zoomIn.setAttribute('aria-disabled', 'false');
+      zoomOut.setAttribute('aria-disabled', 'true');
+      pano.start();
+    } else if (name === 'Wheels') {
+      visualizer.classList.remove('interior-mode');
+      document.getElementById('variant-selector') && document.getElementById('variant-selector').classList.remove('interior-active');
+      document.getElementById('variant-selector') && document.getElementById('variant-selector').classList.add('wheels-active');
+      document.getElementById('config-panel') && document.getElementById('config-panel').classList.remove('interior-active');
+      document.getElementById('config-panel') && document.getElementById('config-panel').classList.add('wheels-active');
+      if (dpadUp)   dpadUp.setAttribute('aria-disabled', 'true');
+      if (dpadDown) dpadDown.setAttribute('aria-disabled', 'true');
+      applyZoom();
+      if (colorName)    colorName.textContent    = WHEEL_THUMBS[wheelIdx].name;
+      if (colorNameMob) colorNameMob.textContent = WHEEL_THUMBS[wheelIdx].name;
+    } else {
+      visualizer.classList.remove('interior-mode');
+      document.getElementById('variant-selector') && document.getElementById('variant-selector').classList.remove('interior-active');
+      document.getElementById('variant-selector') && document.getElementById('variant-selector').classList.remove('wheels-active');
+      document.getElementById('config-panel') && document.getElementById('config-panel').classList.remove('interior-active');
+      document.getElementById('config-panel') && document.getElementById('config-panel').classList.remove('wheels-active');
+      if (dpadUp)   dpadUp.setAttribute('aria-disabled', 'true');
+      if (dpadDown) dpadDown.setAttribute('aria-disabled', 'true');
+      applyZoom();
+      if (colorName)    colorName.textContent    = activeThumbs()[selectedColor].name;
+      if (colorNameMob) colorNameMob.textContent = activeThumbs()[selectedColor].name;
+    }
+    requestAnimationFrame(updateArrows);
+  });
+});
+
+// ── Resize ──
+const resizeObserver = new ResizeObserver(() => { applyLayout(); requestAnimationFrame(updateArrows); if (visualizer.classList.contains('interior-mode')) pano.draw(); });
+resizeObserver.observe(document.documentElement);
+window.addEventListener('resize', () => { applyLayout(); updateArrows(); if (visualizer.classList.contains('interior-mode')) pano.draw(); });
+
+// ── Helper: sync tab dividers for a given tab-bar container ──
+function syncDividers(container) {
+  const tabs = container.querySelectorAll('.config-tab');
+  tabs.forEach(t => {
+    const divider = t.querySelector('.tab-divider');
+    if (!divider) return;
+    const prev = t.previousElementSibling;
+    const isActive  = t.classList.contains('active');
+    const prevActive = prev && prev.classList.contains('active');
+    divider.classList.toggle('show', !isActive && !prevActive);
+  });
+}
+
+// ── Init ──
+const carVideo = document.getElementById('car-video');
+if (carVideo) {
+  carVideo.play().catch(() => {
+    // Autoplay blocked — try on first user interaction
+    document.addEventListener('click', () => carVideo.play(), { once: true });
+    document.addEventListener('touchstart', () => carVideo.play(), { once: true });
+  });
+}
+buildThumbs();
+
+// ── Model select ──
+const modelSelDesktop = document.getElementById('model-select-desktop');
+const modelSelMobile  = document.getElementById('model-select-mobile');
+const modelLabelDt    = document.getElementById('model-label-desktop');
+const modelLabelMob   = document.getElementById('model-label-mobile');
+
+function onModelChange(value) {
+  const optGroup = document.querySelector(`[value="${value}"]`)?.closest('optgroup');
+  const label = optGroup ? optGroup.label : 'ID.7';
+  if (modelLabelDt)  modelLabelDt.textContent  = label;
+  if (modelLabelMob) modelLabelMob.textContent = label;
+  if (modelSelDesktop && modelSelDesktop.value !== value) modelSelDesktop.value = value;
+  if (modelSelMobile  && modelSelMobile.value  !== value) modelSelMobile.value  = value;
+  activeModel = value.startsWith('idpolo') ? 'idpolo' : 'id7';
+  selectedColor = 0;
+  buildThumbs();
+  // Reset scroll positions so arrow state is clean for the new set
+  variantScroll.scrollLeft = 0;
+  if (variantScrollMob) variantScrollMob.scrollLeft = 0;
+  // Update arrows synchronously (DOM is ready), then again after layout paint
+  updateArrows();
+  requestAnimationFrame(() => requestAnimationFrame(updateArrows));
+  colorName.textContent = activeThumbs()[0].name;
+  if (colorNameMob) colorNameMob.textContent = activeThumbs()[0].name;
+  visualizer.classList.add('static-mode');
+  carImg.className = 'draggable';
+  if (!pillDismissed) rotatePill.classList.remove('hidden');
+  updateCarImage();
+}
+if (modelSelDesktop) modelSelDesktop.addEventListener('change', e => onModelChange(e.target.value));
+if (modelSelMobile)  modelSelMobile.addEventListener('change',  e => onModelChange(e.target.value));
+
+carImg.src = ROT_FRAMES[0];
+POLO_ROT_FRAMES.forEach(s => { new Image().src = s; });
+applyLayout();
+
+// Wait two paint frames for thumbs to render, then start options-area animation
+const optionsArea = document.getElementById('variant-selector');
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  if (optionsArea) optionsArea.classList.add('ready');
+}));
+// Seed divider visibility for both tab bars
+syncDividers(document.getElementById('content-switcher'));
+syncDividers(document.getElementById('content-switcher-mobile'));
+setTimeout(updateArrows, 100);
+
+// Clear entry animations after they complete so CSS transitions can take over
+if (optionsArea) {
+  optionsArea.addEventListener('animationend', () => {
+    optionsArea.style.animation = 'none';
+  }, { once: true });
+}
+['#model-panel','#content-switcher',
+ '#zoom-ctrl','#dpad','#rotate-pill'].forEach(sel => {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  el.addEventListener('animationend', () => {
+    el.style.animation = 'none';
+  }, { once: true });
+});
+
+// ── Accessibility button — touch controls toggle ──
+const a11yBtn      = document.getElementById('accessibility-btn');
+const touchCtrlBar = document.getElementById('touch-ctrl-bar');
+const tcZoomIn     = document.getElementById('tc-zoom-in');
+const tcZoomOut    = document.getElementById('tc-zoom-out');
+const tcTiltUp     = document.getElementById('tc-tilt-up');
+const tcTiltDown   = document.getElementById('tc-tilt-down');
+const tcRotLeft    = document.getElementById('tc-rot-left');
+const tcRotRight   = document.getElementById('tc-rot-right');
+
+function syncTouchCtrl() {
+  tcZoomIn.setAttribute('aria-disabled',  zoomIn.getAttribute('aria-disabled')  || 'false');
+  tcZoomOut.setAttribute('aria-disabled', zoomOut.getAttribute('aria-disabled') || 'false');
+  if (dpadUp)   tcTiltUp.setAttribute('aria-disabled',   dpadUp.getAttribute('aria-disabled')   || 'false');
+  if (dpadDown) tcTiltDown.setAttribute('aria-disabled', dpadDown.getAttribute('aria-disabled') || 'false');
+}
+syncTouchCtrl();
+
+a11yBtn.addEventListener('click', () => {
+  const active = a11yBtn.classList.toggle('active');
+  touchCtrlBar.classList.toggle('visible', active);
+});
+
+tcZoomIn.addEventListener('click',   () => { zoomIn.click();  syncTouchCtrl(); });
+tcZoomOut.addEventListener('click',  () => { zoomOut.click(); syncTouchCtrl(); });
+tcTiltUp.addEventListener('click',   () => dpadUp?.click());
+tcTiltDown.addEventListener('click', () => dpadDown?.click());
+tcRotLeft.addEventListener('click',  () => dpadLeft?.click());
+tcRotRight.addEventListener('click', () => dpadRight?.click());
+</script>
+</body>
+</html>

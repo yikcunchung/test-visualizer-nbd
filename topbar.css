@@ -1,0 +1,114 @@
+/* ============================================================
+   VW ID.7 Visualizer — Topbar CSS
+   Source of truth extracted from vw_id7.html
+   Figma file: New Brand Design → 🟡 Selection Tile Fix
+   ============================================================ */
+
+/* ── Fonts ── */
+@font-face {
+  font-family: 'VW Head';
+  src: local('VW Head Bold'), local('VWHead-Bold');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'VW Text';
+  src: local('VW Text Regular'), local('VWText-Regular');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'VW Text';
+  src: local('VW Text Bold'), local('VWText-Bold');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+/* ── Topbar shell ── */
+#topbar {
+  background: white;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 8px 0;
+  height: 64px;
+  width: 100%;
+  flex-shrink: 0;
+  position: relative; z-index: 10;
+}
+
+/* ── Inner container — 24-col grid ── */
+.topbar-container {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+  padding: 0 calc(100vw / 24);  /* 1 column margin */
+  box-sizing: border-box;
+}
+@media (min-width: 2560px) {
+  .topbar-container {
+    padding: 0 calc(100vw / 8); /* 3 column margin at 2560px+ */
+  }
+}
+
+/* ── Left group: Logo + Tabs ── */
+.topbar-left {
+  display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+}
+.topbar-logo-col {
+  display: flex; align-items: center;
+}
+.topbar-logo-col svg {
+  display: block;
+}
+
+/* ── Nav tabs ── */
+.topbar-tabs-col {
+  display: flex; align-items: center; min-height: 40px;
+}
+.topbar-tabs {
+  display: flex; gap: 20px; align-items: center; flex-shrink: 0;
+}
+.topbar-tab {
+  border: none; background: none; cursor: pointer;
+  padding: 8px 0; flex-shrink: 0;
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 700; font-style: normal;
+  font-size: 16px; line-height: 1.2;
+  color: #293043;
+}
+@media (max-width: 959px) {
+  .topbar-tab { display: none; }
+}
+
+/* ── Right: Actions ── */
+.topbar-actions-col {
+  display: flex; flex-direction: column;
+  align-items: flex-end; justify-content: center;
+  min-height: 40px; flex-shrink: 0;
+}
+.topbar-actions {
+  display: flex; gap: 16px; align-items: center; flex-shrink: 0;
+}
+@media (max-width: 959px) {
+  .topbar-actions { gap: 12px; }
+}
+
+/* ── Dealer text ── */
+.topbar-dealer {
+  display: flex; align-items: center; gap: 0;
+}
+.topbar-dealer-text {
+  font-family: 'VW Text', 'Inter', -apple-system, sans-serif;
+  font-weight: 400; font-style: normal;
+  font-size: 14px; line-height: 1.2;
+  color: #293043; white-space: nowrap;
+}
+@media (max-width: 1279px) {
+  .topbar-dealer-text { display: none; }
+}
+
+/* ── Icon tap targets ── */
+/* 32×32 tap target, 24×24 icon centered inside */
+.topbar-cta {
+  width: 32px; height: 32px; flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.topbar-cta svg {
+  width: 24px; height: 24px; display: block; flex-shrink: 0;
+}
