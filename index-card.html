@@ -2103,6 +2103,7 @@ if (modelSelDesktop) modelSelDesktop.addEventListener('change', e => onModelChan
 if (modelSelMobile)  modelSelMobile.addEventListener('change',  e => onModelChange(e.target.value));
 
 carImg.src = ROT_FRAMES[0];
+ROT_FRAMES.forEach(s => { new Image().src = s; });
 POLO_ROT_FRAMES.forEach(s => { new Image().src = s; });
 applyLayout();
 
