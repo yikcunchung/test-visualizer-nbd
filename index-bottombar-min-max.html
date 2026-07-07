@@ -1726,7 +1726,7 @@ function preloadAllFrames() {
 function updateCarImage() {
   const frames = activeFrames();
   const src = frames[rotFrame % frames.length];
-  if (src && !carImg.src.endsWith(src)) carImg.src = src;
+  if (src) carImg.src = src;
 }
 
 // ── Drag to rotate / pan ──
