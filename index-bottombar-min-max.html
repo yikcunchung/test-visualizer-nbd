@@ -426,7 +426,6 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
   height: calc(100dvh - 52px - 76px - 40px);
   position: relative; overflow: hidden;
   border-radius: 20px;
-  z-index: 1;
 }
 @keyframes visFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -531,7 +530,7 @@ body.in-fullscreen #media {
 }
 body.in-fullscreen #bottombar {
   position: absolute; bottom: 16px; left: 50%; right: auto; transform: translateX(-50%);
-  z-index: 12;
+  z-index: 9;
   display: flex; flex-direction: row; align-items: center; gap: 40px;
   background: rgba(255, 255, 255, 0.60);
   backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -1027,7 +1026,7 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 12;
+    z-index: 9;
     display: flex; flex-direction: row; align-items: center; gap: 40px;
     background: rgba(255, 255, 255, 0.60);
     backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -1505,15 +1504,15 @@ const POLO_COLOUR_FOLDER = {
   'Magnetic Gray Metallic':    'grey_dark',
 };
 
-function _id7F(color, wheel, ext = 'png') {
+function _id7F(color, wheel) {
   return Array.from({length: 36}, (_, i) =>
-    `assets/media/id7/exterior/rotation/${color}/${wheel}/frame-${String(i).padStart(2,'0')}.${ext}`);
+    `assets/media/id7/exterior/rotation/${color}/${wheel}/frame-${String(i).padStart(2,'0')}.webp`);
 }
 // [colorIndex][wheelIndex] — matches ID7_THUMBS order: singles first, then black variants
 // null = no frames for that combo; falls back to wheel1 of same color in activeFrames()
 const ID7_ROT_FRAMES = [
-  // 0: black (wheel1 has .webp; wheel2-5 have .png)
-  [_id7F('black','wheel1','webp'), _id7F('black','wheel2'), _id7F('black','wheel3'), _id7F('black','wheel4'), _id7F('black','wheel5')],
+  // 0: black
+  [_id7F('black','wheel1'), _id7F('black','wheel2'), _id7F('black','wheel3'), _id7F('black','wheel4'), _id7F('black','wheel5')],
   // 1: silver (no wheel3)
   [_id7F('silver','wheel1'), _id7F('silver','wheel2'), null, _id7F('silver','wheel4'), _id7F('silver','wheel5')],
   // 2: white (no wheel3)
@@ -1541,7 +1540,7 @@ const ID7_ROT_FRAMES = [
 ];
 
 const GC_ROT_FRAMES = Array.from({length: 36}, (_, i) =>
-  `assets/media/grandcalifornia/exterior/rotation/wheel1/frame-${String(i).padStart(2,'0')}.png`);
+  `assets/media/grandcalifornia/exterior/rotation/wheel1/frame-${String(i).padStart(2,'0')}.webp`);
 const GC_THUMBS = [
   { name: "Candy White",                             src: "assets/media/grandcalifornia/exterior/variants/colour/0238632bf8d09ad0c1ee36e51a693756.webp" },
   { name: "Indium Grey Metallic",                    src: "assets/media/grandcalifornia/exterior/variants/colour/2535a543a409bb4538eed1b6c528d596.webp" },
@@ -1686,7 +1685,7 @@ function activeFrames() {
   const colour = POLO_COLOUR_FOLDER[POLO_THUMBS[selectedColor]?.name] ?? 'yellow';
   const wheel  = `wheel${selectedWheel + 1}`;
   return Array.from({length: 36}, (_, i) =>
-    `assets/media/idpolo/exterior/rotation/${colour}/${wheel}/frame-${String(i).padStart(2,'0')}.png`
+    `assets/media/idpolo/exterior/rotation/${colour}/${wheel}/frame-${String(i).padStart(2,'0')}.webp`
   );
 }
 function frameCount() { return activeFrames().length; }
@@ -1712,7 +1711,7 @@ function preloadAllFrames() {
       [0,1,2].forEach(wi => {
         _preloadCombo(
           Array.from({length: 36}, (_, i) =>
-            `assets/media/idpolo/exterior/rotation/${colour}/wheel${wi+1}/frame-${String(i).padStart(2,'0')}.png`),
+            `assets/media/idpolo/exterior/rotation/${colour}/wheel${wi+1}/frame-${String(i).padStart(2,'0')}.webp`),
           `idpolo|${ci}|${wi}`
         );
       });

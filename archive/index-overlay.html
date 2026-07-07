@@ -839,7 +839,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1b2236; }
     <video id="car-video" autoplay loop muted playsinline style="pointer-events:none;">
       <source src="assets/media/id7/exterior/id7-sequence.mp4" type="video/mp4">
     </video>
-    <img id="car-img" alt="VW ID.7" draggable="false" src="assets/media/id7/exterior/rotation-black/frame-00.webp">
+    <img id="car-img" alt="VW ID.7" draggable="false" src="assets/media/id7/exterior/rotation/black/frame-00.webp">
 
     <!-- Zoom controller — vertical centre right -->
     <div id="zoom-ctrl">
@@ -1078,19 +1078,19 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #1b2236; }
 <script>
 // ── Data ──
 const THUMBS = [
-  {"name": "Grenadilla Black Metallic",       "src": "assets/media/id7/exterior/variants-colours/0E0E.webp"},
-  {"name": "Scale Silver Metallic",            "src": "assets/media/id7/exterior/variants-colours/1T1T.webp"},
-  {"name": "Scale Silver Metallic Black",      "src": "assets/media/id7/exterior/variants-colours/1TA1.webp"},
-  {"name": "Glacier White Metallic",           "src": "assets/media/id7/exterior/variants-colours/2Y2Y.webp"},
-  {"name": "Glacier White Metallic Black",     "src": "assets/media/id7/exterior/variants-colours/2YA1.webp"},
-  {"name": "Stonewashed Blue Metallic",        "src": "assets/media/id7/exterior/variants-colours/5Y5Y.webp"},
-  {"name": "Stonewashed Blue Metallic Black",  "src": "assets/media/id7/exterior/variants-colours/5YA1.webp"},
-  {"name": "Aquamarine Blue Metallic",         "src": "assets/media/id7/exterior/variants-colours/8H8H.webp"},
-  {"name": "Aquamarine Blue Metallic Black",   "src": "assets/media/id7/exterior/variants-colours/8HA1.webp"},
-  {"name": "Moonstone Grey Black",             "src": "assets/media/id7/exterior/variants-colours/C2A1.webp"},
-  {"name": "Moonstone Grey",                   "src": "assets/media/id7/exterior/variants-colours/C2C2.webp"},
-  {"name": "Kings Red Premium Metallic Black", "src": "assets/media/id7/exterior/variants-colours/P8A1.webp"},
-  {"name": "Kings Red Metallic",               "src": "assets/media/id7/exterior/variants-colours/P8P8.webp"}
+  {"name": "Grenadilla Black Metallic",       "src": "assets/media/id7/exterior/variants/colours/0E0E.webp"},
+  {"name": "Scale Silver Metallic",            "src": "assets/media/id7/exterior/variants/colours/1T1T.webp"},
+  {"name": "Scale Silver Metallic Black",      "src": "assets/media/id7/exterior/variants/colours/1TA1.webp"},
+  {"name": "Glacier White Metallic",           "src": "assets/media/id7/exterior/variants/colours/2Y2Y.webp"},
+  {"name": "Glacier White Metallic Black",     "src": "assets/media/id7/exterior/variants/colours/2YA1.webp"},
+  {"name": "Stonewashed Blue Metallic",        "src": "assets/media/id7/exterior/variants/colours/5Y5Y.webp"},
+  {"name": "Stonewashed Blue Metallic Black",  "src": "assets/media/id7/exterior/variants/colours/5YA1.webp"},
+  {"name": "Aquamarine Blue Metallic",         "src": "assets/media/id7/exterior/variants/colours/8H8H.webp"},
+  {"name": "Aquamarine Blue Metallic Black",   "src": "assets/media/id7/exterior/variants/colours/8HA1.webp"},
+  {"name": "Moonstone Grey Black",             "src": "assets/media/id7/exterior/variants/colours/C2A1.webp"},
+  {"name": "Moonstone Grey",                   "src": "assets/media/id7/exterior/variants/colours/C2C2.webp"},
+  {"name": "Kings Red Premium Metallic Black", "src": "assets/media/id7/exterior/variants/colours/P8A1.webp"},
+  {"name": "Kings Red Metallic",               "src": "assets/media/id7/exterior/variants/colours/P8P8.webp"}
 ];
 const POLO_THUMBS = [
   {"name": "Python Yellow Metallic",   "src": "assets/media/idpolo/exterior/variants-colours/a19b17031a2f0e9906f6e0d298bca3aa.webp"},
@@ -1141,48 +1141,48 @@ const POLO_ROT_FRAMES = [
 let activeModel = 'id7'; // 'id7' | 'idpolo'
 
 const ROT_FRAMES = [
-  "assets/media/id7/exterior/rotation-black/frame-00.webp",
-  "assets/media/id7/exterior/rotation-black/frame-01.webp",
-  "assets/media/id7/exterior/rotation-black/frame-02.webp",
-  "assets/media/id7/exterior/rotation-black/frame-03.webp",
-  "assets/media/id7/exterior/rotation-black/frame-04.webp",
-  "assets/media/id7/exterior/rotation-black/frame-05.webp",
-  "assets/media/id7/exterior/rotation-black/frame-06.webp",
-  "assets/media/id7/exterior/rotation-black/frame-07.webp",
-  "assets/media/id7/exterior/rotation-black/frame-08.webp",
-  "assets/media/id7/exterior/rotation-black/frame-09.webp",
-  "assets/media/id7/exterior/rotation-black/frame-10.webp",
-  "assets/media/id7/exterior/rotation-black/frame-11.webp",
-  "assets/media/id7/exterior/rotation-black/frame-12.webp",
-  "assets/media/id7/exterior/rotation-black/frame-13.webp",
-  "assets/media/id7/exterior/rotation-black/frame-14.webp",
-  "assets/media/id7/exterior/rotation-black/frame-15.webp",
-  "assets/media/id7/exterior/rotation-black/frame-16.webp",
-  "assets/media/id7/exterior/rotation-black/frame-17.webp",
-  "assets/media/id7/exterior/rotation-black/frame-18.webp",
-  "assets/media/id7/exterior/rotation-black/frame-19.webp",
-  "assets/media/id7/exterior/rotation-black/frame-20.webp",
-  "assets/media/id7/exterior/rotation-black/frame-21.webp",
-  "assets/media/id7/exterior/rotation-black/frame-22.webp",
-  "assets/media/id7/exterior/rotation-black/frame-23.webp",
-  "assets/media/id7/exterior/rotation-black/frame-24.webp",
-  "assets/media/id7/exterior/rotation-black/frame-25.webp",
-  "assets/media/id7/exterior/rotation-black/frame-26.webp",
-  "assets/media/id7/exterior/rotation-black/frame-27.webp",
-  "assets/media/id7/exterior/rotation-black/frame-28.webp",
-  "assets/media/id7/exterior/rotation-black/frame-29.webp",
-  "assets/media/id7/exterior/rotation-black/frame-30.webp",
-  "assets/media/id7/exterior/rotation-black/frame-31.webp",
-  "assets/media/id7/exterior/rotation-black/frame-32.webp",
-  "assets/media/id7/exterior/rotation-black/frame-33.webp",
-  "assets/media/id7/exterior/rotation-black/frame-34.webp",
-  "assets/media/id7/exterior/rotation-black/frame-35.webp"
+  "assets/media/id7/exterior/rotation/black/frame-00.webp",
+  "assets/media/id7/exterior/rotation/black/frame-01.webp",
+  "assets/media/id7/exterior/rotation/black/frame-02.webp",
+  "assets/media/id7/exterior/rotation/black/frame-03.webp",
+  "assets/media/id7/exterior/rotation/black/frame-04.webp",
+  "assets/media/id7/exterior/rotation/black/frame-05.webp",
+  "assets/media/id7/exterior/rotation/black/frame-06.webp",
+  "assets/media/id7/exterior/rotation/black/frame-07.webp",
+  "assets/media/id7/exterior/rotation/black/frame-08.webp",
+  "assets/media/id7/exterior/rotation/black/frame-09.webp",
+  "assets/media/id7/exterior/rotation/black/frame-10.webp",
+  "assets/media/id7/exterior/rotation/black/frame-11.webp",
+  "assets/media/id7/exterior/rotation/black/frame-12.webp",
+  "assets/media/id7/exterior/rotation/black/frame-13.webp",
+  "assets/media/id7/exterior/rotation/black/frame-14.webp",
+  "assets/media/id7/exterior/rotation/black/frame-15.webp",
+  "assets/media/id7/exterior/rotation/black/frame-16.webp",
+  "assets/media/id7/exterior/rotation/black/frame-17.webp",
+  "assets/media/id7/exterior/rotation/black/frame-18.webp",
+  "assets/media/id7/exterior/rotation/black/frame-19.webp",
+  "assets/media/id7/exterior/rotation/black/frame-20.webp",
+  "assets/media/id7/exterior/rotation/black/frame-21.webp",
+  "assets/media/id7/exterior/rotation/black/frame-22.webp",
+  "assets/media/id7/exterior/rotation/black/frame-23.webp",
+  "assets/media/id7/exterior/rotation/black/frame-24.webp",
+  "assets/media/id7/exterior/rotation/black/frame-25.webp",
+  "assets/media/id7/exterior/rotation/black/frame-26.webp",
+  "assets/media/id7/exterior/rotation/black/frame-27.webp",
+  "assets/media/id7/exterior/rotation/black/frame-28.webp",
+  "assets/media/id7/exterior/rotation/black/frame-29.webp",
+  "assets/media/id7/exterior/rotation/black/frame-30.webp",
+  "assets/media/id7/exterior/rotation/black/frame-31.webp",
+  "assets/media/id7/exterior/rotation/black/frame-32.webp",
+  "assets/media/id7/exterior/rotation/black/frame-33.webp",
+  "assets/media/id7/exterior/rotation/black/frame-34.webp",
+  "assets/media/id7/exterior/rotation/black/frame-35.webp"
 ];
 const WHEEL_THUMBS = [
-  {"name": "Alloy wheels 21\" 'Mataro', Black, diamond-turned",                          "src": "assets/media/id7/exterior/variants-wheels/MRAD55L.webp"},
-  {"name": "Exterior Styling package Black Style with self-aligning Volkswagen logo",     "src": "assets/media/id7/exterior/variants-wheels/MRAD64Q.webp"},
-  {"name": "Leichtmetallräder 8 1/2J x 20 vorn, mit 9 1/2J x 20 hinten",               "src": "assets/media/id7/exterior/variants-wheels/MRAD64R.webp"},
-  {"name": "Alloy wheels 19\" 'Hudson', Black, diamond-turned",                          "src": "assets/media/id7/exterior/variants-wheels/MRADV95.webp"}
+  {"name": "Alloy wheels 21\" 'Mataro', Black, diamond-turned",                          "src": "assets/media/id7/exterior/variants/wheels/MRAD55L.webp"},
+  {"name": "Exterior Styling package Black Style with self-aligning Volkswagen logo",     "src": "assets/media/id7/exterior/variants/wheels/MRAD64Q.webp"},
+  {"name": "Leichtmetallräder 8 1/2J x 20 vorn, mit 9 1/2J x 20 hinten",               "src": "assets/media/id7/exterior/variants/wheels/MRAD64R.webp"},
+  {"name": "Alloy wheels 19\" 'Hudson', Black, diamond-turned",                          "src": "assets/media/id7/exterior/variants/wheels/MRADV95.webp"}
 ];
 
 // ── State ──
@@ -1341,9 +1341,9 @@ function getCarImage() {
     if (activeModel === 'idpolo' && name === 'Grenadilla Black Metallic')
       return 'assets/media/idpolo/exterior/rotation-black/frame-00.webp';
     if (activeModel === 'id7' && name === 'Scale Silver Metallic')
-      return 'assets/media/id7/exterior/rotation-silver/frame-00.webp';
+      return 'assets/media/id7/exterior/rotation/silver/frame-00.webp';
     if (activeModel === 'id7' && name === 'Glacier White Metallic')
-      return 'assets/media/id7/exterior/rotation-white/frame-00.webp';
+      return 'assets/media/id7/exterior/rotation/white/frame-00.webp';
   }
   return activeFrames()[rotFrame];
 }

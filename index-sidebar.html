@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Volkswagen Visualizer</title>
 <link rel="preload" as="image" href="assets/media/id7/showroom/id7-which-hero-16x9-2500x1406.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: manipulation; }
+html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 :root { interpolate-size: allow-keywords; }
 
 @font-face {
@@ -53,7 +53,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   padding: 8px 0; height: 64px; width: 100%;
-  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               background 0.4s ease;
 }
@@ -63,7 +63,6 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
 .topbar-hidden #topbar { transform: translateY(-100%); }
 .topbar-hidden #subnav { transform: translateY(-64px); }
 .stage-visible #subnav { opacity: 0; pointer-events: none; }
-.stage-visible #subnav-sm { opacity: 0; pointer-events: none; }
 .topbar-container {
   display: flex; align-items: center; justify-content: space-between;
   width: 100%; padding: 0 calc(100vw / 24); box-sizing: border-box;
@@ -171,11 +170,11 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
 #page-layout {
   flex: 1 0 auto;
   display: flex; flex-direction: column;
-  padding: 20px 24px;
+  padding: 0 24px;
   gap: 20px;
 }
 @media (min-width: 1920px) {
-  #page-layout { padding: 20px calc(100vw / 24); }
+  #page-layout { padding: 0 calc(100vw / 24); }
 }
 
 /* ── NOISE SECTIONS ── */
@@ -416,17 +415,17 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
 /* ── VISUALIZER ROW ── */
 #visualizer {
   display: flex; flex-direction: row;
-  gap: 12px;
+  gap: 0;
   align-items: center;
 }
 
 /* ── VISUALIZER ── */
 #media {
   flex: 1 0 0; min-width: 1px;
-  height: calc(100dvh - 52px - 76px - 40px);
+  height: calc(100dvh - 52px - 76px);
   position: relative; overflow: hidden;
   border-radius: 20px;
-  z-index: 1;
+  animation: visFadeIn 0.3s ease 0s both;
 }
 @keyframes visFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -438,9 +437,8 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
   user-select: none; -webkit-user-drag: none;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  will-change: transform, opacity;
+  will-change: transform;
   opacity: 1;
-  animation: visFadeIn 0.3s ease 0s both;
 }
 #img-car.draggable { cursor: default; }
 #img-car.dragging  { cursor: default; }
@@ -469,8 +467,8 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
 
 /* btn-interior icon toggle */
 #btn-interior .icon-int-mode { display: none; }
-#visualizer.interior-mode #btn-interior .icon-ext-mode { display: none; }
-#visualizer.interior-mode #btn-interior .icon-int-mode { display: flex; align-items: center; justify-content: center; }
+#media.interior-mode #btn-interior .icon-ext-mode { display: none; }
+#media.interior-mode #btn-interior .icon-int-mode { display: flex; align-items: center; justify-content: center; }
 
 /* ── Overlaid icon buttons ── */
 .vis-btn {
@@ -480,109 +478,45 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
   outline: none; -webkit-tap-highlight-color: transparent;
   transition: opacity 0.15s ease;
 }
+#media.touch-dragging .vis-btn { opacity: 0; pointer-events: none; }
 
 #btn-a11y {
   bottom: 16px; right: 16px;
   width: 32px; height: 32px;
-  background: rgba(255, 255, 255, 0.60); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-  border-radius: 100px;
-  border: none;
+  background: white; border-radius: 100px;
+  border: 2px solid #1B2236;
   overflow: hidden;
-  box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0.08);
-  transition: background 0.2s, opacity 0.25s ease, box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: background 0.2s;
 }
 #btn-a11y svg { width: 12px; height: 12px; display: block; }
 #btn-a11y.active { background: #CCBDAB; }
 #btn-a11y.active svg path { fill: #1B2236; }
-#btn-fullscreen {
-  top: 16px; right: 16px;
-  width: 32px; height: 32px;
-  background: rgba(255, 255, 255, 0.60); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-  border-radius: 100px;
-  border: none;
-  overflow: hidden;
-  box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0.08);
-  transition: opacity 0.25s ease, box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-#btn-fullscreen svg { width: 12px; height: 12px; display: block; }
-/* Fullscreen: mobile only */
-@media (min-width: 960px) { #btn-fullscreen { display: none; } }
-/* Fullscreen icon swap */
-#btn-fullscreen .icon-fs-exit  { display: none; }
-body.in-fullscreen #btn-fullscreen .icon-fs-enter { display: none; }
-body.in-fullscreen #btn-fullscreen .icon-fs-exit  { display: block; }
-/* ── Fullscreen landscape mode ── */
-body.in-fullscreen { overflow: hidden; }
-body.in-fullscreen #visualizer {
-  position: fixed;
-  width: 100dvh; height: 100dvw;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) rotate(90deg);
-  z-index: 1000;
-  background: #f6f5f2;
-  gap: 0; flex-shrink: 0;
-}
-body.in-fullscreen #media {
-  flex: 1 1 auto;
-  width: 100%; height: 100%;
-  aspect-ratio: unset;
-  border-radius: 0;
-  overflow: hidden;
-}
-body.in-fullscreen #bottombar {
-  position: absolute; bottom: 16px; left: 50%; right: auto; transform: translateX(-50%);
-  z-index: 12;
-  display: flex; flex-direction: row; align-items: center; gap: 40px;
-  background: rgba(255, 255, 255, 0.60);
-  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-  border-radius: 999999px; padding: 4px 12px;
-  width: auto; max-width: calc(100% - 32px);
-  overflow: hidden; isolation: isolate;
-}
-body.in-fullscreen #btn-fullscreen { top: 16px; right: 16px; bottom: auto; left: auto; }
-body.in-fullscreen #btn-a11y { top: 16px; right: 60px; bottom: auto; left: auto; }
-body.in-fullscreen #touch-ctrl-bar { top: 16px; right: 104px; bottom: auto; left: auto; flex-direction: row; gap: 12px; }
-body.in-fullscreen #touch-ctrl-bar .touch-ctrl-btn { transform: translateX(8px); }
-body.in-fullscreen #touch-ctrl-bar.visible .touch-ctrl-btn { transform: translateX(0); }
-body.in-fullscreen #btn-interior { top: 16px; left: 16px; bottom: auto; right: auto; }
-body.in-fullscreen #selector-colour,
-body.in-fullscreen #selector-wheel,
-body.in-fullscreen #selector-material { margin-bottom: 0; }
-body.in-fullscreen #bottombar .section { flex: 1 1 0; min-width: 0; max-width: max-content; }
-body.in-fullscreen #select-model { align-self: center; }
-body.in-fullscreen #select-model .select-wrap { width: 120px; }
-body.in-fullscreen #bottombar .swatch-fade { background: none; }
 #touch-ctrl-bar {
-  position: absolute; bottom: 56px; right: 16px;
-  display: flex; flex-direction: column; gap: 8px; align-items: center; z-index: 5;
+  position: absolute; bottom: 16px; right: 56px;
+  display: flex; gap: 8px; align-items: center; z-index: 5;
   pointer-events: none;
-  transition: opacity 0.15s ease;
 }
 #touch-ctrl-bar.visible { pointer-events: auto; }
 #touch-ctrl-bar .touch-ctrl-btn {
   width: 32px; height: 32px; flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.60); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-  border: none; border-radius: 100px; overflow: hidden; cursor: pointer; padding: 0;
+  border: 2px solid #1B2236; background: white; border-radius: 50%; overflow: hidden; cursor: pointer; padding: 0;
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transform: translateY(8px);
+  opacity: 0; transform: translateX(8px);
   transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-#touch-ctrl-bar .touch-ctrl-btn svg path[fill="white"] { fill: none; }
-#touch-ctrl-bar.visible .touch-ctrl-btn { opacity: 1; transform: translateY(0); }
-#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 240ms; }
-#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(2) { transition-delay: 160ms; }
-#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(3) { transition-delay: 80ms; }
+#touch-ctrl-bar.visible .touch-ctrl-btn { opacity: 1; transform: translateX(0); }
+#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 80ms; }
+#media.interior-mode #touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 240ms; }
+#media.interior-mode #touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(2) { transition-delay: 160ms; }
+#media.interior-mode #touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(3) { transition-delay: 80ms; }
 #touch-ctrl-bar .interior-only { display: none; }
 #media.interior-mode #touch-ctrl-bar .interior-only { display: flex; }
 
 #btn-interior {
   bottom: 16px; left: 16px;
-  width: 44px; height: 44px;
-  background: rgba(255, 255, 255, 0.60); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-  border-radius: 100px;
-  border: none;
-  box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0.08);
-  transition: opacity 0.25s ease, box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 46px; height: 46px;
+  background: white; border-radius: 100px;
+  border: 2px solid #1B2236;
 }
 #btn-interior svg { width: 24px; height: 24px; display: block; }
 
@@ -591,7 +525,7 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 #hint-rotate {
   position: absolute; inset: 0;
   background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.64) 0%, rgba(0, 0, 0, 0.80) 100%);
-  z-index: 11; pointer-events: none;
+  z-index: 5; pointer-events: none;
 }
 #hint-rotate.hidden { display: none; }
 #hint-rotate.fading-out { opacity: 0 !important; transition: opacity 0.9s ease !important; }
@@ -621,43 +555,172 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 
 /* ── RIGHT SIDEBAR ── */
 #sidebar {
-  width: 196px; flex-shrink: 0;
+  width: 208px; flex-shrink: 0;
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 12px 24px rgba(49, 25, 2, 0.08);
   border-radius: 12px;
   display: grid;
+  grid-template-columns: 28px 164px;
   grid-template-rows: 1fr auto;
-  gap: 24px;
-  padding: 16px;
-  overflow: clip;
+  gap: 0;
+  column-gap: 0;
+  padding: 16px 16px 16px 0;
+  overflow: hidden;
+  position: relative;
   transition: height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
+#handle-sidebar {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  background: none; border: none; padding: 0;
+  -webkit-tap-highlight-color: transparent; outline: none;
+}
+#handle-sidebar::after {
+  content: '';
+  display: block;
+  width: 4px; height: 40px;
+  background: #949494;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#handle-sidebar:hover::after,
+#sidebar.collapsed #handle-sidebar::after,
+#sidebar.handle-hint #handle-sidebar::after {
+  opacity: 1;
+}
+#accordion-group {
+  grid-column: 2;
+  grid-row: 1;
+}
+#sidebar .select-model-row {
+  grid-column: 2;
+  grid-row: 2;
+}
 @media (min-width: 2560px) {
-  #sidebar { width: 250px; }
+  #sidebar { width: 262px; grid-template-columns: 28px 218px; }
 }
 
+#accordion-group {
+  min-height: 0;
+  display: flex; flex-direction: column;
+  gap: 24px;
+  overflow: clip;
+}
+
+.accordion { display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; min-height: 0; overflow: clip; }
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 24px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.label-header {
+  font-family: 'VW Text', 'Inter', sans-serif;
+  font-weight: 700; font-size: 18px; line-height: 1.2;
+  color: #1b2236;
+}
+.btn-header {
+  display: none;
+}
+
+/* Collapse wrapper — grid-template-rows avoids per-frame layout recalc */
+.wrapper-grid {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  transition: grid-template-rows 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.accordion.collapsed .wrapper-grid {
+  grid-template-rows: 0fr;
+  pointer-events: none;
+}
+
+.body {
+  position: relative;
+  display: flex; flex-direction: column; gap: 10px;
+  min-height: 0;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.accordion.collapsed .body {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+.vscroll {
+  position: absolute;
+  right: 1px; top: 0;
+  width: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.vscroll.visible { opacity: 1; }
+.vscroll-thumb {
+  position: absolute;
+  width: 4px;
+  background: #c8cad0;
+  border-radius: 2px;
+}
+
+.label-swatch {
+  font-family: 'VW Text', 'Inter', sans-serif;
+  font-weight: 400; font-size: 14px; line-height: 1.2;
+  color: #1b2236; display: block; width: 100%;
+  min-height: calc(1.2em * 2);
+  overflow: hidden;
+}
+
+/* Swatch container: flex-wrap matching Figma container-variants-swatches */
+.grid {
+  display: flex; flex-wrap: wrap; align-content: flex-start; align-items: flex-start;
+  gap: 8px;
+  padding: 4px 6px 4px 4px;
+  overflow-x: hidden; overflow-y: auto;
+  scrollbar-width: none;
+}
+#grid-colour, #grid-wheel, #grid-material { width: 100%; }
+
+/* When sections together exceed container height: split evenly, grids scroll */
+#accordion-group.constrained .accordion { flex: 1 1 0; transition: flex-basis 0.65s cubic-bezier(0.16, 1, 0.3, 1); }
+#accordion-group.constrained .accordion.collapsed { flex: 0 0 auto; }
+#accordion-group.constrained .wrapper-grid { flex: 1 0 0; min-height: 0; }
+#accordion-group.constrained .accordion.collapsed .wrapper-grid { flex: none; }
+#accordion-group.constrained .body { height: 100%; }
+#accordion-group.constrained .grid { flex: 1 0 0; min-height: 0; }
 
 /* Swatch button */
 .btn-swatch {
-  position: relative; width: 48px; height: 48px; flex-shrink: 0; cursor: pointer; overflow: visible; border: none; background: none; padding: 0;
+  position: relative; width: 46px; height: 46px; flex-shrink: 0; cursor: pointer; overflow: visible; border: none; background: none; padding: 0;
+  border-radius: 50%;
 }
-.btn-swatch.selected { outline: none; border-radius: 999999px; box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0.08); }
-.stroke-selected { display: none; position: absolute; border-radius: 999999px; border: 3px solid #997f67; inset: 0; z-index: 10; pointer-events: none; }
+.btn-swatch.selected { outline: none; }
+.stroke-selected { display: none; position: absolute; border-radius: 100%; border: 3px solid #997f67; inset: -4.35%; z-index: 10; pointer-events: none; }
 .btn-swatch.selected .stroke-selected { display: block; }
-.stroke { position: absolute; left: 1px; top: 1px; width: 46px; height: 46px; border-radius: 999999px; border: 1px solid #949494; overflow: hidden; }
+.stroke       { position: absolute; inset: 0; border-radius: 100%; border: 1.4px solid #949494; }
 .btn-swatch.selected .stroke { border-color: transparent; }
-.stroke img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; border-radius: 999999px; }
-#grid-wheel .stroke, #grid-material .stroke { background: #fff; }
-.checkmark { position: absolute; z-index: 20; pointer-events: none; top: -12.5%; right: -12.5%; bottom: 62.5%; left: 62.5%; display: none; }
+.img-swatch { position: absolute; inset: 0; border-radius: 100%; overflow: hidden; }
+#grid-wheel .img-swatch, #grid-material .img-swatch { background: #fff; }
+.img-swatch       { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.btn-swatch.selected div.img-swatch { box-shadow: 0 2px 4px 0 var(--shadow-small, rgba(49, 25, 2, 0.30)); }
+.stroke-inset    { display: none; }
+.checkmark { position: absolute; z-index: 20; pointer-events: none; top: -13.04%; right: -17.39%; bottom: 60.87%; left: 65.22%; display: none; }
 .btn-swatch.selected .checkmark { display: block; }
-.badge { position: absolute; inset: 0; }
+.btn-swatch.selected .stroke-selected { box-shadow: 0 2px 4px 0 var(--shadow-small, rgba(49, 25, 2, 0.30)); }
+.badge { position: absolute; inset: 8.33%; }
 .badge svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
 .tick   { position: absolute; inset: 34.71% 26.82% 35.13% 30.54%; }
 .tick svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
 
 /* Sidebar interior/exterior mode visibility */
+.accordion.interior-only { display: none; }
+#sidebar.interior-mode .accordion.interior-only { display: flex; flex-direction: column; gap: 8px; }
 #sidebar.interior-mode .exterior-only { display: none !important; }
 
 .select-wrap {
@@ -701,9 +764,12 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 }
 .btn-info .icon-info {
   display: block; width: 24px; height: 24px;
+  background-color: #293043;
+  -webkit-mask: url('https://www.figma.com/api/mcp/asset/3582f7fb-44d3-48ff-9985-ae115f09a163') center / contain no-repeat;
+  mask: url('https://www.figma.com/api/mcp/asset/3582f7fb-44d3-48ff-9985-ae115f09a163') center / contain no-repeat;
+  transition: background-color 0.2s ease;
 }
-.btn-info .icon-info path { transition: fill 0.2s ease; }
-.btn-info:hover .icon-info path { fill: #ccbdab; }
+.btn-info:hover .icon-info { background-color: #ccbdab; }
 
 /* ── SUBNAV BAR ── */
 #subnav {
@@ -745,7 +811,7 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
   background: #fff;
   display: flex; align-items: center;
   border-top: 1px solid rgba(41,48,67,0.12);
-  z-index: 11;
+  z-index: 8;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .stage-visible #nbabar { opacity: 0; transform: translateY(100%); pointer-events: none; }
@@ -799,9 +865,8 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 /* ── Mobile subnav ── */
 #subnav-sm {
   display: none;
-  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
   height: 46px; background: white;
-  transition: opacity 0.3s ease;
   border-bottom: 1px solid #d0d1d5;
   align-items: center; justify-content: flex-end;
   padding: 0 16px;
@@ -809,45 +874,39 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 @media (max-width: 959px) { #subnav-sm { display: flex; } }
 
 /* ── Mobile sidebar ── */
-#bottombar {
+#sidebar-sm {
   display: none;
   background: white;
-  border-radius: 20px;
+  border-radius: 12px;
   box-shadow: 0 12px 24px rgba(49, 25, 2, 0.08);
-  padding: 20px;
+  padding: 12px;
   flex-direction: column;
   gap: 16px;
   overflow: clip;
+  width: 100%;
   isolation: isolate;
 }
-@media (max-width: 959px) { #bottombar { display: flex; } }
+@media (max-width: 959px) { #sidebar-sm { display: flex; } }
 
-#tabbar-sm {
-  display: flex; gap: 32px;
-  overflow-x: auto; scrollbar-width: none;
-}
-#tabbar-sm::-webkit-scrollbar { display: none; }
-
-.tab-sm {
-  font-family: 'VW Text', 'Inter', sans-serif;
-  font-size: 16px; line-height: 1.2; color: #293043;
-  border: none; border-bottom: 2px solid transparent;
-  background: none; padding: 0 0 8px;
-  cursor: pointer; white-space: nowrap; flex-shrink: 0;
-}
-.tab-sm.active { font-weight: 700; border-bottom-color: #293043; }
+.mob-sec { display: flex; flex-direction: column; gap: 4px; }
+.mob-sec.interior-only { display: none; }
+#sidebar-sm.interior-mode .mob-sec.interior-only { display: flex; }
+#sidebar-sm.interior-mode .mob-sec.exterior-only { display: none; }
+.mob-sec-header { display: flex; align-items: baseline; overflow: hidden; }
+.mob-sec-title { font-family: 'VW Head', 'Inter', sans-serif; font-weight: 700; font-size: 18px; line-height: 1.2; color: #1b2236; flex-shrink: 0; }
+.mob-sec-sep { font-family: 'VW Text', 'Inter', sans-serif; font-size: 14px; line-height: 1.2; color: #1b2236; margin: 0 4px; flex-shrink: 0; }
+.mob-sec-value { font-family: 'VW Text', 'Inter', sans-serif; font-size: 14px; line-height: 1.2; color: #1b2236; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 /* Single-row horizontal swatch scroller */
 .swatch-row-sm {
-  display: flex; gap: 8px;
-  overflow-x: auto; padding: 4px 0 4px 4px;
+  display: flex; gap: 12px;
+  overflow-x: auto; padding: 4px 0 6px 4px;
   scrollbar-width: none;
 }
 .swatch-row-sm::-webkit-scrollbar { display: none; }
 .swatch-scroll-wrap { position: relative; }
-.swatch-fade { position: absolute; top: 0; bottom: 0; width: 46px; pointer-events: none; z-index: 30; opacity: 0; transition: opacity 0.2s; }
-.swatch-fade.show { opacity: 1; }
-.swatch-fade:not(.show) .swatch-arrow { pointer-events: none; }
+.swatch-fade { position: absolute; top: 0; bottom: 0; width: 46px; pointer-events: none; z-index: 30; display: none; }
+.swatch-fade.show { display: block; }
 .swatch-fade.left  { left: 0;  background: linear-gradient(to right, white, rgba(255,255,255,0)); }
 .swatch-fade.right { right: 0; background: linear-gradient(to right, rgba(255,255,255,0), white); }
 .swatch-arrow {
@@ -863,71 +922,21 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 
 /* Mobile layout overrides */
 @media (max-width: 959px) {
+  #topbar { display: none; }
   #subnav { display: none; }
-  #showroom { padding-top: 0; padding-bottom: 0; }
-  #subnav-sm { top: 64px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-  .topbar-hidden #subnav-sm { transform: translateY(-64px); }
-  #page-layout { padding: 0 16px; gap: 0; flex: none; }
-  #visualizer { flex-direction: column; gap: 0; align-items: stretch; }
-  #media { flex: none; width: 100%; transition: none; }
+  #showroom { padding-top: 46px; padding-bottom: 0; overflow-x: hidden; }
+  #page-layout { padding: 16px; gap: 16px; flex: none; }
+  #stage { width: calc(100% + 32px); margin-left: -16px; margin-right: -16px; margin-top: -16px; }
+  #visualizer { flex-direction: column; gap: 0; align-items: stretch; height: calc(100dvh - 46px - 76px); }
+  #media { flex: 1; min-height: 0; width: 100%; transition: none; }
+  #sidebar-sm { flex: none; overflow-y: auto; overflow-x: hidden; }
   #sidebar { display: none; }
-
-  /* Stage mobile layout — Figma 217:3256 (375×762) */
-  #stage { height: 762px; margin: 0 -16px; width: calc(100% + 32px); }
-  #media-stage {
-    top: 0; left: 50%; right: auto; bottom: auto;
-    transform: translateX(-50%);
-    width: 762px; height: 429px;
-  }
-  #wrapper-header {
-    top: 0; padding: 32px 16px;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 24%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 100%);
-  }
-  .wrapper-label { text-align: center; }
-  .label-headline { font-size: 56px; }
-  .label-subline { font-size: 20px; }
-  .btn-group { flex-direction: column; gap: 12px; align-items: stretch; }
-  .btn-stage { width: 100%; }
-
-  /* noises span full device width (cancel page-layout's 16px padding) */
-  .noise { margin-left: -16px; margin-right: -16px; overflow: visible; }
-
-  /* noise-1 mobile layout — from Figma 217:3263 (375×1972) */
-  #noise-1 { padding: 64px 0 48px; }
-  .car-technical-data-section { padding: 0 33px; }
-  .tiles { flex-wrap: nowrap; overflow-x: auto; margin: 0 -33px; padding: 0 33px; scroll-padding: 0 33px; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
-  .tiles::-webkit-scrollbar { display: none; }
-  .tile-technical { flex: none; width: min(66.66vw, 1706.66px); max-width: min(66.66vw, 1706.66px); }
-  .breadcrumbs { padding: 0 33px; margin-top: 53px; }
-  /* USP sticky frame — parallax scroll stays active, layout adapted */
-  /* Figma 217:3263: breadcrumbs bottom ≈ 321px, usp-1 at 477px → 156px into sticky frame */
-  .usp-sticky-frame { padding-top: 156px; }
-  .usp-row { flex-direction: column; align-items: center; gap: 0; padding: 0; }
-  /* Grid stacking: usp-1/2/3 all occupy the same cell — only one visible at a time via JS */
-  .usp-group { display: grid; place-items: center; }
-  .usp-1, .usp-2, .usp-3 { grid-area: 1 / 1; align-items: center; text-align: center; }
-  .usp-4 { white-space: normal; left: 16px; right: 16px; }
-  .word-pair-label { font-size: 24px; }
-  .word-pair-value { font-size: 40px; line-height: 1.2; white-space: normal; }
-  /* Car image: full viewport width, top: 261px from sticky frame */
-  .usp-car-img { top: 261px; bottom: auto; width: 100vw; height: 217px; object-fit: cover; object-position: center; }
-  /* image-1: 343px wide (16px each side), 4:3 crop — matches Figma 217:3263 (343×257px) */
-  #image-1 { width: calc(100% - 32px); margin: 53px 16px 0; aspect-ratio: 4/3; }
-  /* label margin-top adjusted for 4:3 image height (257px); gap to label = 238px */
-  .label-header-midpage { margin-top: 238px; margin-bottom: 301px; font-size: 24px; padding: 0 16px; }
-  .intro-vis { padding: 60px 0 0; }
-
-  /* noise-2 mobile layout */
-  #noise-2 { padding: 48px 0; }
-  .section-highlight { padding: 0 16px; }
-  .highlight-group { flex-direction: column; gap: 20px; }
-  .highlight { flex: 0 0 auto; }
-
+  .noise { display: none; margin-left: 0; margin-right: 0; }
   #showroom::after { content: ''; display: block; height: calc(76px + env(safe-area-inset-bottom)); flex-shrink: 0; }
   .label-swatch { min-height: 0; }
   #img-car { inset: 0; width: 100%; height: 100%; object-position: center 24%; }
   .label-rotate { top: 47%; }
-  .hint-turntable { width: 60%; aspect-ratio: 836.768 / 115.925; height: auto; top: 51%; }
+  .hint-turntable { width: 80vw; top: 51%; }
 }
 
 /* Entry animations */
@@ -935,12 +944,6 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes bbPanelSlideUp {
-  from { opacity: 0; transform: translate(-50%, 16px); }
-  to   { opacity: 1; transform: translate(-50%, 0); }
-}
-#bottombar.enter { animation: bbPanelSlideUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
-@media (max-width: 959px) { #bottombar.enter { animation: none; } }
 
 @keyframes scaleFade {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
@@ -956,130 +959,9 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 }
 @media (min-width: 960px) {
   #sidebar      { animation: slideUpFade 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both; }
-  #btn-interior   { animation: dissolveFade 0.35s ease 0.55s both; }
-  #btn-a11y       { animation: dissolveFade 0.35s ease 0.60s both; }
-  #btn-fullscreen { animation: dissolveFade 0.35s ease 0.65s both; }
-}
-
-/* ── BOTTOMBAR LAYOUT OVERRIDES ── */
-#visualizer {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  height: calc(100dvh - 52px - 76px);
-  position: relative;
-}
-#page-layout { gap: 12px; padding-top: 0; padding-bottom: 0; }
-#img-car { inset: 0; width: 100%; height: 100%; }
-#media {
-  width: 100%;
-  height: 100%;
-  flex: none;
-}
-@media (max-width: 959px) {
-  #visualizer { height: auto; }
-  #media { height: auto; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 20px; }
-  #bottombar {
-    position: static;
-    transform: none;
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 100%;
-    padding: 8px 12px;
-    flex-direction: column;
-    gap: 0;
-    overflow: hidden;
-    isolation: auto;
-  }
-  #selector-colour   { margin-bottom: 20px; }
-  #selector-wheel    { margin-bottom: 16px; }
-  #selector-material { margin-bottom: 16px; }
-  .section { flex-shrink: 0; width: auto !important; }
-  .swatches { padding: 4px 0; }
-  #select-model { align-self: flex-start; }
-  #btn-interior { bottom: 12px; left: 12px; }
-  #btn-a11y { bottom: 12px; right: 12px; }
-  #btn-fullscreen { top: 12px; right: 12px; }
-  #touch-ctrl-bar { bottom: 12px; right: 56px; flex-direction: row; }
-  #touch-ctrl-bar .touch-ctrl-btn { transform: translateX(8px); }
-  #touch-ctrl-bar.visible .touch-ctrl-btn { transform: translateX(0); }
-  #media.is-rotating .vis-btn,
-  #media.is-rotating #touch-ctrl-bar { opacity: 0; pointer-events: none; }
-  body.in-fullscreen #media.is-rotating ~ #bottombar {
-    backdrop-filter: none; -webkit-backdrop-filter: none;
-  }
-  .swatch-arrow { width: 32px; height: 32px; }
-  #bottombar .swatch-fade.left  { background: linear-gradient(to right, #f6f5f2, rgba(246,245,242,0)); }
-  #bottombar .swatch-fade.right { background: linear-gradient(to right, rgba(246,245,242,0), #f6f5f2); }
-}
-
-
-#sidebar  { display: none !important; }
-
-/* ── BOTTOM BAR PANEL ── */
-@media (min-width: 960px) {
-  #bottombar {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 12;
-    display: flex; flex-direction: row; align-items: center; gap: 40px;
-    background: rgba(255, 255, 255, 0.60);
-    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-    transition: opacity 0.15s ease, box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0.08);
-    border-radius: 999999px; padding: 4px 12px;
-    width: fit-content; max-width: calc(100% - 140px);
-    overflow: hidden;
-  }
-  #bottombar:hover,
-  #btn-a11y:hover,
-  #btn-fullscreen:hover,
-  #btn-interior:hover { box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0.24); }
-}
-.section {
-  display: flex; flex-direction: column; gap: 4px; flex-shrink: 1; min-width: 0;
-}
-.section.interior-only { display: none; }
-#bottombar.interior-mode .section.interior-only { display: flex; }
-#bottombar.interior-mode .section.exterior-only { display: none; }
-.sec-header {
-  display: flex; align-items: baseline; overflow: hidden; max-width: 100%;
-}
-.sec-title {
-  font-family: 'VW Head', 'Inter', sans-serif;
-  font-weight: 700; font-size: 18px; line-height: 1.2; color: #1b2236; flex-shrink: 0;
-}
-.sec-sep {
-  font-family: 'VW Text', 'Inter', sans-serif;
-  font-size: 14px; line-height: 1.2; color: #1b2236; margin: 0 4px; flex-shrink: 0;
-}
-.sec-value {
-  font-family: 'VW Text', 'Inter', sans-serif;
-  font-size: 14px; line-height: 1.2; color: #1b2236;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
-}
-.swatches-wrap { position: relative; }
-#bottombar .swatch-fade { width: 56px; background: none; }
-.swatches {
-  display: flex; flex-wrap: nowrap; gap: 8px;
-  padding: 8px 6px 8px 4px;
-  overflow-x: auto; scrollbar-width: none;
-}
-.swatches::-webkit-scrollbar { display: none; }
-#select-model {
-  display: flex; align-items: flex-start; gap: 8px; flex-shrink: 0; align-self: center;
-}
-#select-model .select-wrap { width: 167px; }
-@media (max-width: 959px) {
-  #select-model .select-wrap { width: 230px; }
-  #select-model { align-self: flex-start; }
-  #showroom { overflow: clip; }
+  #btn-interior { animation: dissolveFade 0.35s ease 0.55s both; }
+  #btn-a11y     { animation: dissolveFade 0.35s ease 0.60s both; }
+  .label-rotate { font-size: 20px; }
 }
 </style>
 </head>
@@ -1177,8 +1059,8 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
           <p class="label-subline">Exceptional range, faster charging and intuitive technology.</p>
         </div>
         <div class="btn-group">
-          <button class="btn-stage btn-primary">Build your ID.7</button>
           <button class="btn-stage btn-secondary">Browse available ID.7 stock</button>
+          <button class="btn-stage btn-primary">Build your ID.7</button>
         </div>
       </div>
     </div>
@@ -1274,6 +1156,11 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
     <div id="media">
       <img id="img-car" alt="VW ID. Polo" draggable="false">
 
+      <!-- Accessibility button (top-right) -->
+      <button class="vis-btn" id="btn-a11y" title="Accessibility" aria-label="Accessibility">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.94308 7.87513L4.67346 11.514C4.64225 11.6052 4.5938 11.689 4.53095 11.7605C4.4681 11.832 4.39212 11.8898 4.30747 11.9304C4.18031 11.9923 4.03831 12.0136 3.89947 11.9916C3.76063 11.9696 3.63119 11.9054 3.52758 11.8071C3.42396 11.7087 3.35082 11.5807 3.31743 11.4392C3.28403 11.2977 3.29189 11.1491 3.34 11.0122L4.22519 8.4696C4.29544 8.27827 4.35094 8.08146 4.39117 7.88102C4.42694 7.67751 4.45251 7.47222 4.46777 7.26596C4.50181 6.89369 4.52593 6.49051 4.54437 6.10352C4.56281 5.71654 4.57558 5.34132 4.58551 5.03085C4.59828 4.64386 4.49756 4.61884 4.19824 4.54527L4.13582 4.53056L1.5824 4.03174C1.49056 4.01494 1.40282 3.97952 1.3242 3.92751C1.24558 3.87549 1.17761 3.80791 1.1242 3.72862C1.04484 3.60851 1.00164 3.46668 1.00005 3.32108C0.998454 3.17548 1.03855 3.03266 1.11526 2.91072C1.19196 2.78877 1.30183 2.69317 1.43095 2.63603C1.56006 2.57889 1.70262 2.56278 1.84058 2.58973L4.58409 3.12386C4.69332 3.13416 4.79971 3.14741 4.91178 3.16065C5.24939 3.20863 5.58957 3.23468 5.93032 3.23863C6.35448 3.23004 6.77786 3.19713 7.19852 3.14005C7.32619 3.12533 7.44677 3.10915 7.56735 3.09738L10.1562 2.59415C10.3399 2.55464 10.5312 2.5922 10.6882 2.69862C10.766 2.75324 10.8326 2.82336 10.8841 2.9049C10.9356 2.98644 10.9709 3.07778 10.9881 3.17362C11.0052 3.26945 11.0039 3.36786 10.984 3.46314C10.9642 3.55842 10.9263 3.64866 10.8726 3.72862C10.8199 3.80841 10.7526 3.87664 10.6745 3.92941C10.5963 3.98218 10.5089 4.01845 10.4173 4.03615L7.94327 4.51879C7.86099 4.53791 7.78722 4.55116 7.72197 4.56146C7.46379 4.60707 7.33612 4.63062 7.35172 5.01172C7.36307 5.28982 7.3957 5.62236 7.43826 5.96962C7.48791 6.37721 7.55316 6.80981 7.62125 7.20563C7.66523 7.46607 7.70637 7.67502 7.76311 7.87513C7.81985 8.07525 7.87517 8.27978 7.96029 8.52551L8.82704 11.0122C8.87515 11.1491 8.88301 11.2977 8.84962 11.4392C8.81622 11.5807 8.74308 11.7087 8.63947 11.8071C8.53585 11.9054 8.40642 11.9696 8.26757 11.9916C8.12873 12.0136 7.98673 11.9923 7.85957 11.9304C7.77492 11.8898 7.69894 11.832 7.63609 11.7605C7.57324 11.689 7.52479 11.6052 7.49358 11.514L6.2197 7.88249L6.07785 7.61322L5.93599 7.87513H5.94308ZM5.99841 6.92648e-07C6.28822 -0.000254866 6.56914 0.103734 6.79332 0.294248C7.01749 0.484762 7.17105 0.750012 7.22781 1.0448C7.28457 1.33959 7.24103 1.64567 7.10461 1.91089C6.96819 2.17611 6.74733 2.38406 6.47966 2.4993C6.21199 2.61454 5.91408 2.62994 5.63669 2.54287C5.35931 2.45581 5.11961 2.27167 4.95844 2.02184C4.79727 1.772 4.7246 1.47193 4.75283 1.17275C4.78105 0.873566 4.90842 0.593794 5.11322 0.381103C5.22924 0.260159 5.36718 0.16422 5.5191 0.0988132C5.67102 0.0334064 5.83392 -0.000175874 5.99841 6.92648e-07Z" fill="#1B2236"/></svg>
+      </button>
+
       <!-- Touch controls bar (slides in when a11y active) -->
       <div id="touch-ctrl-bar">
         <button class="touch-ctrl-btn" id="tc-rot-left" title="Rotate left" aria-label="Rotate left"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#tc-cl)"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16345 0 16 0C24.8366 0 32 7.16345 32 16Z" fill="white"/><path d="M12 16C11.9983 15.5607 12.1668 15.1378 12.47 14.82L17.07 10L18 10.94L13.39 15.76C13.2678 15.8967 13.2678 16.1033 13.39 16.24L18 21.06L17.07 22L12.47 17.18C12.1685 16.861 12.0004 16.4389 12 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-cl"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16345 0 16 0C24.8366 0 32 7.16345 32 16Z" fill="white"/></clipPath></defs></svg></button>
@@ -1281,6 +1168,18 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
         <button class="touch-ctrl-btn interior-only" id="btn-tilt-up" title="Tilt up" aria-label="Tilt up"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#ti-u)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20.7837 19.0923L16.0371 14.1304L15.9941 14.0845L15.9546 14.1255L11.2168 19.0913L10.2549 18.1733L14.9888 13.2114C15.2384 12.906 15.606 12.721 16 12.7026C16.3929 12.7213 16.7586 12.9085 17.0034 13.2163L21.7446 18.1723L20.7837 19.0923Z" fill="#1B2236"/></g><defs><clipPath id="ti-u"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
         <button class="touch-ctrl-btn interior-only" id="btn-tilt-down" title="Tilt down" aria-label="Tilt down"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#ti-d)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M11.2158 12.8052L15.9624 17.7671L16.0054 17.813L16.045 17.772L20.7827 12.8062L21.7447 13.7242L17.0107 18.686C16.7611 18.9914 16.3935 19.1764 15.9995 19.1948C15.6066 19.1761 15.2409 18.9889 14.9961 18.6811L10.2549 13.7251L11.2158 12.8052Z" fill="#1B2236"/></g><defs><clipPath id="ti-d"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
       </div>
+
+      <!-- Interior button (bottom-right) -->
+      <button class="vis-btn" id="btn-interior" title="Interior view" aria-label="Interior view">
+        <!-- Exterior mode: show interior 360° icon (from Figma 24px/interior 360) -->
+        <div class="icon-ext-mode">
+          <svg width="24" height="24" viewBox="10 10 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.8918 24.061C12.5124 24.2838 11.6301 24.8951 11.6301 25.77C11.6307 27.4994 15.5036 29.2876 21.9836 29.2876C22.2949 29.2876 22.5994 29.2802 22.9026 29.2719C22.565 28.9366 22.1257 28.5066 21.5403 27.9448L22.4612 26.9858C25.0062 29.4258 25.0129 29.518 25.0354 29.8198C25.054 30.1047 25.062 30.2338 22.8987 33.0014L21.8508 32.1831C22.3887 31.4952 22.7741 30.9878 23.0637 30.5991C22.7086 30.6104 22.3485 30.6177 21.9827 30.6177C14.9955 30.6176 10.3005 28.6691 10.3 25.77C10.3 24.2076 11.6422 23.2525 12.219 22.9145L12.8918 24.061ZM31.6272 22.9077C31.7098 22.9435 33.6106 23.8109 33.6106 25.7788C33.6103 27.7885 30.8985 29.6265 27.0149 30.2466L26.8059 28.9341C30.1874 28.3931 32.2801 26.8755 32.2805 25.7788C32.2805 24.6829 31.1347 24.1448 31.0842 24.1216L31.6272 22.9077ZM30.261 11.6665C29.9679 16.0485 29.2074 18.9897 28.4143 21.0063C27.6258 23.0112 26.7882 24.1199 26.4729 24.6665L26.2815 24.9985H17.0491L16.9016 24.5346L16.0657 21.895C15.8054 21.0729 16.2316 20.0121 17.2766 19.8823C18.515 19.7288 19.7206 19.9943 20.7629 20.1665C21.6767 20.3174 22.5132 20.4095 23.3586 20.2427V19.9546C23.3586 19.4738 23.5666 19.0072 23.7756 18.6128C23.9807 18.2259 24.2877 17.7366 24.5315 17.3081C25.0569 16.3847 25.5295 15.3538 25.5295 14.1196C25.5295 13.6463 25.5108 13.1695 25.4875 12.7632C25.433 11.8065 26.184 10.9575 27.1741 10.9575H30.3079L30.261 11.6665ZM27.1741 12.2876C26.9801 12.2876 26.8021 12.4617 26.8147 12.687C26.8388 13.1096 26.8596 13.6133 26.8596 14.1196C26.8596 15.7046 26.2466 16.9814 25.6868 17.9653C25.388 18.4904 25.1523 18.8549 24.9504 19.2358C24.7527 19.6091 24.6887 19.8251 24.6887 19.9546V21.2466L24.2239 21.393C22.8969 21.8116 21.6551 21.6622 20.5461 21.479C19.3986 21.2894 18.4377 21.079 17.4407 21.2026C17.4003 21.2076 17.3718 21.2245 17.3479 21.268C17.3196 21.3196 17.3055 21.4028 17.3342 21.4936L18.0227 23.6684H25.5276C25.9386 23.0173 26.5502 22.1102 27.176 20.519C27.8702 18.7539 28.5651 16.1588 28.8811 12.2876H27.1741Z" fill="#1B2236"/></svg>
+        </div>
+        <!-- Interior mode: show exterior 360° icon -->
+        <div class="icon-int-mode">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5751 9.39701C16.5971 9.32301 17.5541 9.21401 18.4941 9.08501C18.3341 8.69501 18.0861 8.18001 17.7871 7.60501C15.8411 7.83701 13.8881 7.96401 11.9331 7.96401C10.0301 7.96401 8.12608 7.84401 6.22608 7.62401C5.92708 8.20001 5.67908 8.71701 5.51908 9.10401C6.51908 9.23301 7.52508 9.34401 8.52808 9.41301L8.43608 10.739C7.40408 10.668 6.36908 10.555 5.33908 10.421V14.003H7.57908V13.787V12.457L8.91008 12.457H15.1241H16.4531V13.787V14.003H18.6811V10.401C17.7101 10.534 16.7231 10.647 15.6711 10.724L15.5751 9.39701ZM8.39008 4.66301C8.00908 4.66301 7.94708 4.70701 7.49808 5.33401C7.30308 5.66301 7.10408 6.01001 6.90908 6.35801C10.3061 6.71401 13.7171 6.71001 17.1051 6.34301C16.9051 5.98501 16.7011 5.63001 16.5011 5.29501C16.1661 4.76101 16.0261 4.66301 15.5761 4.66301L8.39008 4.66301ZM20.4261 5.87901L20.6601 7.18801C20.245 7.26171 19.8278 7.32321 19.4108 7.38467C19.3356 7.39576 19.2603 7.40685 19.1851 7.41801C19.6361 8.31701 20.0111 9.18601 20.0111 9.58601V14.146C20.0111 14.802 19.4861 15.333 18.8391 15.333H16.2961C15.6471 15.333 15.1241 14.802 15.1241 14.146V13.787H8.91008V14.138C8.91008 14.794 8.37808 15.333 7.73008 15.333L5.18108 15.333C4.53408 15.333 4.00908 14.802 4.00908 14.146L4.00908 9.58601C4.00908 9.19201 4.37908 8.33501 4.82608 7.44101C4.75092 7.43016 4.67573 7.41939 4.60053 7.40861C4.19047 7.34984 3.77992 7.29099 3.37008 7.22001L3.59908 5.90901C4.22508 6.01901 4.85208 6.11001 5.48008 6.19501C5.96608 5.30901 6.38408 4.60601 6.38408 4.60601C6.39096 4.59639 6.39783 4.5868 6.40468 4.57721C6.8818 3.9103 7.29481 3.33301 8.39008 3.33301L15.5761 3.33301C16.7571 3.33301 17.2421 3.97401 17.6431 4.61301C17.6431 4.61301 18.0541 5.30201 18.5321 6.17501C19.1641 6.08801 19.7961 5.99101 20.4261 5.87901ZM11.206 10.0704C11.206 10.5214 11.567 10.8874 12.014 10.8874C12.46 10.8874 12.822 10.5214 12.822 10.0704C12.822 9.61841 12.46 9.25241 12.014 9.25241C11.567 9.25241 11.206 9.61841 11.206 10.0704ZM16.8544 18.9185L17.0654 20.2305C20.9484 19.6095 23.6604 17.7715 23.6604 15.7625C23.6604 13.7935 21.7574 12.9265 21.6764 12.8915L21.1334 14.1055C21.1824 14.1275 22.3304 14.6665 22.3304 15.7625C22.3304 16.8585 20.2364 18.3765 16.8544 18.9185ZM12.509 16.9688C15.055 19.4088 15.063 19.5078 15.084 19.8038V19.8039C15.105 20.0948 15.1137 20.2152 12.948 22.9858L11.9 22.1648C12.434 21.4828 12.821 20.9748 13.113 20.5828C12.758 20.5948 12.398 20.6018 12.032 20.6018C5.04398 20.6018 0.349976 18.6538 0.349976 15.7538C0.349976 14.1888 1.69198 13.2358 2.26898 12.8978L2.93998 14.0458C2.56098 14.2678 1.67998 14.8768 1.67998 15.7538C1.67998 17.4838 5.55198 19.2718 12.032 19.2718C12.344 19.2718 12.649 19.2648 12.952 19.2558C12.614 18.9208 12.175 18.4918 11.589 17.9298L12.509 16.9688Z" fill="#1B2236"/></svg>
+        </div>
+      </button>
 
       <!-- Hidden rotation triggers (used by touch controls, keyboard, and drag handlers) -->
       <button id="rot-left"  style="display:none" aria-hidden="true"></button>
@@ -1295,84 +1194,164 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
       <!-- Pano canvas for interior 360° -->
       <canvas id="image-interior"></canvas>
 
-      <!-- Expand handle -->
-      <button class="vis-btn" id="btn-interior" title="Interior view" aria-label="Interior view">
-        <div class="icon-ext-mode">
-          <svg width="24" height="24" viewBox="10 10 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.8918 24.061C12.5124 24.2838 11.6301 24.8951 11.6301 25.77C11.6307 27.4994 15.5036 29.2876 21.9836 29.2876C22.2949 29.2876 22.5994 29.2802 22.9026 29.2719C22.565 28.9366 22.1257 28.5066 21.5403 27.9448L22.4612 26.9858C25.0062 29.4258 25.0129 29.518 25.0354 29.8198C25.054 30.1047 25.062 30.2338 22.8987 33.0014L21.8508 32.1831C22.3887 31.4952 22.7741 30.9878 23.0637 30.5991C22.7086 30.6104 22.3485 30.6177 21.9827 30.6177C14.9955 30.6176 10.3005 28.6691 10.3 25.77C10.3 24.2076 11.6422 23.2525 12.219 22.9145L12.8918 24.061ZM31.6272 22.9077C31.7098 22.9435 33.6106 23.8109 33.6106 25.7788C33.6103 27.7885 30.8985 29.6265 27.0149 30.2466L26.8059 28.9341C30.1874 28.3931 32.2801 26.8755 32.2805 25.7788C32.2805 24.6829 31.1347 24.1448 31.0842 24.1216L31.6272 22.9077ZM30.261 11.6665C29.9679 16.0485 29.2074 18.9897 28.4143 21.0063C27.6258 23.0112 26.7882 24.1199 26.4729 24.6665L26.2815 24.9985H17.0491L16.9016 24.5346L16.0657 21.895C15.8054 21.0729 16.2316 20.0121 17.2766 19.8823C18.515 19.7288 19.7206 19.9943 20.7629 20.1665C21.6767 20.3174 22.5132 20.4095 23.3586 20.2427V19.9546C23.3586 19.4738 23.5666 19.0072 23.7756 18.6128C23.9807 18.2259 24.2877 17.7366 24.5315 17.3081C25.0569 16.3847 25.5295 15.3538 25.5295 14.1196C25.5295 13.6463 25.5108 13.1695 25.4875 12.7632C25.433 11.8065 26.184 10.9575 27.1741 10.9575H30.3079L30.261 11.6665ZM27.1741 12.2876C26.9801 12.2876 26.8021 12.4617 26.8147 12.687C26.8388 13.1096 26.8596 13.6133 26.8596 14.1196C26.8596 15.7046 26.2466 16.9814 25.6868 17.9653C25.388 18.4904 25.1523 18.8549 24.9504 19.2358C24.7527 19.6091 24.6887 19.8251 24.6887 19.9546V21.2466L24.2239 21.393C22.8969 21.8116 21.6551 21.6622 20.5461 21.479C19.3986 21.2894 18.4377 21.079 17.4407 21.2026C17.4003 21.2076 17.3718 21.2245 17.3479 21.268C17.3196 21.3196 17.3055 21.4028 17.3342 21.4936L18.0227 23.6684H25.5276C25.9386 23.0173 26.5502 22.1102 27.176 20.519C27.8702 18.7539 28.5651 16.1588 28.8811 12.2876H27.1741Z" fill="#1B2236"/></svg>
-        </div>
-        <div class="icon-int-mode">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5751 9.39701C16.5971 9.32301 17.5541 9.21401 18.4941 9.08501C18.3341 8.69501 18.0861 8.18001 17.7871 7.60501C15.8411 7.83701 13.8881 7.96401 11.9331 7.96401C10.0301 7.96401 8.12608 7.84401 6.22608 7.62401C5.92708 8.20001 5.67908 8.71701 5.51908 9.10401C6.51908 9.23301 7.52508 9.34401 8.52808 9.41301L8.43608 10.739C7.40408 10.668 6.36908 10.555 5.33908 10.421V14.003H7.57908V13.787V12.457L8.91008 12.457H15.1241H16.4531V13.787V14.003H18.6811V10.401C17.7101 10.534 16.7231 10.647 15.6711 10.724L15.5751 9.39701ZM8.39008 4.66301C8.00908 4.66301 7.94708 4.70701 7.49808 5.33401C7.30308 5.66301 7.10408 6.01001 6.90908 6.35801C10.3061 6.71401 13.7171 6.71001 17.1051 6.34301C16.9051 5.98501 16.7011 5.63001 16.5011 5.29501C16.1661 4.76101 16.0261 4.66301 15.5761 4.66301L8.39008 4.66301ZM20.4261 5.87901L20.6601 7.18801C20.245 7.26171 19.8278 7.32321 19.4108 7.38467C19.3356 7.39576 19.2603 7.40685 19.1851 7.41801C19.6361 8.31701 20.0111 9.18601 20.0111 9.58601V14.146C20.0111 14.802 19.4861 15.333 18.8391 15.333H16.2961C15.6471 15.333 15.1241 14.802 15.1241 14.146V13.787H8.91008V14.138C8.91008 14.794 8.37808 15.333 7.73008 15.333L5.18108 15.333C4.53408 15.333 4.00908 14.802 4.00908 14.146L4.00908 9.58601C4.00908 9.19201 4.37908 8.33501 4.82608 7.44101C4.75092 7.43016 4.67573 7.41939 4.60053 7.40861C4.19047 7.34984 3.77992 7.29099 3.37008 7.22001L3.59908 5.90901C4.22508 6.01901 4.85208 6.11001 5.48008 6.19501C5.96608 5.30901 6.38408 4.60601 6.38408 4.60601C6.39096 4.59639 6.39783 4.5868 6.40468 4.57721C6.8818 3.9103 7.29481 3.33301 8.39008 3.33301L15.5761 3.33301C16.7571 3.33301 17.2421 3.97401 17.6431 4.61301C17.6431 4.61301 18.0541 5.30201 18.5321 6.17501C19.1641 6.08801 19.7961 5.99101 20.4261 5.87901ZM11.206 10.0704C11.206 10.5214 11.567 10.8874 12.014 10.8874C12.46 10.8874 12.822 10.5214 12.822 10.0704C12.822 9.61841 12.46 9.25241 12.014 9.25241C11.567 9.25241 11.206 9.61841 11.206 10.0704ZM16.8544 18.9185L17.0654 20.2305C20.9484 19.6095 23.6604 17.7715 23.6604 15.7625C23.6604 13.7935 21.7574 12.9265 21.6764 12.8915L21.1334 14.1055C21.1824 14.1275 22.3304 14.6665 22.3304 15.7625C22.3304 16.8585 20.2364 18.3765 16.8544 18.9185ZM12.509 16.9688C15.055 19.4088 15.063 19.5078 15.084 19.8038V19.8039C15.105 20.0948 15.1137 20.2152 12.948 22.9858L11.9 22.1648C12.434 21.4828 12.821 20.9748 13.113 20.5828C12.758 20.5948 12.398 20.6018 12.032 20.6018C5.04398 20.6018 0.349976 18.6538 0.349976 15.7538C0.349976 14.1888 1.69198 13.2358 2.26898 12.8978L2.93998 14.0458C2.56098 14.2678 1.67998 14.8768 1.67998 15.7538C1.67998 17.4838 5.55198 19.2718 12.032 19.2718C12.344 19.2718 12.649 19.2648 12.952 19.2558C12.614 18.9208 12.175 18.4918 11.589 17.9298L12.509 16.9688Z" fill="#1B2236"/></svg>
-        </div>
-      </button>
-      <button class="vis-btn" id="btn-a11y" title="Accessibility" aria-label="Accessibility">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.94308 7.87513L4.67346 11.514C4.64225 11.6052 4.5938 11.689 4.53095 11.7605C4.4681 11.832 4.39212 11.8898 4.30747 11.9304C4.18031 11.9923 4.03831 12.0136 3.89947 11.9916C3.76063 11.9696 3.63119 11.9054 3.52758 11.8071C3.42396 11.7087 3.35082 11.5807 3.31743 11.4392C3.28403 11.2977 3.29189 11.1491 3.34 11.0122L4.22519 8.4696C4.29544 8.27827 4.35094 8.08146 4.39117 7.88102C4.42694 7.67751 4.45251 7.47222 4.46777 7.26596C4.50181 6.89369 4.52593 6.49051 4.54437 6.10352C4.56281 5.71654 4.57558 5.34132 4.58551 5.03085C4.59828 4.64386 4.49756 4.61884 4.19824 4.54527L4.13582 4.53056L1.5824 4.03174C1.49056 4.01494 1.40282 3.97952 1.3242 3.92751C1.24558 3.87549 1.17761 3.80791 1.1242 3.72862C1.04484 3.60851 1.00164 3.46668 1.00005 3.32108C0.998454 3.17548 1.03855 3.03266 1.11526 2.91072C1.19196 2.78877 1.30183 2.69317 1.43095 2.63603C1.56006 2.57889 1.70262 2.56278 1.84058 2.58973L4.58409 3.12386C4.69332 3.13416 4.79971 3.14741 4.91178 3.16065C5.24939 3.20863 5.58957 3.23468 5.93032 3.23863C6.35448 3.23004 6.77786 3.19713 7.19852 3.14005C7.32619 3.12533 7.44677 3.10915 7.56735 3.09738L10.1562 2.59415C10.3399 2.55464 10.5312 2.5922 10.6882 2.69862C10.766 2.75324 10.8326 2.82336 10.8841 2.9049C10.9356 2.98644 10.9709 3.07778 10.9881 3.17362C11.0052 3.26945 11.0039 3.36786 10.984 3.46314C10.9642 3.55842 10.9263 3.64866 10.8726 3.72862C10.8199 3.80841 10.7526 3.87664 10.6745 3.92941C10.5963 3.98218 10.5089 4.01845 10.4173 4.03615L7.94327 4.51879C7.86099 4.53791 7.78722 4.55116 7.72197 4.56146C7.46379 4.60707 7.33612 4.63062 7.35172 5.01172C7.36307 5.28982 7.3957 5.62236 7.43826 5.96962C7.48791 6.37721 7.55316 6.80981 7.62125 7.20563C7.66523 7.46607 7.70637 7.67502 7.76311 7.87513C7.81985 8.07525 7.87517 8.27978 7.96029 8.52551L8.82704 11.0122C8.87515 11.1491 8.88301 11.2977 8.84962 11.4392C8.81622 11.5807 8.74308 11.7087 8.63947 11.8071C8.53585 11.9054 8.40642 11.9696 8.26757 11.9916C8.12873 12.0136 7.98673 11.9923 7.85957 11.9304C7.77492 11.8898 7.69894 11.832 7.63609 11.7605C7.57324 11.689 7.52479 11.6052 7.49358 11.514L6.2197 7.88249L6.07785 7.61322L5.93599 7.87513H5.94308ZM5.99841 6.92648e-07C6.28822 -0.000254866 6.56914 0.103734 6.79332 0.294248C7.01749 0.484762 7.17105 0.750012 7.22781 1.0448C7.28457 1.33959 7.24103 1.64567 7.10461 1.91089C6.96819 2.17611 6.74733 2.38406 6.47966 2.4993C6.21199 2.61454 5.91408 2.62994 5.63669 2.54287C5.35931 2.45581 5.11961 2.27167 4.95844 2.02184C4.79727 1.772 4.7246 1.47193 4.75283 1.17275C4.78105 0.873566 4.90842 0.593794 5.11322 0.381103C5.22924 0.260159 5.36718 0.16422 5.5191 0.0988132C5.67102 0.0334064 5.83392 -0.000175874 5.99841 6.92648e-07Z" fill="#1B2236"/></svg>
-      </button>
-      <button class="vis-btn" id="btn-fullscreen" title="Fullscreen" aria-label="Fullscreen">
-        <span class="icon-fs-enter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.6651 10.3348H4.00006V11.6649H1.07526L0.968811 11.6591C0.818216 11.6423 0.675794 11.5916 0.542053 11.4579C0.408354 11.3242 0.357612 11.1817 0.340881 11.0311L0.335022 10.9003V7.99988H1.6651V10.3348ZM11.6651 7.99988V10.9003L11.6592 11.0311C11.6425 11.1817 11.5917 11.3242 11.4581 11.4579C11.3244 11.5916 11.1819 11.6423 11.0313 11.6591L10.9249 11.6649H8.00006V10.3348H10.335V7.99988H11.6651ZM4.00006 1.66492H1.6651V3.99988H0.335022V1.10046L0.340881 0.968628C0.357634 0.818097 0.408364 0.675559 0.542053 0.54187C0.675766 0.4082 0.818251 0.357427 0.968811 0.340698L1.07526 0.334839H4.00006V1.66492ZM11.0313 0.340698C11.1819 0.357434 11.3244 0.408184 11.4581 0.54187C11.5918 0.675562 11.6425 0.818094 11.6592 0.968628L11.6651 1.10046V3.99988H10.335V1.66492H8.00006V0.334839H10.9249L11.0313 0.340698Z" fill="#1B2236"/></svg>
-        </span>
-        <span class="icon-fs-exit">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.96875 4.65918C7.81816 4.64244 7.67573 4.59174 7.54199 4.45801C7.40826 4.32427 7.35756 4.18184 7.34082 4.03125L7.33496 3.90039L7.33496 1H8.66504L8.66504 3.33496H11L11 4.66504H8.0752L7.96875 4.65918ZM1 3.33496H3.33496V1L4.66504 1V3.90039L4.65918 4.03125C4.64244 4.18184 4.59174 4.32427 4.45801 4.45801C4.32427 4.59174 4.18184 4.64244 4.03125 4.65918L3.9248 4.66504H1L1 3.33496ZM7.33496 11V8.09961L7.34082 7.96875C7.35756 7.81816 7.40826 7.67573 7.54199 7.54199C7.67573 7.40826 7.81816 7.35756 7.96875 7.34082L8.0752 7.33496H11V8.66504H8.66504V11H7.33496ZM3.33496 8.66504L1 8.66504V7.33496L3.9248 7.33496L4.03125 7.34082C4.18184 7.35756 4.32427 7.40826 4.45801 7.54199C4.59174 7.67573 4.64244 7.81816 4.65918 7.96875L4.66504 8.09961V11L3.33496 11V8.66504Z" fill="#1B2236"/></svg>
-        </span>
-      </button>
     </div><!-- /media -->
 
-    <div id="bottombar">
-        <!-- Colour section -->
-        <div class="section exterior-only" id="selector-colour">
-          <span id="label-colour" style="display:none"></span>
-          <div class="swatches-wrap">
-            <div class="swatch-fade left"  id="fade-left-colour"><button class="swatch-arrow" id="scroll-left-colour"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></button></div>
-            <div class="swatches" id="grid-colour"></div>
-            <div class="swatch-fade right" id="fade-right-colour"><button class="swatch-arrow" id="scroll-right-colour"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></button></div>
-          </div>
-        </div>
+    <!-- RIGHT SIDEBAR -->
+    <div id="sidebar">
+      <button id="handle-sidebar" aria-label="Toggle sidebar"></button>
 
-        <!-- Wheel section -->
-        <div class="section exterior-only" id="selector-wheel">
-          <span id="label-wheel" style="display:none"></span>
-          <div class="swatches-wrap">
-            <div class="swatch-fade left"  id="fade-left-wheel"><button class="swatch-arrow" id="scroll-left-wheel"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></button></div>
-            <div class="swatches" id="grid-wheel"></div>
-            <div class="swatch-fade right" id="fade-right-wheel"><button class="swatch-arrow" id="scroll-right-wheel"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></button></div>
-          </div>
-        </div>
+      <div id="accordion-group">
 
-        <!-- Material section (interior mode only) -->
-        <div class="section interior-only" id="selector-material">
-          <span id="label-material" style="display:none"></span>
-          <div class="swatches-wrap">
-            <div class="swatch-fade left"  id="fade-left-material"><button class="swatch-arrow" id="scroll-left-material"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></button></div>
-            <div class="swatches" id="grid-material"></div>
-            <div class="swatch-fade right" id="fade-right-material"><button class="swatch-arrow" id="scroll-right-material"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></button></div>
-          </div>
-        </div>
-
-        <!-- Model selector -->
-        <div id="select-model" class="select-model-row">
-          <div class="select-wrap" id="wrapper-select-model-lg">
-            <span class="select-label" id="label-select-model-lg">ID.7</span>
-            <select class="select-native" id="select-model-lg" aria-label="Select model">
-              <optgroup label="ID.7">
-                <option value="id7" selected>Pro Match Plus</option>
-              </optgroup>
-              <optgroup label="ID.Polo">
-                <option value="idpolo">Trend</option>
-              </optgroup>
-              <optgroup label="Grand California">
-                <option value="grandcalifornia">600</option>
-              </optgroup>
-            </select>
-            <div class="select-chevron-icon">
-              <svg fill="none" preserveAspectRatio="none" viewBox="0 0 21.95 11.427">
-                <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="#293043"/>
-              </svg>
-            </div>
-          </div>
-          <button class="btn-info" aria-label="Model information">
-            <svg class="icon-info" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1C18.374 1 23 5.626 23 12C23 18.374 18.374 23 12 23C5.626 23 1 18.374 1 12C1 5.626 5.626 1 12 1ZM12 2.33008C6.397 2.33008 2.33008 6.397 2.33008 12C2.33008 17.603 6.397 21.6699 12 21.6699C17.603 21.6699 21.6699 17.603 21.6699 12C21.6699 6.397 17.603 2.33008 12 2.33008ZM12.7832 15.6562L15.3857 15.6553V16.9854L8.41895 16.9863V15.6562H11.4531V11.3369H9.41406V10.0068H12.7832V15.6562ZM12 6.49316C12.4419 6.49316 12.7743 6.78789 12.7744 7.30371C12.7744 7.81971 12.442 8.11523 12 8.11523C11.558 8.11523 11.2256 7.81971 11.2256 7.30371C11.2257 6.78789 11.5581 6.49316 12 6.49316Z" fill="#293043"/></svg>
+      <!-- Colour section -->
+      <div class="accordion exterior-only collapsed" id="accordion-colour">
+        <div class="header">
+          <span class="label-header">Colours</span>
+          <button class="btn-header" aria-label="Toggle colour panel">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 21.95 11.427">
+              <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="#293043"/>
+            </svg>
           </button>
         </div>
+        <div class="wrapper-grid">
+          <div class="body">
+            <div class="grid" id="grid-colour"></div>
+            <p class="label-swatch" id="label-colour">Grenadilla Black Metallic</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wheels section -->
+      <div class="accordion exterior-only collapsed" id="accordion-wheel">
+        <div class="header">
+          <span class="label-header">Wheels</span>
+          <button class="btn-header" aria-label="Toggle wheels panel">
+            <svg width="12" height="7" viewBox="0 0 21.95 11.427" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="#293043"/>
+            </svg>
+          </button>
+        </div>
+        <div class="wrapper-grid">
+          <div class="body">
+            <div class="grid" id="grid-wheel"></div>
+            <p class="label-swatch" id="label-wheel">Alloy wheels 21" 'Mataro', Black</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Materials section (interior mode only) -->
+      <div class="accordion interior-only" id="accordion-material">
+        <div class="header">
+          <span class="label-header">Materials</span>
+          <button class="btn-header" aria-label="Toggle materials panel">
+            <svg width="12" height="7" viewBox="0 0 21.95 11.427" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="#293043"/>
+            </svg>
+          </button>
+        </div>
+        <div class="wrapper-grid">
+          <div class="body">
+            <div class="grid" id="grid-material"></div>
+            <p class="label-swatch" id="label-material">Material 1</p>
+          </div>
+        </div>
+      </div>
+
+      </div><!-- /accordion-group -->
+
+      <!-- Model select -->
+      <div class="select-model-row">
+        <div class="select-wrap" id="wrapper-select-model-lg">
+          <span class="select-label" id="label-select-model-lg">ID. Polo</span>
+          <select class="select-native" id="select-model-lg" aria-label="Select model">
+            <optgroup label="ID.7">
+              <option value="id7">Pro Match Plus</option>
+            </optgroup>
+            <optgroup label="ID.Polo">
+              <option value="idpolo" selected>ID. Polo</option>
+            </optgroup>
+            <optgroup label="Grand California">
+              <option value="grandcalifornia">Grand California</option>
+            </optgroup>
+          </select>
+          <div class="select-chevron-icon">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 21.95 11.427">
+              <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="#293043"/>
+            </svg>
+          </div>
+        </div>
+        <button class="btn-info" aria-label="Model information">
+          <span class="icon-info"></span>
+        </button>
+      </div>
+
+    </div><!-- /sidebar -->
+
+    <!-- MOBILE SIDEBAR -->
+    <div id="sidebar-sm">
+      <!-- Colours section -->
+      <div class="mob-sec exterior-only">
+        <div class="swatch-scroll-wrap">
+          <div class="swatch-fade left" id="fade-left-colour"><button class="swatch-arrow" id="scroll-left-colour"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></button></div>
+          <div class="swatch-row-sm" id="grid-colour-sm"></div>
+          <div class="swatch-fade right" id="fade-right-colour"><button class="swatch-arrow" id="scroll-right-colour"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></button></div>
+        </div>
+        <div class="mob-sec-header">
+          <span class="mob-sec-title">Colours</span>
+          <span class="mob-sec-sep"> — </span>
+          <span class="mob-sec-value" id="label-colour-sm">Grenadilla Black Metallic</span>
+        </div>
+      </div>
+      <!-- Wheels section -->
+      <div class="mob-sec exterior-only">
+        <div class="swatch-scroll-wrap">
+          <div class="swatch-fade left" id="fade-left-wheel"><button class="swatch-arrow" id="scroll-left-wheel"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></button></div>
+          <div class="swatch-row-sm" id="grid-wheel-sm"></div>
+          <div class="swatch-fade right" id="fade-right-wheel"><button class="swatch-arrow" id="scroll-right-wheel"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></button></div>
+        </div>
+        <div class="mob-sec-header">
+          <span class="mob-sec-title">Wheels</span>
+          <span class="mob-sec-sep"> — </span>
+          <span class="mob-sec-value" id="label-wheel-sm">Alloy wheels 21&quot; &lsquo;Mataro&rsquo;, Black</span>
+        </div>
+      </div>
+      <!-- Materials section (interior only) -->
+      <div class="mob-sec interior-only">
+        <div class="swatch-scroll-wrap">
+          <div class="swatch-fade left" id="fade-left-material-sm"><button class="swatch-arrow" id="scroll-left-material-sm"><svg viewBox="0 0 10.5024 21" preserveAspectRatio="none"><use href="#icon-chevron-left"/></svg></button></div>
+          <div class="swatch-row-sm" id="grid-material-sm"></div>
+          <div class="swatch-fade right" id="fade-right-material-sm"><button class="swatch-arrow" id="scroll-right-material-sm"><svg viewBox="0 0 10.5 21" preserveAspectRatio="none"><use href="#icon-chevron-right"/></svg></button></div>
+        </div>
+        <div class="mob-sec-header">
+          <span class="mob-sec-title">Materials</span>
+          <span class="mob-sec-sep"> — </span>
+          <span class="mob-sec-value" id="label-material-sm">Material 1</span>
+        </div>
+      </div>
+      <!-- Model select -->
+      <div class="select-model-row">
+        <div class="select-wrap" id="wrapper-select-model-sm">
+          <span class="select-label" id="label-select-model-sm">ID. Polo</span>
+          <select class="select-native" id="select-model-sm" aria-label="Select model">
+            <optgroup label="ID.7">
+              <option value="id7">Pro Match Plus</option>
+            </optgroup>
+            <optgroup label="ID.Polo">
+              <option value="idpolo" selected>ID. Polo</option>
+            </optgroup>
+            <optgroup label="Grand California">
+              <option value="grandcalifornia">Grand California</option>
+            </optgroup>
+          </select>
+          <div class="select-chevron-icon">
+            <svg fill="none" preserveAspectRatio="none" viewBox="0 0 21.95 11.427">
+              <path d="M10.975 11.427C10.525 11.427 10.102 11.249 9.786 10.927L0 0.93L0.95 0L10.735 9.996C10.865 10.127 11.084 10.128 11.215 9.995L20.999 0L21.95 0.93L12.165 10.926C11.848 11.25 11.425 11.427 10.975 11.427Z" fill="#293043"/>
+            </svg>
+          </div>
+        </div>
+        <button class="btn-info" aria-label="Model information">
+          <span class="icon-info"></span>
+        </button>
+      </div>
     </div><!-- /bottombar -->
 
     </div><!-- /visualizer -->
@@ -1459,135 +1438,168 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
 
 // ── Data ──
 const POLO_THUMBS = [
-  { name: "Python Yellow Metallic",   src: "assets/media/idpolo/exterior/variants/colour/a19b17031a2f0e9906f6e0d298bca3aa.webp" },
-  { name: "Grenadilla Black Metallic",src: "assets/media/idpolo/exterior/variants/colour/89bf9b76e164f0be53c684433023e491.webp" },
-  { name: "Celestial Blue Metallic",  src: "assets/media/idpolo/exterior/variants/colour/efa6862cfe551af8bc28402a48ae7289.webp" },
-  { name: "Candy White",              src: "assets/media/idpolo/exterior/variants/colour/3bfeaff0f064617a5f18b4f779d2fdcd.webp" },
-  { name: "Oyster Silver Metallic",   src: "assets/media/idpolo/exterior/variants/colour/5bc839aef1732be4f78ee9e27f5ee62b.webp" },
-  { name: "Magnetic Gray Metallic",   src: "assets/media/idpolo/exterior/variants/colour/e0923111f74c7455af80b4ed42d276b8.webp" }
+  { name: "Python Yellow Metallic",   src: "assets/media/idpolo/exterior/variants-colours/a19b17031a2f0e9906f6e0d298bca3aa.webp" },
+  { name: "Grenadilla Black Metallic",src: "assets/media/idpolo/exterior/variants-colours/89bf9b76e164f0be53c684433023e491.webp" },
+  { name: "Celestial Blue Metallic",  src: "assets/media/idpolo/exterior/variants-colours/efa6862cfe551af8bc28402a48ae7289.webp" },
+  { name: "Candy White",              src: "assets/media/idpolo/exterior/variants-colours/3bfeaff0f064617a5f18b4f779d2fdcd.webp" },
+  { name: "Oyster Silver Metallic",   src: "assets/media/idpolo/exterior/variants-colours/5bc839aef1732be4f78ee9e27f5ee62b.webp" },
+  { name: "Magnetic Gray Metallic",   src: "assets/media/idpolo/exterior/variants-colours/e0923111f74c7455af80b4ed42d276b8.webp" }
 ];
 
 const POLO_WHEEL_THUMBS = [
-  { name: "Edinburgh 17\"", src: "assets/media/idpolo/exterior/variants/wheels/wheel1.webp" },
-  { name: "Linz 18\"",      src: "assets/media/idpolo/exterior/variants/wheels/wheel2.webp" },
-  { name: "Stahlräder 17\"",src: "assets/media/idpolo/exterior/variants/wheels/wheel3.webp" }
+  { name: "Alloy 21\" 'Mataro', Black",                               src: "assets/media/id7/exterior/variants/wheels/MRAD55L.webp" },
+  { name: "Exterior Styling package Black",                           src: "assets/media/id7/exterior/variants/wheels/MRAD64Q.webp" },
+  { name: "Alloy 8 1/2J x 20, 9 1/2J x 20",                         src: "assets/media/id7/exterior/variants/wheels/MRAD64R.webp" },
+  { name: "Alloy 19\" 'Hudson', Black",                               src: "assets/media/id7/exterior/variants/wheels/MRADV95.webp" }
 ];
 
 const ID7_THUMBS = [
-  { name: "Grenadilla Black Metallic",        src: "assets/media/id7/exterior/variants/colour/0E0E.webp" },
-  { name: "Scale Silver Metallic",            src: "assets/media/id7/exterior/variants/colour/1T1T.webp" },
-  { name: "Glacier White Metallic",           src: "assets/media/id7/exterior/variants/colour/2Y2Y.webp" },
-  { name: "Stonewashed Blue Metallic",        src: "assets/media/id7/exterior/variants/colour/5Y5Y.webp" },
-  { name: "Aquamarine Blue Metallic",         src: "assets/media/id7/exterior/variants/colour/8H8H.webp" },
-  { name: "Moonstone Grey",                   src: "assets/media/id7/exterior/variants/colour/C2C2.webp" },
-  { name: "Kings Red Metallic",               src: "assets/media/id7/exterior/variants/colour/P8P8.webp" },
-  { name: "Scale Silver Metallic Black",      src: "assets/media/id7/exterior/variants/colour/1TA1.webp" },
-  { name: "Glacier White Metallic Black",     src: "assets/media/id7/exterior/variants/colour/2YA1.webp" },
-  { name: "Stonewashed Blue Metallic Black",  src: "assets/media/id7/exterior/variants/colour/5YA1.webp" },
-  { name: "Aquamarine Blue Metallic Black",   src: "assets/media/id7/exterior/variants/colour/8HA1.webp" },
-  { name: "Moonstone Grey Black",             src: "assets/media/id7/exterior/variants/colour/C2A1.webp" },
-  { name: "Kings Red Premium Metallic Black", src: "assets/media/id7/exterior/variants/colour/P8A1.webp" }
+  { name: "Grenadilla Black Metallic",       src: "assets/media/id7/exterior/variants/colours/0E0E.webp" },
+  { name: "Scale Silver Metallic",           src: "assets/media/id7/exterior/variants/colours/1T1T.webp" },
+  { name: "Scale Silver Metallic Black",     src: "assets/media/id7/exterior/variants/colours/1TA1.webp" },
+  { name: "Glacier White Metallic",          src: "assets/media/id7/exterior/variants/colours/2Y2Y.webp" },
+  { name: "Glacier White Metallic Black",    src: "assets/media/id7/exterior/variants/colours/2YA1.webp" },
+  { name: "Stonewashed Blue Metallic",       src: "assets/media/id7/exterior/variants/colours/5Y5Y.webp" },
+  { name: "Stonewashed Blue Metallic Black", src: "assets/media/id7/exterior/variants/colours/5YA1.webp" },
+  { name: "Aquamarine Blue Metallic",        src: "assets/media/id7/exterior/variants/colours/8H8H.webp" },
+  { name: "Aquamarine Blue Metallic Black",  src: "assets/media/id7/exterior/variants/colours/8HA1.webp" },
+  { name: "Moonstone Grey",                  src: "assets/media/id7/exterior/variants/colours/C2C2.webp" },
+  { name: "Moonstone Grey Black",            src: "assets/media/id7/exterior/variants/colours/C2A1.webp" },
+  { name: "Kings Red Metallic",              src: "assets/media/id7/exterior/variants/colours/P8P8.webp" },
+  { name: "Kings Red Premium Metallic Black",src: "assets/media/id7/exterior/variants/colours/P8A1.webp" }
 ];
 
-const ID7_WHEEL_THUMBS = [
-  { name: "Mataró 21\"",    src: "assets/media/id7/exterior/variants/wheels/wheel1.webp" },
-  { name: "Hudson 19\"",    src: "assets/media/id7/exterior/variants/wheels/wheel2.webp" },
-  { name: "Bergen 19\"",    src: "assets/media/id7/exterior/variants/wheels/wheel3.webp" },
-  { name: "Trondheim 20\"", src: "assets/media/id7/exterior/variants/wheels/wheel4.webp" },
-  { name: "Montreal 20\"",  src: "assets/media/id7/exterior/variants/wheels/wheel5.webp" }
-];
-
-const POLO_COLOUR_FOLDER = {
-  'Grenadilla Black Metallic': 'black',
-  'Celestial Blue Metallic':   'blue',
-  'Candy White':               'white',
-  'Oyster Silver Metallic':    'grey_light',
-  'Magnetic Gray Metallic':    'grey_dark',
-};
-
-function _id7F(color, wheel, ext = 'png') {
-  return Array.from({length: 36}, (_, i) =>
-    `assets/media/id7/exterior/rotation/${color}/${wheel}/frame-${String(i).padStart(2,'0')}.${ext}`);
-}
-// [colorIndex][wheelIndex] — matches ID7_THUMBS order: singles first, then black variants
-// null = no frames for that combo; falls back to wheel1 of same color in activeFrames()
-const ID7_ROT_FRAMES = [
-  // 0: black (wheel1 has .webp; wheel2-5 have .png)
-  [_id7F('black','wheel1','webp'), _id7F('black','wheel2'), _id7F('black','wheel3'), _id7F('black','wheel4'), _id7F('black','wheel5')],
-  // 1: silver (no wheel3)
-  [_id7F('silver','wheel1'), _id7F('silver','wheel2'), null, _id7F('silver','wheel4'), _id7F('silver','wheel5')],
-  // 2: white (no wheel3)
-  [_id7F('white','wheel1'), _id7F('white','wheel2'), null, _id7F('white','wheel4'), _id7F('white','wheel5')],
-  // 3: blue (no wheel3)
-  [_id7F('blue','wheel1'), _id7F('blue','wheel2'), null, _id7F('blue','wheel4'), _id7F('blue','wheel5')],
-  // 4: aquamarine_blue (no wheel3)
-  [_id7F('aquamarine_blue','wheel1'), _id7F('aquamarine_blue','wheel2'), null, _id7F('aquamarine_blue','wheel4'), _id7F('aquamarine_blue','wheel5')],
-  // 5: grey (no wheel3)
-  [_id7F('grey','wheel1'), _id7F('grey','wheel2'), null, _id7F('grey','wheel4'), _id7F('grey','wheel5')],
-  // 6: red (no wheel3)
-  [_id7F('red','wheel1'), _id7F('red','wheel2'), null, _id7F('red','wheel4'), _id7F('red','wheel5')],
-  // 7: silver_black
-  [_id7F('silver_black','wheel1'), _id7F('silver_black','wheel2'), _id7F('silver_black','wheel3'), _id7F('silver_black','wheel4'), _id7F('silver_black','wheel5')],
-  // 8: white_black
-  [_id7F('white_black','wheel1'), _id7F('white_black','wheel2'), _id7F('white_black','wheel3'), _id7F('white_black','wheel4'), _id7F('white_black','wheel5')],
-  // 9: blue_black
-  [_id7F('blue_black','wheel1'), _id7F('blue_black','wheel2'), _id7F('blue_black','wheel3'), _id7F('blue_black','wheel4'), _id7F('blue_black','wheel5')],
-  // 10: aquamarine_blue_black
-  [_id7F('aquamarine_blue_black','wheel1'), _id7F('aquamarine_blue_black','wheel2'), _id7F('aquamarine_blue_black','wheel3'), _id7F('aquamarine_blue_black','wheel4'), _id7F('aquamarine_blue_black','wheel5')],
-  // 11: grey_black
-  [_id7F('grey_black','wheel1'), _id7F('grey_black','wheel2'), _id7F('grey_black','wheel3'), _id7F('grey_black','wheel4'), _id7F('grey_black','wheel5')],
-  // 12: red_black
-  [_id7F('red_black','wheel1'), _id7F('red_black','wheel2'), _id7F('red_black','wheel3'), _id7F('red_black','wheel4'), _id7F('red_black','wheel5')],
-];
+const ID7_WHEEL_THUMBS = POLO_WHEEL_THUMBS; // same assets
 
 const GC_ROT_FRAMES = Array.from({length: 36}, (_, i) =>
-  `assets/media/grandcalifornia/exterior/rotation/wheel1/frame-${String(i).padStart(2,'0')}.png`);
-const GC_THUMBS = [
-  { name: "Candy White",                             src: "assets/media/grandcalifornia/exterior/variants/colour/0238632bf8d09ad0c1ee36e51a693756.webp" },
-  { name: "Indium Grey Metallic",                    src: "assets/media/grandcalifornia/exterior/variants/colour/2535a543a409bb4538eed1b6c528d596.webp" },
-  { name: "Oyster Silver",                           src: "assets/media/grandcalifornia/exterior/variants/colour/27a4db43d0498f9c7233b09f5718ad37.webp" },
-  { name: "Oyster Silver / Indium Grey",             src: "assets/media/grandcalifornia/exterior/variants/colour/69a8a67650856c97909cbc448fb8a79c.webp" },
-  { name: "Candy White / Deep Ocean Blue",           src: "assets/media/grandcalifornia/exterior/variants/colour/b4b067505e0d8f4df740c12b82fc6c96.webp" },
-  { name: "Candy White upper / Cherry Red lower",    src: "assets/media/grandcalifornia/exterior/variants/colour/c156c0441e94093100a20e38213d9e41.webp" },
-  { name: "Candy White upper / Mojave Beige lower",  src: "assets/media/grandcalifornia/exterior/variants/colour/ffa76f426a1657413d0acea47f8a738f.webp" },
+  `assets/media/grandcalifornia/exterior/rotation/frame-${String(i).padStart(2,'0')}.png`);
+const GC_THUMBS = POLO_THUMBS;
+const GC_WHEEL_THUMBS = POLO_WHEEL_THUMBS;
+
+const POLO_ROT_FRAMES = [
+  "assets/media/idpolo/exterior/rotation-yellow/frame-00.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-01.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-02.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-03.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-04.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-05.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-06.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-07.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-08.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-09.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-10.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-11.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-12.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-13.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-14.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-15.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-16.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-17.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-18.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-19.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-20.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-21.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-22.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-23.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-24.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-25.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-26.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-27.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-28.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-29.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-30.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-31.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-32.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-33.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-34.png",
+  "assets/media/idpolo/exterior/rotation-yellow/frame-35.png"
 ];
-const GC_WHEEL_THUMBS = [
-  { name: "Stahlräder 16\" Silver", src: "assets/media/grandcalifornia/exterior/variants/wheels/1b02967d81a2e7d8790e32d298a84225.webp" },
-  { name: "Stahlräder 16\" Silver", src: "assets/media/grandcalifornia/exterior/variants/wheels/1ef6848bf05f8c0ee33b1779fc42b2e5.webp" },
-  { name: "Stahlräder 16\" Black",  src: "assets/media/grandcalifornia/exterior/variants/wheels/8d0cff18773b5f7b1d2a124e5aca655a.webp" },
-  { name: "Lismore 17\" Silver",    src: "assets/media/grandcalifornia/exterior/variants/wheels/a68ec5a08a5636287d26c4b0835bb392.webp" },
-  { name: "Stahlräder 16\" Black",  src: "assets/media/grandcalifornia/exterior/variants/wheels/de2b4c50e138aa10276ea6c3d1b99327.webp" },
-  { name: "Lismore 17\" Black",     src: "assets/media/grandcalifornia/exterior/variants/wheels/ee0fa2f992503bfcd59d5517a75c3fd6.webp" },
+
+const POLO_ROT_FRAMES_BLACK = [
+  "assets/media/idpolo/exterior/rotation-black/frame-00.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-01.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-02.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-03.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-04.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-05.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-06.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-07.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-08.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-09.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-10.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-11.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-12.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-13.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-14.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-15.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-16.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-17.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-18.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-19.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-20.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-21.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-22.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-23.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-24.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-25.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-26.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-27.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-28.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-29.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-30.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-31.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-32.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-33.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-34.png",
+  "assets/media/idpolo/exterior/rotation-black/frame-35.png"
+];
+
+const POLO_ROT_FRAMES_BLUE = Array.from({length: 36}, (_, i) =>
+  `assets/media/idpolo/exterior/rotation-blue/frame-${String(i).padStart(2,'0')}.png`
+);
+
+const ID7_ROT_FRAMES = [
+  Array.from({length: 36}, (_, i) => `assets/media/id7/exterior/rotation/black/frame-${String(i).padStart(2,'0')}.webp`),
+  ["assets/media/id7/exterior/rotation/silver/frame-00.webp"],
+  ["assets/media/id7/exterior/rotation/silver_black/e099ab0b4019d32bfbdbdc7c02536767.webp"],
+  ["assets/media/id7/exterior/rotation/white/frame-00.webp"],
+  ["assets/media/id7/exterior/rotation/white_black/981510e80cf219e01c1e72409a09a278.webp"],
+  ["assets/media/id7/exterior/rotation/blue/a0cb0743f8035b9d1464bcce147fc6f3.webp"],
+  ["assets/media/id7/exterior/rotation/blue_black/4e60de9104bfa004039c91fdcc5eb3ea.webp"],
+  ["assets/media/id7/exterior/rotation/quamarine-blue/b7705f6369d7a7ca9cfebbfb5aa2ba60.webp"],
+  ["assets/media/id7/exterior/rotation/quamarine-blue_black/3a38b796523e92b034ba1aed8e18970c.webp"],
+  ["assets/media/id7/exterior/rotation/grey/5339c460cfb0f30bfb5d49672185fdea.webp"],
+  ["assets/media/id7/exterior/rotation/grey_black/d74a14ccc5ba29267f79f8e2a826bc01.webp"],
+  ["assets/media/id7/exterior/rotation/red/7eaf8aeba15b6d435bd1a72c98f8e574.webp"],
+  ["assets/media/id7/exterior/rotation/red_black/392b55262b76c7bdd60221cbd756ce93.webp"],
 ];
 
 // ── State ──
-let selectedModel    = 'id7';
+let selectedModel    = 'idpolo';
 let selectedColor    = 0;
 let selectedWheel    = 0;
 let selectedMaterial = 0;
 let rotFrame         = 0;
 let rotation         = 0;
 let isDragging       = false;
-let bbAnimating      = false;
 let startX           = 0;
 let startY           = 0;
 let pillDismissed    = false;
 let interiorMode     = false;
-let exteriorScrollY  = 0;
 
 // ── Elements ──
 const carImg     = document.getElementById('img-car');
-const media      = document.getElementById('media');
+const media = document.getElementById('media');
 const rotatePill = document.getElementById('hint-rotate');
+let _unconstrainTimer = null;
 const colorName  = document.getElementById('label-colour');
 const wheelName  = document.getElementById('label-wheel');
 const colorGrid  = document.getElementById('grid-colour');
 const wheelGrid  = document.getElementById('grid-wheel');
-// Bottom bar is universal — no separate mobile grids
-const mColorGrid = colorGrid;
-const mWheelGrid = wheelGrid;
-const mColorName = colorName;
-const mWheelName = wheelName;
+const mColorGrid = document.getElementById('grid-colour-sm');
+const mWheelGrid = document.getElementById('grid-wheel-sm');
+const mColorName = document.getElementById('label-colour-sm');
+const mWheelName = document.getElementById('label-wheel-sm');
 
 // ── Interior panorama ──
 const pano = (() => {
@@ -1662,8 +1674,102 @@ const pano = (() => {
   };
 })();
 
-// Redraw canvas whenever #media resizes (e.g. bottombar collapse animation)
+// ── Accordion constraint ──
+// Sidebar height is always set explicitly so grid's 1fr row has a definite parent.
+// When all sections fit naturally: sidebar = natural height (may be shorter than media).
+// When sections overflow: sidebar = media height; sections get smart-allocated heights
+// (greedy — smaller sections receive their full natural height first, remainder to larger).
+// Redraw canvas whenever #media resizes (e.g. sidebar resize animation)
 new ResizeObserver(() => { if (interiorMode) pano.draw(); }).observe(media);
+
+function updateAccordionConstraint() {
+  if (_unconstrainTimer) { clearTimeout(_unconstrainTimer); _unconstrainTimer = null; }
+
+  const sidebar  = document.getElementById('sidebar');
+  const cont     = document.getElementById('accordion-group');
+  const vis      = document.getElementById('media');
+  const SIDEBAR_OH = 106; // padding(32) + gap(24) + select(50)
+
+  const allSects  = [...cont.querySelectorAll('.accordion')]
+    .filter(s => getComputedStyle(s).display !== 'none');
+  const openSects = allSects.filter(s => !s.classList.contains('collapsed'));
+
+  if (!allSects.length) { sidebar.style.height = SIDEBAR_OH + 'px'; return; }
+
+  // scrollHeight measures natural content height regardless of constrained clipping
+  const measuredH = allSects.map(s => {
+    const headerH = s.querySelector('.header')?.offsetHeight ?? 24;
+    if (s.classList.contains('collapsed')) return headerH + 8;
+    const gridH = s.querySelector('.grid')?.scrollHeight ?? 0;
+    const nameH = s.querySelector('.label-swatch')?.offsetHeight ?? 0;
+    return headerH + 8 + gridH + 10 + nameH;
+  });
+
+  const sectionGap = 24 * (allSects.length - 1);
+  const totalNat   = measuredH.reduce((a, b) => a + b, 0);
+  const visH       = vis.clientHeight;
+  const sidebarNat = totalNat + sectionGap + SIDEBAR_OH;
+
+  sidebar.style.height = Math.min(sidebarNat, visH) + 'px';
+
+  // Set collapsed sections to explicit px so flex-basis transitions animate
+  const setCollapsedFlex = () => {
+    allSects.filter(s => s.classList.contains('collapsed')).forEach(s => {
+      const headerH = s.querySelector('.header')?.offsetHeight ?? 24;
+      s.style.flex = `0 0 ${headerH + 8}px`;
+    });
+  };
+
+  if (!openSects.length || sidebarNat <= visH) {
+    if (cont.classList.contains('constrained') && openSects.length) {
+      // Animate open sections to their natural height before dropping constrained mode
+      openSects.forEach(s => {
+        const idx = allSects.indexOf(s);
+        s.style.flex = `0 0 ${measuredH[idx]}px`;
+      });
+      setCollapsedFlex();
+      _unconstrainTimer = setTimeout(() => {
+        allSects.forEach(s => s.style.flex = '');
+        cont.classList.remove('constrained');
+        _unconstrainTimer = null;
+      }, 650);
+    } else {
+      allSects.forEach(s => s.style.flex = '');
+      cont.classList.remove('constrained');
+    }
+    return;
+  }
+
+  // Constrained: distribute remaining space among open sections
+  cont.classList.add('constrained');
+
+  const sidebarH  = Math.min(sidebarNat, visH);
+  const closedH   = allSects.reduce((acc, s, i) =>
+    s.classList.contains('collapsed') ? acc + measuredH[i] : acc, 0);
+  const available = sidebarH - SIDEBAR_OH - sectionGap - closedH;
+
+  const openData = openSects.map(s => ({ s, h: measuredH[allSects.indexOf(s)] }));
+
+  if (openData.length === 1) {
+    openData[0].s.style.flex = `0 0 ${available}px`;
+    setCollapsedFlex();
+    return;
+  }
+
+  // Greedy: smaller open sections get their full natural height first
+  const order  = [...openData].sort((a, b) => a.h - b.h);
+  const allocs = new Map();
+  let rem      = available;
+
+  order.forEach(({ s, h }, rank) => {
+    const share = rem / (openData.length - rank);
+    allocs.set(s, Math.min(h, share));
+    rem -= allocs.get(s);
+  });
+
+  openData.forEach(({ s }) => { s.style.flex = `0 0 ${allocs.get(s)}px`; });
+  setCollapsedFlex();
+}
 
 // ── Model helpers ──
 function currentThumbs() {
@@ -1678,56 +1784,17 @@ function currentWheels() {
 }
 
 function activeFrames() {
-  if (selectedModel === 'id7') {
-    const colorRow = ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
-    return colorRow[selectedWheel] ?? colorRow[0];
-  }
+  if (selectedModel === 'id7') return ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
   if (selectedModel === 'grandcalifornia') return GC_ROT_FRAMES;
-  const colour = POLO_COLOUR_FOLDER[POLO_THUMBS[selectedColor]?.name] ?? 'yellow';
-  const wheel  = `wheel${selectedWheel + 1}`;
-  return Array.from({length: 36}, (_, i) =>
-    `assets/media/idpolo/exterior/rotation/${colour}/${wheel}/frame-${String(i).padStart(2,'0')}.png`
-  );
+  if (POLO_THUMBS[selectedColor]?.name === 'Grenadilla Black Metallic') return POLO_ROT_FRAMES_BLACK;
+  if (POLO_THUMBS[selectedColor]?.name === 'Celestial Blue Metallic')  return POLO_ROT_FRAMES_BLUE;
+  return POLO_ROT_FRAMES;
 }
 function frameCount() { return activeFrames().length; }
 
-// ── Frame preloading — hold decoded Image refs so the browser can't evict them ──
-const _fCache = new Map();
-function _preloadCombo(frames, key) {
-  if (!frames?.length || _fCache.has(key)) return;
-  _fCache.set(key, frames.map(src => {
-    const img = new Image();
-    img.src = src;
-    img.decode().catch(() => {});
-    return img;
-  }));
-}
-function preloadActiveFrames() {
-  _preloadCombo(activeFrames(), `${selectedModel}|${selectedColor}|${selectedWheel}`);
-}
-function preloadAllFrames() {
-  setTimeout(() => {
-    POLO_THUMBS.forEach((t, ci) => {
-      const colour = POLO_COLOUR_FOLDER[t.name] ?? 'yellow';
-      [0,1,2].forEach(wi => {
-        _preloadCombo(
-          Array.from({length: 36}, (_, i) =>
-            `assets/media/idpolo/exterior/rotation/${colour}/wheel${wi+1}/frame-${String(i).padStart(2,'0')}.png`),
-          `idpolo|${ci}|${wi}`
-        );
-      });
-    });
-    ID7_ROT_FRAMES.forEach((row, ci) => {
-      row.forEach((frames, wi) => { if (frames) _preloadCombo(frames, `id7|${ci}|${wi}`); });
-    });
-    _preloadCombo(GC_ROT_FRAMES, `grandcalifornia|0|0`);
-  }, 1000);
-}
-
 function updateCarImage() {
-  const frames = activeFrames();
-  const src = frames[rotFrame % frames.length];
-  if (src && !carImg.src.endsWith(src)) carImg.src = src;
+  const src = activeFrames()[rotFrame];
+  if (!carImg.src.endsWith(src)) carImg.src = src;
 }
 
 // ── Drag to rotate / pan ──
@@ -1735,18 +1802,13 @@ function startDrag(clientX, clientY) {
   isDragging = true;
   startX = clientX;
   startY = clientY;
-  media.classList.add('is-rotating');
 }
 function moveDrag(clientX, clientY) {
   if (!isDragging) return;
-  const rawDx = clientX - startX;
-  const rawDy = clientY - startY;
+  const dx = clientX - startX;
+  const dy = clientY - startY;
   startX = clientX;
   startY = clientY;
-  // In fullscreen the visualizer is rotated 90° CW, so screen Y maps to visual X
-  const inFS = document.body.classList.contains('in-fullscreen');
-  const dx = inFS ? rawDy : rawDx;
-  const dy = inFS ? rawDx : rawDy;
   if (interiorMode) {
     const w = pano.canvas.offsetWidth  || 600;
     const h = pano.canvas.offsetHeight || 400;
@@ -1767,7 +1829,6 @@ function moveDrag(clientX, clientY) {
 function endDrag() {
   if (!isDragging) return;
   isDragging = false;
-  media.classList.remove('is-rotating');
 }
 
 // ── Rotate pill buttons ──
@@ -1787,26 +1848,19 @@ document.getElementById('rot-right').addEventListener('click', () => {
 });
 
 media.addEventListener('mousedown',  e => {
-  if (e.target.closest('button, select, #bottombar')) return;
+  if (e.target.closest('button')) return;
   e.preventDefault();
   startDrag(e.clientX, e.clientY);
 });
 media.addEventListener('touchstart', e => {
-  if (e.target.closest('button, select, #bottombar')) return;
+  if (e.target.closest('button')) return;
+  media.classList.add('touch-dragging');
   startDrag(e.touches[0].clientX, e.touches[0].clientY);
 }, { passive: true });
 window.addEventListener('mousemove',  e => moveDrag(e.clientX, e.clientY));
-let _tmX = 0, _tmY = 0, _tmPending = false;
-window.addEventListener('touchmove', e => {
-  _tmX = e.touches[0].clientX;
-  _tmY = e.touches[0].clientY;
-  if (!_tmPending) {
-    _tmPending = true;
-    requestAnimationFrame(() => { moveDrag(_tmX, _tmY); _tmPending = false; });
-  }
-}, { passive: true });
+window.addEventListener('touchmove',  e => moveDrag(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
 window.addEventListener('mouseup',   endDrag);
-window.addEventListener('touchend',  endDrag);
+window.addEventListener('touchend',  () => { media.classList.remove('touch-dragging'); endDrag(); });
 
 
 // ── Build swatch button ──
@@ -1816,7 +1870,10 @@ function makeSwatchBtn(src, alt, idx, isSelected, onClick) {
   btn.innerHTML = `
     <div class="stroke-selected"></div>
     <div class="stroke">
-      <img src="${src}" alt="${alt}" loading="eager" decoding="sync">
+      <div class="img-swatch">
+        <img class="img-swatch" src="${src}" alt="${alt}" loading="eager" decoding="sync">
+      </div>
+      <div class="stroke-inset"></div>
     </div>
     <div class="checkmark">
       <div class="badge">
@@ -1826,7 +1883,6 @@ function makeSwatchBtn(src, alt, idx, isSelected, onClick) {
         <svg viewBox="0 0 10.234 7.24"><path d="M3.631 7.24C3.236 7.24 2.87 7.082 2.599 6.796L2.598 6.795L0 4.028L0.961 3.097L3.577 5.872C3.577 5.872 3.608 5.904 3.63 5.902C3.652 5.901 3.669 5.886 3.669 5.886L9.234 0L10.234 0.908L4.603 6.854C4.339 7.103 3.994 7.24 3.631 7.24Z" fill="white"/></svg>
       </div>
     </div>`;
-  btn.addEventListener('mousedown', e => e.preventDefault());
   btn.addEventListener('click', () => onClick(idx));
   return btn;
 }
@@ -1845,53 +1901,21 @@ function revealSwatches(grid, baseDelay = 0) {
   });
 }
 
-// ── Scroll swatch into view (edge-snap for first/last 6 when overflowing) ──
-function scrollSwatchIntoView(grid, idx) {
-  const scrollMax = grid.scrollWidth - grid.clientWidth;
-  if (scrollMax <= 0) return; // no overflow — nothing to do
-
-  const total = grid.querySelectorAll('.btn-swatch').length;
-  if (!total) return;
-
-  const edge = Math.min(6, Math.floor(total / 2));
-
-  if (idx < edge) {
-    grid.scrollTo({ left: 0, behavior: 'smooth' });
-    return;
-  }
-  if (idx >= total - edge) {
-    grid.scrollTo({ left: scrollMax, behavior: 'smooth' });
-    return;
-  }
-
-  // Middle swatches: scroll just enough to clear the 56px fade zone
-  const fadeW  = 56;
-  const gridX  = grid.getBoundingClientRect().left;
-  const btn    = grid.querySelectorAll('.btn-swatch')[idx];
-  const r      = btn.getBoundingClientRect();
-  const bL     = r.left  - gridX + grid.scrollLeft;
-  const bR     = r.right - gridX + grid.scrollLeft;
-  const viewL  = grid.scrollLeft + fadeW;
-  const viewR  = grid.scrollLeft + grid.clientWidth - fadeW;
-  if (bL < viewL) {
-    grid.scrollTo({ left: bL - fadeW, behavior: 'smooth' });
-  } else if (bR > viewR) {
-    grid.scrollTo({ left: bR - grid.clientWidth + fadeW, behavior: 'smooth' });
-  }
-}
-
 // ── Build colour grid ──
 function buildColorGrid(revealDelay = 0) {
   colorGrid.innerHTML = '';
+  mColorGrid.innerHTML = '';
   currentThumbs().forEach((t, i) => {
     colorGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedColor, selectColor));
+    mColorGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedColor, selectColor));
   });
   revealSwatches(colorGrid, revealDelay);
+  revealSwatches(mColorGrid, revealDelay);
+  requestAnimationFrame(updateAccordionConstraint);
 }
 
 function selectColor(idx) {
   selectedColor = idx;
-  refreshWheelAvailability();
   [colorGrid, mColorGrid].forEach(g =>
     g.querySelectorAll('.btn-swatch').forEach((b, i) =>
       b.className = 'btn-swatch' + (i === idx ? ' selected' : '')));
@@ -1900,30 +1924,19 @@ function selectColor(idx) {
   carImg.className = 'draggable';
   if (!pillDismissed) rotatePill.classList.remove('hidden');
   updateCarImage();
-  scrollSwatchIntoView(colorGrid, idx);
-  preloadActiveFrames();
 }
 
 // ── Build wheel grid ──
 function buildWheelGrid(revealDelay = 0) {
   wheelGrid.innerHTML = '';
+  mWheelGrid.innerHTML = '';
   currentWheels().forEach((t, i) => {
     wheelGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedWheel, selectWheel));
+    mWheelGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedWheel, selectWheel));
   });
-  refreshWheelAvailability();
   revealSwatches(wheelGrid, revealDelay);
-}
-
-function refreshWheelAvailability() {
-  if (selectedModel !== 'id7') return;
-  const colorRow = ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
-  wheelGrid.querySelectorAll('.btn-swatch').forEach((btn, i) => {
-    btn.style.display = colorRow[i] ? '' : 'none';
-  });
-  if (!colorRow[selectedWheel]) {
-    const fallback = colorRow.findIndex(f => f !== null);
-    if (fallback !== -1) selectWheel(fallback);
-  }
+  revealSwatches(mWheelGrid, revealDelay);
+  requestAnimationFrame(updateAccordionConstraint);
 }
 
 function selectWheel(idx) {
@@ -1933,252 +1946,185 @@ function selectWheel(idx) {
       b.className = 'btn-swatch' + (i === idx ? ' selected' : '')));
   wheelName.textContent = currentWheels()[idx].name;
   mWheelName.textContent = currentWheels()[idx].name;
-  updateCarImage();
-  scrollSwatchIntoView(wheelGrid, idx);
-  preloadActiveFrames();
 }
 
 // ── Materials (interior) ──
-const ID7_MATERIAL_IMGS = [
-  { name: 'Material 1', src: 'assets/media/id7/interior/variants/material-1.webp' },
-  { name: 'Material 2', src: 'assets/media/id7/interior/variants/material-2.webp' },
-  { name: 'Material 3', src: 'assets/media/id7/interior/variants/material-3.webp' }
+const MATERIAL_IMGS = [
+  { name: 'Material 1', src: 'assets/media/id7/interior/variants-materials/material-1.webp' },
+  { name: 'Material 2', src: 'assets/media/id7/interior/variants-materials/material-2.webp' },
+  { name: 'Material 3', src: 'assets/media/id7/interior/variants-materials/material-3.webp' }
 ];
-const POLO_MATERIAL_IMGS = [
-  { name: 'Material 1', src: 'assets/media/idpolo/interior/variants/material-1.webp' },
-  { name: 'Material 2', src: 'assets/media/idpolo/interior/variants/material-2.webp' },
-  { name: 'Material 3', src: 'assets/media/idpolo/interior/variants/material-3.webp' }
-];
-function currentMaterials() {
-  return selectedModel === 'id7' ? ID7_MATERIAL_IMGS : POLO_MATERIAL_IMGS;
-}
 
 function buildMaterialGrid() {
   const grid = document.getElementById('grid-material');
+  const gridSm = document.getElementById('grid-material-sm');
   const nameEl = document.getElementById('label-material');
-  const mats = currentMaterials();
+  const nameElSm = document.getElementById('label-material-sm');
   grid.innerHTML = '';
-  mats.forEach((t, i) => {
+  if (gridSm) gridSm.innerHTML = '';
+  MATERIAL_IMGS.forEach((t, i) => {
     grid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedMaterial, selectMaterial));
+    if (gridSm) gridSm.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedMaterial, selectMaterial));
   });
-  if (nameEl) nameEl.textContent = mats[selectedMaterial]?.name ?? '';
+  if (nameEl) nameEl.textContent = MATERIAL_IMGS[selectedMaterial].name;
+  if (nameElSm) nameElSm.textContent = MATERIAL_IMGS[selectedMaterial].name;
   revealSwatches(grid);
+  if (gridSm) revealSwatches(gridSm);
+  requestAnimationFrame(updateAccordionConstraint);
 }
 
 function selectMaterial(idx) {
   selectedMaterial = idx;
-  document.getElementById('grid-material').querySelectorAll('.btn-swatch').forEach((b, i) =>
-    b.className = 'btn-swatch' + (i === idx ? ' selected' : ''));
-  document.getElementById('label-material').textContent = currentMaterials()[idx]?.name ?? '';
+  [document.getElementById('grid-material'), document.getElementById('grid-material-sm')].forEach(g => {
+    if (g) g.querySelectorAll('.btn-swatch').forEach((b, i) =>
+      b.className = 'btn-swatch' + (i === idx ? ' selected' : ''));
+  });
+  const _matBody = document.querySelector('#accordion-material .body');
+  const _sbEl = document.getElementById('sidebar');
+  const bH0 = _matBody.offsetHeight, sH0 = _sbEl.offsetHeight;
+  document.getElementById('label-material').textContent = MATERIAL_IMGS[idx].name;
+  const nameElSm = document.getElementById('label-material-sm');
+  if (nameElSm) nameElSm.textContent = MATERIAL_IMGS[idx].name;
+  const bH1 = _matBody.offsetHeight, sH1 = _sbEl.offsetHeight;
+  if (bH1 !== bH0) {
+    const cfg = { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'none' };
+    _matBody.animate([{ height: bH0 + 'px' }, { height: bH1 + 'px' }], cfg);
+    _sbEl.animate([{ height: sH0 + 'px' }, { height: sH1 + 'px' }], cfg);
+  }
 }
 
 // ── Model switching ──
 function selectModel(modelId) {
-  animateBBWidth(() => {
-    selectedModel = modelId;
-    selectedColor = 0;
-    selectedWheel = 0;
-    buildColorGrid();
-    buildWheelGrid();
-    if (window.updateBBArrows) window.updateBBArrows();
-    colorName.textContent = currentThumbs()[0]?.name ?? '';
-    wheelName.textContent = currentWheels()[0]?.name ?? '';
-    carImg.className = 'draggable';
-    if (!pillDismissed) rotatePill.classList.remove('hidden');
-    updateCarImage();
-    document.getElementById('label-select-model-lg').textContent =
-      modelId === 'id7' ? 'ID.7' :
-      modelId === 'grandcalifornia' ? 'Grand California' :
-      'ID. Polo';
-    if (modelId === 'id7') media.classList.add('id7-mode');
-    else media.classList.remove('id7-mode');
-    preloadActiveFrames();
-  });
+  const sidebarEl = document.getElementById('sidebar');
+  const colorBody = document.querySelector('#accordion-colour .body');
+  const wheelBody = document.querySelector('#accordion-wheel .body');
+  const sbH0 = sidebarEl.offsetHeight;
+  const cbH0 = colorBody.offsetHeight;
+  const wbH0 = wheelBody.offsetHeight;
+
+  selectedModel = modelId;
+  selectedColor = 0;
+  selectedWheel = 0;
+  buildColorGrid();
+  buildWheelGrid();
+  colorName.textContent = currentThumbs()[0]?.name ?? '';
+  wheelName.textContent = currentWheels()[0]?.name ?? '';
+  mColorName.textContent = currentThumbs()[0]?.name ?? '';
+  mWheelName.textContent = currentWheels()[0]?.name ?? '';
+  carImg.className = 'draggable';
+  if (!pillDismissed) rotatePill.classList.remove('hidden');
+  rotFrame = 0;
+  rotation = 0;
+  updateCarImage();
+  const modelLabel = modelId === 'id7' ? 'ID.7' : modelId === 'grandcalifornia' ? 'Grand California' : 'ID. Polo';
+  document.getElementById('label-select-model-lg').textContent = modelLabel;
+  document.getElementById('label-select-model-sm').textContent = modelLabel;
+  if (modelId === 'id7') media.classList.add('id7-mode');
+  else media.classList.remove('id7-mode');
+
+  const sbH1 = sidebarEl.offsetHeight;
+  const cbH1 = colorBody.offsetHeight;
+  const wbH1 = wheelBody.offsetHeight;
+  const cfg = { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'none' };
+  if (cbH1 !== cbH0) colorBody.animate([{ height: cbH0 + 'px' }, { height: cbH1 + 'px' }], cfg);
+  if (wbH1 !== wbH0) wheelBody.animate([{ height: wbH0 + 'px' }, { height: wbH1 + 'px' }], cfg);
+  if (sbH1 !== sbH0) sidebarEl.animate([{ height: sbH0 + 'px' }, { height: sbH1 + 'px' }], cfg);
 }
 
 document.getElementById('select-model-lg').addEventListener('change', e => selectModel(e.target.value));
+document.getElementById('select-model-sm').addEventListener('change', e => {
+  document.getElementById('select-model-lg').value = e.target.value;
+  selectModel(e.target.value);
+});
 
-
-// ── Section width constraint (mirrors index-bottombar.html updateBBConstraint) ──
-function updateBBConstraint() {
-  if (window.innerWidth < 960 && !document.body.classList.contains('in-fullscreen')) return;
-  const panel    = document.getElementById('bottombar');
-  const mediaEl  = document.getElementById('media');
-  const allSects = [...panel.querySelectorAll('.section')]
-    .filter(s => getComputedStyle(s).display !== 'none');
-  if (!allSects.length) return;
-
-  allSects.forEach(s => s.style.width = '');
-
-  if (document.body.classList.contains('in-fullscreen')) return;
-
-  panel.style.maxWidth = 'none';
-  const natWidths = allSects.map(s => {
-    const cssMax = parseFloat(getComputedStyle(s).maxWidth);
-    return isNaN(cssMax) ? s.scrollWidth : Math.min(s.scrollWidth, cssMax);
+// ── Accordion toggles ──
+document.querySelectorAll('.header').forEach(header => {
+  header.addEventListener('click', () => {
+    const section = header.closest('.accordion');
+    section.classList.toggle('collapsed');
+    requestAnimationFrame(updateAccordionConstraint);
   });
-  const totalNat  = natWidths.reduce((a, b) => a + b, 0);
-  const panelNat  = panel.offsetWidth;
-  const overhead  = panelNat - totalNat;
-  panel.style.maxWidth = '';
+});
 
-  const maxW = parseFloat(getComputedStyle(panel).maxWidth) || mediaEl.clientWidth;
-
-  if (panelNat <= maxW) {
-    allSects.forEach((s, i) => { s.style.width = natWidths[i] + 'px'; });
-  } else {
-    const available  = maxW - overhead;
-    const equalShare = available / allSects.length;
-
-    // Wheel stays fixed until colour's allocation drops to wheel's natural width.
-    // Only then does wheel start to overflow alongside colour.
-    const wheelSect  = allSects.find(s => s.id === 'selector-wheel');
-    const colourSect = allSects.find(s => s.id === 'selector-colour');
-    let forceWheelFixed = false;
-    if (wheelSect && colourSect) {
-      const wheelNatW = natWidths[allSects.indexOf(wheelSect)];
-      const otherNat  = natWidths.reduce((a, w, i) =>
-        (allSects[i] !== wheelSect && allSects[i] !== colourSect) ? a + w : a, 0);
-      forceWheelFixed = (available - wheelNatW - otherNat) >= wheelNatW;
-    }
-
-    const sectData   = allSects.map((s, i) => ({
-      s, w: natWidths[i],
-      overflowable: natWidths[i] > equalShare && !(s === wheelSect && forceWheelFixed),
-    }));
-    const fixedSects = sectData.filter(d => !d.overflowable);
-    const flexSects  = sectData.filter(d =>  d.overflowable);
-    const fixedTotal = fixedSects.reduce((a, d) => a + d.w, 0);
-
-    fixedSects.forEach(d => { d.s.style.width = d.w + 'px'; });
-
-    const flexAvail = available - fixedTotal;
-    const order     = [...flexSects].sort((a, b) => a.w - b.w);
-    const allocs    = new Map();
-    let rem = flexAvail;
-    order.forEach(({ s, w }, rank) => {
-      const share = rem / (flexSects.length - rank);
-      allocs.set(s, Math.round(Math.min(w, share)));
-      rem -= allocs.get(s);
-    });
-    flexSects.forEach(({ s }) => { s.style.width = Math.max(0, allocs.get(s)) + 'px'; });
-  }
-}
-
-// ── Animated bottombar resize ──
-function animateBBWidth(fn) {
-  const panel     = document.getElementById('bottombar');
-  const colourSec = document.getElementById('selector-colour');
-  const wheelSec  = document.getElementById('selector-wheel');
-  const sm        = document.getElementById('select-model');
-  const isMobile  = window.innerWidth < 960 && !document.body.classList.contains('in-fullscreen');
-
-  const pW0  = panel.offsetWidth;
-  const pH0  = isMobile ? panel.offsetHeight : 0;
-  const cW0  = colourSec.offsetWidth;
-  const wW0  = wheelSec.offsetWidth;
-  const smY0 = sm.getBoundingClientRect().top;
-
-  const visibleBefore = isMobile
-    ? new Set([...panel.querySelectorAll('.section')].filter(s => getComputedStyle(s).display !== 'none'))
-    : new Set();
-
-  fn();
-  updateBBConstraint();
-
-  const pW1  = panel.offsetWidth;
-  const pH1  = isMobile ? panel.offsetHeight : 0;
-  const cW1  = colourSec.offsetWidth;
-  const wW1  = wheelSec.offsetWidth;
-  const smY1 = sm.getBoundingClientRect().top;
-
-  const cfg = { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'none' };
-
-  const smDeltaY = smY0 - smY1;
-  if (smDeltaY !== 0 && !document.body.classList.contains('in-fullscreen')) {
-    sm.animate(
-      [{ transform: `translateY(${smDeltaY}px)` }, { transform: 'translateY(0)' }],
-      cfg
-    );
-  }
-
-  if (pW1 !== pW0) {
-    bbAnimating = true;
-    const anims = [panel.animate([{ width: pW0 + 'px' }, { width: pW1 + 'px' }], cfg)];
-    if (cW1 !== cW0) anims.push(colourSec.animate([{ width: cW0 + 'px' }, { width: cW1 + 'px' }], cfg));
-    if (wW1 !== wW0) anims.push(wheelSec.animate([{ width: wW0 + 'px' }, { width: wW1 + 'px' }], cfg));
-    Promise.all(anims.map(a => a.finished)).then(() => {
-      bbAnimating = false;
-      updateBBArrows();
-    });
-  }
-
-  if (isMobile) {
-    if (pH0 !== pH1) {
-      panel.animate([{ height: pH0 + 'px' }, { height: pH1 + 'px' }], cfg);
-    }
-    const newlyVisible = [...panel.querySelectorAll('.section')]
-      .filter(s => getComputedStyle(s).display !== 'none' && !visibleBefore.has(s));
-    newlyVisible.forEach(s => s.animate(
-      [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }],
-      { duration: 350, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', delay: 80, fill: 'both' }
-    ));
-  }
+// ── Interior mode toggle ──
+function animateHeightChange(el, h0) {
+  const h1 = el.offsetHeight;
+  if (h1 === h0) return;
+  el.style.overflow = 'hidden';
+  const anim = el.animate(
+    [{ height: h0 + 'px' }, { height: h1 + 'px' }],
+    { duration: 400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'none' }
+  );
+  anim.onfinish = () => { el.style.overflow = ''; };
 }
 
 function enterInterior() {
-  if (window.innerWidth < 960) exteriorScrollY = window.scrollY;
-  animateBBWidth(() => {
-    interiorMode = true;
-    media.classList.add('interior-mode');
-    media.parentElement.classList.add('interior-mode');
-    document.getElementById('bottombar').classList.add('interior-mode');
-    buildMaterialGrid();
-    revealSwatches(document.getElementById('grid-material'));
-  });
-  if (window.innerWidth < 960) window.scrollTo({ top: exteriorScrollY, behavior: 'instant' });
+  interiorMode = true;
+  const isMobile = window.innerWidth < 960;
+  const sidebarSm = document.getElementById('sidebar-sm');
+  const h0 = isMobile ? sidebarSm.offsetHeight : media.offsetHeight;
+  media.classList.add('interior-mode');
+  document.getElementById('accordion-material').classList.remove('collapsed');
+  document.getElementById('sidebar').classList.add('interior-mode');
+  sidebarSm.classList.add('interior-mode');
+  animateHeightChange(isMobile ? sidebarSm : media, h0);
+  revealSwatches(document.getElementById('grid-material'));
+  revealSwatches(document.getElementById('grid-material-sm'));
+  requestAnimationFrame(updateAccordionConstraint);
   pano.start();
 }
 
 function exitInterior() {
-  animateBBWidth(() => {
-    interiorMode = false;
-    updateCarImage();
-    media.classList.remove('interior-mode');
-    media.parentElement.classList.remove('interior-mode');
-    document.getElementById('bottombar').classList.remove('interior-mode');
-    revealSwatches(colorGrid);
-    revealSwatches(wheelGrid);
-  });
-  if (window.innerWidth < 960) window.scrollTo({ top: exteriorScrollY, behavior: 'instant' });
+  interiorMode = false;
+  const isMobile = window.innerWidth < 960;
+  const sidebarSm = document.getElementById('sidebar-sm');
+  const h0 = isMobile ? sidebarSm.offsetHeight : media.offsetHeight;
+  updateCarImage();
+  media.classList.remove('interior-mode');
+  document.getElementById('sidebar').classList.remove('interior-mode');
+  sidebarSm.classList.remove('interior-mode');
+  document.getElementById('accordion-material').classList.add('collapsed');
+  document.getElementById('accordion-colour').classList.remove('collapsed');
+  document.getElementById('accordion-wheel').classList.remove('collapsed');
+  animateHeightChange(isMobile ? sidebarSm : media, h0);
   pano.reset();
+  requestAnimationFrame(updateAccordionConstraint);
 }
 
 document.getElementById('btn-interior').addEventListener('click', () => {
   if (interiorMode) exitInterior(); else enterInterior();
 });
 
-document.getElementById('btn-fullscreen').addEventListener('click', () => {
-  document.body.classList.toggle('in-fullscreen');
-  requestAnimationFrame(updateBBConstraint);
+window.addEventListener('resize', () => { if (interiorMode) pano.draw(); updateAccordionConstraint(); });
+
+// ── Custom grid scrollbars (macOS overlay scrollbars ignore CSS :hover) ──
+document.querySelectorAll('.grid').forEach(grid => {
+  const body = grid.closest('.body');
+  if (!body) return;
+
+  const bar   = document.createElement('div');
+  const thumb = document.createElement('div');
+  bar.className   = 'vscroll';
+  thumb.className = 'vscroll-thumb';
+  bar.appendChild(thumb);
+  body.appendChild(bar);
+
+  function update() {
+    const { scrollTop, scrollHeight, clientHeight } = grid;
+    if (scrollHeight <= clientHeight) { bar.style.display = 'none'; return; }
+    bar.style.display  = '';
+    bar.style.top      = grid.offsetTop + 'px';
+    bar.style.height   = clientHeight + 'px';
+    const thumbH       = Math.max(clientHeight / scrollHeight * clientHeight, 20);
+    thumb.style.height = thumbH + 'px';
+    thumb.style.top    = scrollTop / (scrollHeight - clientHeight) * (clientHeight - thumbH) + 'px';
+  }
+
+  grid.addEventListener('scroll', update);
+  new ResizeObserver(update).observe(grid);
+  grid.addEventListener('mouseenter', () => { update(); bar.classList.add('visible'); });
+  grid.addEventListener('mouseleave', () => bar.classList.remove('visible'));
 });
-
-window.addEventListener('resize', () => { if (interiorMode) pano.draw(); updateBBConstraint(); });
-
-
-// ── Staged preload ──
-// Stage 1: swatch thumbnails — stored in module-level array to prevent GC of decoded refs
-const _swatchRefs = [
-  ...POLO_THUMBS.map(t => t.src),
-  ...ID7_THUMBS.map(t => t.src),
-  ...ID7_WHEEL_THUMBS.map(t => t.src),
-  ...POLO_WHEEL_THUMBS.map(t => t.src),
-  ...GC_THUMBS.map(t => t.src),
-  ...GC_WHEEL_THUMBS.map(t => t.src),
-  ...ID7_MATERIAL_IMGS.map(t => t.src),
-  ...POLO_MATERIAL_IMGS.map(t => t.src),
-  'assets/media/id7/interior/id7-interior-view.webp'
-].map(s => { const img = new Image(); img.src = s; img.decode().catch(() => {}); return img; });
 
 // ── Init ──
 let _visualizerReady = false;
@@ -2186,19 +2132,25 @@ function initVisualizer() {
   if (_visualizerReady) return;
   _visualizerReady = true;
 
-  // Stage 2: active combo frames — needed as soon as the visualizer is visible
-  preloadActiveFrames();
-  // Stage 3: all other combos — in background after swatches and active combo are loading
-  preloadAllFrames();
+  // Kick off swatch image fetches so they're cached when revealSwatches fires
+  [
+    ...POLO_THUMBS.map(t => t.src),
+    ...ID7_THUMBS.map(t => t.src),
+    ...POLO_WHEEL_THUMBS.map(t => t.src),
+    ...MATERIAL_IMGS.map(t => t.src),
+    ...POLO_ROT_FRAMES, ...POLO_ROT_FRAMES_BLACK, ...POLO_ROT_FRAMES_BLUE, ...ID7_ROT_FRAMES.flat(), ...GC_ROT_FRAMES,
+    'assets/media/id7/interior/id7-interior-view.webp'
+  ].forEach(s => { const i = new Image(); i.src = s; });
 
-  if (selectedModel === 'id7') media.classList.add('id7-mode');
   buildColorGrid(0.5);
   buildWheelGrid(0.5);
+  buildMaterialGrid();
   carImg.className = 'draggable';
   updateCarImage();
-  colorName.textContent = currentThumbs()[0]?.name ?? '';
-  wheelName.textContent = currentWheels()[0]?.name ?? '';
-  requestAnimationFrame(updateBBConstraint);
+  colorName.textContent = currentThumbs()[0].name;
+  wheelName.textContent = currentWheels()[0].name;
+  mColorName.textContent = currentThumbs()[0].name;
+  mWheelName.textContent = currentWheels()[0].name;
 }
 
 // Defer visualizer until user scrolls near the explore CTA
@@ -2272,50 +2224,20 @@ function initVisualizer() {
     const p2 = clamp01((p - 0.60) / 0.40);   // phase 2 occupies remaining 40%
 
     if (p2 === 0) {
-      if (window.innerWidth < 960) {
-        // Mobile: fully sequential — each USP exits completely before the next enters
-        // p1 divided into 3 equal thirds; within each third: enter → dwell → exit
-        const mobileSeq = [
-          { el: u1, es: 0.00, ee: 0.13, xs: 0.23, xe: 0.33 },
-          { el: u2, es: 0.33, ee: 0.46, xs: 0.57, xe: 0.67 },
-          { el: u3, es: 0.67, ee: 0.80 },   // phase 2 handles the exit
-        ];
-        [u1, u2, u3].forEach(el => { el.style.opacity = '0'; el.style.transform = `translateY(${SLIDE}px)`; });
-        mobileSeq.forEach(({ el, es, ee, xs, xe }) => {
-          if (xs !== undefined && p1 >= xs) {
-            const t = clamp01((p1 - xs) / (xe - xs));
-            el.style.opacity = 1 - t;
-            el.style.transform = `translateY(${-t * SLIDE}px)`;
-          } else if (p1 >= es) {
-            const t = clamp01((p1 - es) / (ee - es));
-            el.style.opacity = t;
-            el.style.transform = t < 1 ? `translateY(${(1 - t) * SLIDE}px)` : 'none';
-          }
-        });
-      } else {
-        p1Items.forEach(({ el, s, e }) => {
-          const t = clamp01((p1 - s) / (e - s));
-          el.style.opacity = t;
-          el.style.transform = t < 1 ? `translateY(${(1 - t) * SLIDE}px)` : 'none';
-        });
-      }
+      p1Items.forEach(({ el, s, e }) => {
+        const t = clamp01((p1 - s) / (e - s));
+        el.style.opacity = t;
+        el.style.transform = t < 1 ? `translateY(${(1 - t) * SLIDE}px)` : 'none';
+      });
       u4.style.opacity = '0';
       u4.style.transform = `translateY(${SLIDE}px)`;
     } else {
-      // p2 0→0.40: fade out visible USP(s); usp-4 stays hidden
+      // p2 0→0.40: usp-1/2/3 fade+slide out; usp-4 stays hidden
       const fadeOut = clamp01(p2 / 0.4);
-      if (window.innerWidth < 960) {
-        // Mobile: only u3 is still visible at end of phase 1; u1/u2 already gone
-        u3.style.opacity = 1 - fadeOut;
-        u3.style.transform = `translateY(${-fadeOut * SLIDE}px)`;
-        u1.style.opacity = '0';
-        u2.style.opacity = '0';
-      } else {
-        [u1, u2, u3].forEach(el => {
-          el.style.opacity = 1 - fadeOut;
-          el.style.transform = `translateY(${-fadeOut * SLIDE}px)`;
-        });
-      }
+      [u1, u2, u3].forEach(el => {
+        el.style.opacity = 1 - fadeOut;
+        el.style.transform = `translateY(${-fadeOut * SLIDE}px)`;
+      });
       // p2 0.40→0.70: usp-4 fades+slides in; p2 0.70→1.0: dwell, still locked
       const fadeIn = clamp01((p2 - 0.4) / 0.3);
       u4.style.opacity = fadeIn;
@@ -2332,6 +2254,24 @@ function initVisualizer() {
   requestAnimationFrame(tick);
 })();
 
+// Expand accordions when more than 50vh of the visualizer is in view
+(function () {
+  const colour = document.getElementById('accordion-colour');
+  const wheel  = document.getElementById('accordion-wheel');
+  if (!colour || !wheel) return;
+  const obs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      colour.classList.remove('collapsed');
+      requestAnimationFrame(updateAccordionConstraint);
+      setTimeout(() => {
+        wheel.classList.remove('collapsed');
+        requestAnimationFrame(updateAccordionConstraint);
+      }, 150);
+      obs.disconnect();
+    }
+  }, { rootMargin: '0px 0px -50% 0px', threshold: 0 });
+  obs.observe(media);
+})();
 
 // Show hint-rotate when visualizer scrolls into viewport beyond 20%, then auto-dismiss
 (function () {
@@ -2429,6 +2369,53 @@ window.addEventListener('scroll', () => {
   _lastScrollY = y;
 }, { passive: true });
 
+// ── Mobile swatch scroll arrows ──
+(function () {
+  const grids = [
+    { el: document.getElementById('grid-colour-sm'),   fl: document.getElementById('fade-left-colour'),      fr: document.getElementById('fade-right-colour')      },
+    { el: document.getElementById('grid-wheel-sm'),    fl: document.getElementById('fade-left-wheel'),       fr: document.getElementById('fade-right-wheel')       },
+    { el: document.getElementById('grid-material-sm'), fl: document.getElementById('fade-left-material-sm'), fr: document.getElementById('fade-right-material-sm') },
+  ];
+
+  function updateMobArrows() {
+    grids.forEach(({ el, fl, fr }) => {
+      if (!el || !fl || !fr) return;
+      const over  = el.scrollWidth > el.clientWidth + 1;
+      const left  = el.scrollLeft > 1;
+      const right = el.scrollLeft < el.scrollWidth - el.clientWidth - 1;
+      fl.classList.toggle('show', over && left);
+      fr.classList.toggle('show', over && right);
+      const lm = over && left, rm = over && right;
+      const mask = lm && rm ? 'linear-gradient(90deg,transparent 0,black 46px,black calc(100% - 46px),transparent 100%)'
+                 : lm       ? 'linear-gradient(90deg,transparent 0,black 46px,black 100%)'
+                 : rm       ? 'linear-gradient(90deg,black 0,black calc(100% - 46px),transparent 100%)'
+                 : 'none';
+      el.style.webkitMaskImage = mask;
+      el.style.maskImage = mask;
+    });
+  }
+
+  function wireArrow(btn, dir, getEl) {
+    let didPointer = false;
+    function doScroll() {
+      const el = getEl();
+      const max = el.scrollWidth - el.clientWidth;
+      el.scrollTo({ left: dir > 0 ? Math.min(max, el.scrollLeft + 180) : Math.max(0, el.scrollLeft - 180), behavior: 'smooth' });
+    }
+    btn.addEventListener('pointerdown', () => { didPointer = true; doScroll(); });
+    btn.addEventListener('click',       () => { if (didPointer) { didPointer = false; return; } doScroll(); });
+  }
+
+  grids.forEach(({ el }) => { if (el) el.addEventListener('scroll', updateMobArrows, { passive: true }); });
+  wireArrow(document.getElementById('scroll-left-colour'),  -1, () => document.getElementById('grid-colour-sm'));
+  wireArrow(document.getElementById('scroll-right-colour'),  1, () => document.getElementById('grid-colour-sm'));
+  wireArrow(document.getElementById('scroll-left-wheel'),        -1, () => document.getElementById('grid-wheel-sm'));
+  wireArrow(document.getElementById('scroll-right-wheel'),         1, () => document.getElementById('grid-wheel-sm'));
+  wireArrow(document.getElementById('scroll-left-material-sm'),  -1, () => document.getElementById('grid-material-sm'));
+  wireArrow(document.getElementById('scroll-right-material-sm'),  1, () => document.getElementById('grid-material-sm'));
+  new ResizeObserver(updateMobArrows).observe(document.getElementById('grid-colour-sm') || document.body);
+  setTimeout(updateMobArrows, 150);
+})();
 
 // ── Arrow key rotation / pano pan ──
 document.addEventListener('keydown', e => {
@@ -2460,68 +2447,43 @@ const PANO_STEP = 0.1745;
   document.getElementById('btn-tilt-down').addEventListener('click', () => pano.pan(0, -PANO_STEP));
 })();
 
-// ── Bottom bar swatch scroll arrows ──
+
+
 (function () {
-  const bbGrids = [
-    { el: document.getElementById('grid-colour'),   fl: document.getElementById('fade-left-colour'),   fr: document.getElementById('fade-right-colour') },
-    { el: document.getElementById('grid-wheel'),    fl: document.getElementById('fade-left-wheel'),    fr: document.getElementById('fade-right-wheel') },
-    { el: document.getElementById('grid-material'), fl: document.getElementById('fade-left-material'), fr: document.getElementById('fade-right-material') },
-  ];
-  function updateBBArrows() {
-    bbGrids.forEach(({ el, fl, fr }) => {
-      if (!el || !fl || !fr) return;
-      const over  = el.scrollWidth > el.clientWidth + 1;
-      const left  = over && el.scrollLeft > 1;
-      const right = over && el.scrollLeft < el.scrollWidth - el.clientWidth - 1;
-      if (!bbAnimating) {
-        fl.classList.toggle('show', left);
-        fr.classList.toggle('show', right);
-      }
-      let mask = 'none';
-      if (left && right) mask = 'linear-gradient(90deg, transparent 0, black 44px, black calc(100% - 44px), transparent 100%)';
-      else if (left)     mask = 'linear-gradient(90deg, transparent 0, black 44px, black 100%)';
-      else if (right)    mask = 'linear-gradient(90deg, black 0, black calc(100% - 44px), transparent 100%)';
-      el.style.webkitMaskImage = mask;
-      el.style.maskImage = mask;
-    });
-  }
+  const handle = document.getElementById('handle-sidebar');
+  const panel  = document.getElementById('sidebar');
+  const CFG    = { duration: 440, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'none' };
+  let collapsed = false;
+  let natW = 0;
+  let anim = null;
 
-  function wireArrow(btn, dir, getEl) {
-    let didPointer = false;
-    function doScroll() {
-      const el = getEl();
-      const max = el.scrollWidth - el.clientWidth;
-      el.scrollTo({ left: dir > 0 ? Math.min(max, el.scrollLeft + 180) : Math.max(0, el.scrollLeft - 180), behavior: 'smooth' });
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      panel.classList.add('handle-hint');
+      setTimeout(() => panel.classList.remove('handle-hint'), 10000);
+      observer.disconnect();
     }
-    btn.addEventListener('pointerdown', () => { didPointer = true; doScroll(); });
-    btn.addEventListener('click',       () => { if (didPointer) { didPointer = false; return; } doScroll(); });
-  }
+  }, { threshold: 0.1 });
+  observer.observe(panel);
 
-  bbGrids.forEach(({ el }) => {
-    if (!el) return;
-    el.addEventListener('scroll', updateBBArrows, { passive: true });
-    new ResizeObserver(updateBBArrows).observe(el);
+  handle.addEventListener('click', () => {
+    if (anim) { anim.cancel(); anim = null; }
+
+    if (!collapsed) {
+      natW = panel.offsetWidth;
+      panel.style.width = natW + 'px';
+      panel.classList.add('collapsed');
+      anim = panel.animate([{ width: natW + 'px' }, { width: '28px' }], CFG);
+      anim.finished.then(() => { panel.style.width = '28px'; anim = null; });
+      collapsed = true;
+    } else {
+      panel.classList.remove('collapsed');
+      anim = panel.animate([{ width: '28px' }, { width: natW + 'px' }], CFG);
+      anim.finished.then(() => { panel.style.width = ''; anim = null; });
+      collapsed = false;
+    }
   });
-  wireArrow(document.getElementById('scroll-left-colour'),   -1, () => document.getElementById('grid-colour'));
-  wireArrow(document.getElementById('scroll-right-colour'),   1, () => document.getElementById('grid-colour'));
-  wireArrow(document.getElementById('scroll-left-wheel'),    -1, () => document.getElementById('grid-wheel'));
-  wireArrow(document.getElementById('scroll-right-wheel'),    1, () => document.getElementById('grid-wheel'));
-  wireArrow(document.getElementById('scroll-left-material'), -1, () => document.getElementById('grid-material'));
-  wireArrow(document.getElementById('scroll-right-material'), 1, () => document.getElementById('grid-material'));
-  new ResizeObserver(updateBBArrows).observe(document.getElementById('bottombar'));
-  setTimeout(updateBBArrows, 150);
-  window.updateBBArrows = updateBBArrows;
 })();
-
-// ── Bottombar entry animation — fires when visualizer is 80% in viewport ──
-const bbPanel = document.getElementById('bottombar');
-new IntersectionObserver((entries, obs) => {
-  if (entries[0].isIntersecting) {
-    bbPanel.classList.add('enter');
-    obs.disconnect();
-  }
-}, { threshold: 1.0 }).observe(document.getElementById('visualizer'));
-
 </script>
 </body>
 </html>

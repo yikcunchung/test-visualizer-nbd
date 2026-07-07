@@ -426,7 +426,6 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; touch-action: m
   height: calc(100dvh - 52px - 76px - 40px);
   position: relative; overflow: hidden;
   border-radius: 20px;
-  z-index: 1;
 }
 @keyframes visFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -531,7 +530,7 @@ body.in-fullscreen #media {
 }
 body.in-fullscreen #bottombar {
   position: absolute; bottom: 16px; left: 50%; right: auto; transform: translateX(-50%);
-  z-index: 12;
+  z-index: 10;
   display: flex; flex-direction: row; align-items: center; gap: 40px;
   background: rgba(255, 255, 255, 0.60);
   backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -1027,7 +1026,7 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 12;
+    z-index: 10;
     display: flex; flex-direction: row; align-items: center; gap: 40px;
     background: rgba(255, 255, 255, 0.60);
     backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -1177,8 +1176,8 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
           <p class="label-subline">Exceptional range, faster charging and intuitive technology.</p>
         </div>
         <div class="btn-group">
-          <button class="btn-stage btn-primary">Build your ID.7</button>
-          <button class="btn-stage btn-secondary">Browse available ID.7 stock</button>
+          <button class="btn-stage btn-primary">Browse available ID.7 stock</button>
+          <button class="btn-stage btn-secondary">Build your ID.7</button>
         </div>
       </div>
     </div>
@@ -1351,13 +1350,13 @@ body.in-fullscreen #bottombar .swatch-fade { background: none; }
         <!-- Model selector -->
         <div id="select-model" class="select-model-row">
           <div class="select-wrap" id="wrapper-select-model-lg">
-            <span class="select-label" id="label-select-model-lg">ID.7</span>
+            <span class="select-label" id="label-select-model-lg">ID. Polo</span>
             <select class="select-native" id="select-model-lg" aria-label="Select model">
               <optgroup label="ID.7">
-                <option value="id7" selected>Pro Match Plus</option>
+                <option value="id7">Pro Match Plus</option>
               </optgroup>
               <optgroup label="ID.Polo">
-                <option value="idpolo">Trend</option>
+                <option value="idpolo" selected>Trend</option>
               </optgroup>
               <optgroup label="Grand California">
                 <option value="grandcalifornia">600</option>
@@ -1468,33 +1467,33 @@ const POLO_THUMBS = [
 ];
 
 const POLO_WHEEL_THUMBS = [
-  { name: "Edinburgh 17\"", src: "assets/media/idpolo/exterior/variants/wheels/wheel1.webp" },
-  { name: "Linz 18\"",      src: "assets/media/idpolo/exterior/variants/wheels/wheel2.webp" },
-  { name: "Stahlräder 17\"",src: "assets/media/idpolo/exterior/variants/wheels/wheel3.webp" }
+  { name: "Wheel 1", src: "assets/media/idpolo/exterior/variants/wheels/wheel1.webp" },
+  { name: "Wheel 2", src: "assets/media/idpolo/exterior/variants/wheels/wheel2.webp" },
+  { name: "Wheel 3", src: "assets/media/idpolo/exterior/variants/wheels/wheel3.webp" }
 ];
 
 const ID7_THUMBS = [
-  { name: "Grenadilla Black Metallic",        src: "assets/media/id7/exterior/variants/colour/0E0E.webp" },
-  { name: "Scale Silver Metallic",            src: "assets/media/id7/exterior/variants/colour/1T1T.webp" },
-  { name: "Glacier White Metallic",           src: "assets/media/id7/exterior/variants/colour/2Y2Y.webp" },
-  { name: "Stonewashed Blue Metallic",        src: "assets/media/id7/exterior/variants/colour/5Y5Y.webp" },
-  { name: "Aquamarine Blue Metallic",         src: "assets/media/id7/exterior/variants/colour/8H8H.webp" },
-  { name: "Moonstone Grey",                   src: "assets/media/id7/exterior/variants/colour/C2C2.webp" },
-  { name: "Kings Red Metallic",               src: "assets/media/id7/exterior/variants/colour/P8P8.webp" },
-  { name: "Scale Silver Metallic Black",      src: "assets/media/id7/exterior/variants/colour/1TA1.webp" },
-  { name: "Glacier White Metallic Black",     src: "assets/media/id7/exterior/variants/colour/2YA1.webp" },
-  { name: "Stonewashed Blue Metallic Black",  src: "assets/media/id7/exterior/variants/colour/5YA1.webp" },
-  { name: "Aquamarine Blue Metallic Black",   src: "assets/media/id7/exterior/variants/colour/8HA1.webp" },
-  { name: "Moonstone Grey Black",             src: "assets/media/id7/exterior/variants/colour/C2A1.webp" },
-  { name: "Kings Red Premium Metallic Black", src: "assets/media/id7/exterior/variants/colour/P8A1.webp" }
+  { name: "Grenadilla Black Metallic",       src: "assets/media/id7/exterior/variants/colour/0E0E.webp" },
+  { name: "Scale Silver Metallic",           src: "assets/media/id7/exterior/variants/colour/1T1T.webp" },
+  { name: "Scale Silver Metallic Black",     src: "assets/media/id7/exterior/variants/colour/1TA1.webp" },
+  { name: "Glacier White Metallic",          src: "assets/media/id7/exterior/variants/colour/2Y2Y.webp" },
+  { name: "Glacier White Metallic Black",    src: "assets/media/id7/exterior/variants/colour/2YA1.webp" },
+  { name: "Stonewashed Blue Metallic",       src: "assets/media/id7/exterior/variants/colour/5Y5Y.webp" },
+  { name: "Stonewashed Blue Metallic Black", src: "assets/media/id7/exterior/variants/colour/5YA1.webp" },
+  { name: "Aquamarine Blue Metallic",        src: "assets/media/id7/exterior/variants/colour/8H8H.webp" },
+  { name: "Aquamarine Blue Metallic Black",  src: "assets/media/id7/exterior/variants/colour/8HA1.webp" },
+  { name: "Moonstone Grey",                  src: "assets/media/id7/exterior/variants/colour/C2C2.webp" },
+  { name: "Moonstone Grey Black",            src: "assets/media/id7/exterior/variants/colour/C2A1.webp" },
+  { name: "Kings Red Metallic",              src: "assets/media/id7/exterior/variants/colour/P8P8.webp" },
+  { name: "Kings Red Premium Metallic Black",src: "assets/media/id7/exterior/variants/colour/P8A1.webp" }
 ];
 
 const ID7_WHEEL_THUMBS = [
-  { name: "Mataró 21\"",    src: "assets/media/id7/exterior/variants/wheels/wheel1.webp" },
-  { name: "Hudson 19\"",    src: "assets/media/id7/exterior/variants/wheels/wheel2.webp" },
-  { name: "Bergen 19\"",    src: "assets/media/id7/exterior/variants/wheels/wheel3.webp" },
-  { name: "Trondheim 20\"", src: "assets/media/id7/exterior/variants/wheels/wheel4.webp" },
-  { name: "Montreal 20\"",  src: "assets/media/id7/exterior/variants/wheels/wheel5.webp" }
+  { name: "Wheel 1", src: "assets/media/id7/exterior/variants/wheels/wheel1.webp" },
+  { name: "Wheel 2", src: "assets/media/id7/exterior/variants/wheels/wheel2.webp" },
+  { name: "Wheel 3", src: "assets/media/id7/exterior/variants/wheels/wheel3.webp" },
+  { name: "Wheel 4", src: "assets/media/id7/exterior/variants/wheels/wheel4.webp" },
+  { name: "Wheel 5", src: "assets/media/id7/exterior/variants/wheels/wheel5.webp" }
 ];
 
 const POLO_COLOUR_FOLDER = {
@@ -1505,63 +1504,29 @@ const POLO_COLOUR_FOLDER = {
   'Magnetic Gray Metallic':    'grey_dark',
 };
 
-function _id7F(color, wheel, ext = 'png') {
-  return Array.from({length: 36}, (_, i) =>
-    `assets/media/id7/exterior/rotation/${color}/${wheel}/frame-${String(i).padStart(2,'0')}.${ext}`);
-}
-// [colorIndex][wheelIndex] — matches ID7_THUMBS order: singles first, then black variants
-// null = no frames for that combo; falls back to wheel1 of same color in activeFrames()
 const ID7_ROT_FRAMES = [
-  // 0: black (wheel1 has .webp; wheel2-5 have .png)
-  [_id7F('black','wheel1','webp'), _id7F('black','wheel2'), _id7F('black','wheel3'), _id7F('black','wheel4'), _id7F('black','wheel5')],
-  // 1: silver (no wheel3)
-  [_id7F('silver','wheel1'), _id7F('silver','wheel2'), null, _id7F('silver','wheel4'), _id7F('silver','wheel5')],
-  // 2: white (no wheel3)
-  [_id7F('white','wheel1'), _id7F('white','wheel2'), null, _id7F('white','wheel4'), _id7F('white','wheel5')],
-  // 3: blue (no wheel3)
-  [_id7F('blue','wheel1'), _id7F('blue','wheel2'), null, _id7F('blue','wheel4'), _id7F('blue','wheel5')],
-  // 4: aquamarine_blue (no wheel3)
-  [_id7F('aquamarine_blue','wheel1'), _id7F('aquamarine_blue','wheel2'), null, _id7F('aquamarine_blue','wheel4'), _id7F('aquamarine_blue','wheel5')],
-  // 5: grey (no wheel3)
-  [_id7F('grey','wheel1'), _id7F('grey','wheel2'), null, _id7F('grey','wheel4'), _id7F('grey','wheel5')],
-  // 6: red (no wheel3)
-  [_id7F('red','wheel1'), _id7F('red','wheel2'), null, _id7F('red','wheel4'), _id7F('red','wheel5')],
-  // 7: silver_black
-  [_id7F('silver_black','wheel1'), _id7F('silver_black','wheel2'), _id7F('silver_black','wheel3'), _id7F('silver_black','wheel4'), _id7F('silver_black','wheel5')],
-  // 8: white_black
-  [_id7F('white_black','wheel1'), _id7F('white_black','wheel2'), _id7F('white_black','wheel3'), _id7F('white_black','wheel4'), _id7F('white_black','wheel5')],
-  // 9: blue_black
-  [_id7F('blue_black','wheel1'), _id7F('blue_black','wheel2'), _id7F('blue_black','wheel3'), _id7F('blue_black','wheel4'), _id7F('blue_black','wheel5')],
-  // 10: aquamarine_blue_black
-  [_id7F('aquamarine_blue_black','wheel1'), _id7F('aquamarine_blue_black','wheel2'), _id7F('aquamarine_blue_black','wheel3'), _id7F('aquamarine_blue_black','wheel4'), _id7F('aquamarine_blue_black','wheel5')],
-  // 11: grey_black
-  [_id7F('grey_black','wheel1'), _id7F('grey_black','wheel2'), _id7F('grey_black','wheel3'), _id7F('grey_black','wheel4'), _id7F('grey_black','wheel5')],
-  // 12: red_black
-  [_id7F('red_black','wheel1'), _id7F('red_black','wheel2'), _id7F('red_black','wheel3'), _id7F('red_black','wheel4'), _id7F('red_black','wheel5')],
+  Array.from({length: 36}, (_, i) => `assets/media/id7/exterior/rotation/black/wheel1/frame-${String(i).padStart(2,'0')}.webp`),
+  ["assets/media/id7/exterior/rotation/silver/wheel1/frame-00.webp"],
+  ["assets/media/id7/exterior/rotation/silver_black/wheel1/e099ab0b4019d32bfbdbdc7c02536767.webp"],
+  ["assets/media/id7/exterior/rotation/white/wheel1/frame-00.webp"],
+  ["assets/media/id7/exterior/rotation/white_black/wheel1/981510e80cf219e01c1e72409a09a278.webp"],
+  ["assets/media/id7/exterior/rotation/blue/wheel1/a0cb0743f8035b9d1464bcce147fc6f3.webp"],
+  ["assets/media/id7/exterior/rotation/blue_black/wheel1/4e60de9104bfa004039c91fdcc5eb3ea.webp"],
+  ["assets/media/id7/exterior/rotation/quamarine-blue/wheel1/b7705f6369d7a7ca9cfebbfb5aa2ba60.webp"],
+  ["assets/media/id7/exterior/rotation/quamarine-blue_black/wheel1/3a38b796523e92b034ba1aed8e18970c.webp"],
+  ["assets/media/id7/exterior/rotation/grey/wheel1/5339c460cfb0f30bfb5d49672185fdea.webp"],
+  ["assets/media/id7/exterior/rotation/grey_black/wheel1/d74a14ccc5ba29267f79f8e2a826bc01.webp"],
+  ["assets/media/id7/exterior/rotation/red/wheel1/7eaf8aeba15b6d435bd1a72c98f8e574.webp"],
+  ["assets/media/id7/exterior/rotation/red_black/wheel1/392b55262b76c7bdd60221cbd756ce93.webp"],
 ];
 
 const GC_ROT_FRAMES = Array.from({length: 36}, (_, i) =>
   `assets/media/grandcalifornia/exterior/rotation/wheel1/frame-${String(i).padStart(2,'0')}.png`);
-const GC_THUMBS = [
-  { name: "Candy White",                             src: "assets/media/grandcalifornia/exterior/variants/colour/0238632bf8d09ad0c1ee36e51a693756.webp" },
-  { name: "Indium Grey Metallic",                    src: "assets/media/grandcalifornia/exterior/variants/colour/2535a543a409bb4538eed1b6c528d596.webp" },
-  { name: "Oyster Silver",                           src: "assets/media/grandcalifornia/exterior/variants/colour/27a4db43d0498f9c7233b09f5718ad37.webp" },
-  { name: "Oyster Silver / Indium Grey",             src: "assets/media/grandcalifornia/exterior/variants/colour/69a8a67650856c97909cbc448fb8a79c.webp" },
-  { name: "Candy White / Deep Ocean Blue",           src: "assets/media/grandcalifornia/exterior/variants/colour/b4b067505e0d8f4df740c12b82fc6c96.webp" },
-  { name: "Candy White upper / Cherry Red lower",    src: "assets/media/grandcalifornia/exterior/variants/colour/c156c0441e94093100a20e38213d9e41.webp" },
-  { name: "Candy White upper / Mojave Beige lower",  src: "assets/media/grandcalifornia/exterior/variants/colour/ffa76f426a1657413d0acea47f8a738f.webp" },
-];
-const GC_WHEEL_THUMBS = [
-  { name: "Stahlräder 16\" Silver", src: "assets/media/grandcalifornia/exterior/variants/wheels/1b02967d81a2e7d8790e32d298a84225.webp" },
-  { name: "Stahlräder 16\" Silver", src: "assets/media/grandcalifornia/exterior/variants/wheels/1ef6848bf05f8c0ee33b1779fc42b2e5.webp" },
-  { name: "Stahlräder 16\" Black",  src: "assets/media/grandcalifornia/exterior/variants/wheels/8d0cff18773b5f7b1d2a124e5aca655a.webp" },
-  { name: "Lismore 17\" Silver",    src: "assets/media/grandcalifornia/exterior/variants/wheels/a68ec5a08a5636287d26c4b0835bb392.webp" },
-  { name: "Stahlräder 16\" Black",  src: "assets/media/grandcalifornia/exterior/variants/wheels/de2b4c50e138aa10276ea6c3d1b99327.webp" },
-  { name: "Lismore 17\" Black",     src: "assets/media/grandcalifornia/exterior/variants/wheels/ee0fa2f992503bfcd59d5517a75c3fd6.webp" },
-];
+const GC_THUMBS = POLO_THUMBS;
+const GC_WHEEL_THUMBS = POLO_WHEEL_THUMBS;
 
 // ── State ──
-let selectedModel    = 'id7';
+let selectedModel    = 'idpolo';
 let selectedColor    = 0;
 let selectedWheel    = 0;
 let selectedMaterial = 0;
@@ -1678,10 +1643,7 @@ function currentWheels() {
 }
 
 function activeFrames() {
-  if (selectedModel === 'id7') {
-    const colorRow = ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
-    return colorRow[selectedWheel] ?? colorRow[0];
-  }
+  if (selectedModel === 'id7') return ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
   if (selectedModel === 'grandcalifornia') return GC_ROT_FRAMES;
   const colour = POLO_COLOUR_FOLDER[POLO_THUMBS[selectedColor]?.name] ?? 'yellow';
   const wheel  = `wheel${selectedWheel + 1}`;
@@ -1690,39 +1652,6 @@ function activeFrames() {
   );
 }
 function frameCount() { return activeFrames().length; }
-
-// ── Frame preloading — hold decoded Image refs so the browser can't evict them ──
-const _fCache = new Map();
-function _preloadCombo(frames, key) {
-  if (!frames?.length || _fCache.has(key)) return;
-  _fCache.set(key, frames.map(src => {
-    const img = new Image();
-    img.src = src;
-    img.decode().catch(() => {});
-    return img;
-  }));
-}
-function preloadActiveFrames() {
-  _preloadCombo(activeFrames(), `${selectedModel}|${selectedColor}|${selectedWheel}`);
-}
-function preloadAllFrames() {
-  setTimeout(() => {
-    POLO_THUMBS.forEach((t, ci) => {
-      const colour = POLO_COLOUR_FOLDER[t.name] ?? 'yellow';
-      [0,1,2].forEach(wi => {
-        _preloadCombo(
-          Array.from({length: 36}, (_, i) =>
-            `assets/media/idpolo/exterior/rotation/${colour}/wheel${wi+1}/frame-${String(i).padStart(2,'0')}.png`),
-          `idpolo|${ci}|${wi}`
-        );
-      });
-    });
-    ID7_ROT_FRAMES.forEach((row, ci) => {
-      row.forEach((frames, wi) => { if (frames) _preloadCombo(frames, `id7|${ci}|${wi}`); });
-    });
-    _preloadCombo(GC_ROT_FRAMES, `grandcalifornia|0|0`);
-  }, 1000);
-}
 
 function updateCarImage() {
   const frames = activeFrames();
@@ -1891,7 +1820,6 @@ function buildColorGrid(revealDelay = 0) {
 
 function selectColor(idx) {
   selectedColor = idx;
-  refreshWheelAvailability();
   [colorGrid, mColorGrid].forEach(g =>
     g.querySelectorAll('.btn-swatch').forEach((b, i) =>
       b.className = 'btn-swatch' + (i === idx ? ' selected' : '')));
@@ -1901,7 +1829,6 @@ function selectColor(idx) {
   if (!pillDismissed) rotatePill.classList.remove('hidden');
   updateCarImage();
   scrollSwatchIntoView(colorGrid, idx);
-  preloadActiveFrames();
 }
 
 // ── Build wheel grid ──
@@ -1910,21 +1837,9 @@ function buildWheelGrid(revealDelay = 0) {
   currentWheels().forEach((t, i) => {
     wheelGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedWheel, selectWheel));
   });
-  refreshWheelAvailability();
   revealSwatches(wheelGrid, revealDelay);
 }
 
-function refreshWheelAvailability() {
-  if (selectedModel !== 'id7') return;
-  const colorRow = ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
-  wheelGrid.querySelectorAll('.btn-swatch').forEach((btn, i) => {
-    btn.style.display = colorRow[i] ? '' : 'none';
-  });
-  if (!colorRow[selectedWheel]) {
-    const fallback = colorRow.findIndex(f => f !== null);
-    if (fallback !== -1) selectWheel(fallback);
-  }
-}
 
 function selectWheel(idx) {
   selectedWheel = idx;
@@ -1935,7 +1850,6 @@ function selectWheel(idx) {
   mWheelName.textContent = currentWheels()[idx].name;
   updateCarImage();
   scrollSwatchIntoView(wheelGrid, idx);
-  preloadActiveFrames();
 }
 
 // ── Materials (interior) ──
@@ -1992,7 +1906,6 @@ function selectModel(modelId) {
       'ID. Polo';
     if (modelId === 'id7') media.classList.add('id7-mode');
     else media.classList.remove('id7-mode');
-    preloadActiveFrames();
   });
 }
 
@@ -2166,32 +2079,28 @@ document.getElementById('btn-fullscreen').addEventListener('click', () => {
 window.addEventListener('resize', () => { if (interiorMode) pano.draw(); updateBBConstraint(); });
 
 
-// ── Staged preload ──
-// Stage 1: swatch thumbnails — stored in module-level array to prevent GC of decoded refs
-const _swatchRefs = [
-  ...POLO_THUMBS.map(t => t.src),
-  ...ID7_THUMBS.map(t => t.src),
-  ...ID7_WHEEL_THUMBS.map(t => t.src),
-  ...POLO_WHEEL_THUMBS.map(t => t.src),
-  ...GC_THUMBS.map(t => t.src),
-  ...GC_WHEEL_THUMBS.map(t => t.src),
-  ...ID7_MATERIAL_IMGS.map(t => t.src),
-  ...POLO_MATERIAL_IMGS.map(t => t.src),
-  'assets/media/id7/interior/id7-interior-view.webp'
-].map(s => { const img = new Image(); img.src = s; img.decode().catch(() => {}); return img; });
-
 // ── Init ──
 let _visualizerReady = false;
 function initVisualizer() {
   if (_visualizerReady) return;
   _visualizerReady = true;
 
-  // Stage 2: active combo frames — needed as soon as the visualizer is visible
-  preloadActiveFrames();
-  // Stage 3: all other combos — in background after swatches and active combo are loading
-  preloadAllFrames();
+  // Kick off swatch image fetches so they're cached when revealSwatches fires
+  [
+    ...POLO_THUMBS.map(t => t.src),
+    ...ID7_THUMBS.map(t => t.src),
+    ...POLO_WHEEL_THUMBS.map(t => t.src),
+    ...ID7_MATERIAL_IMGS.map(t => t.src),
+    ...POLO_MATERIAL_IMGS.map(t => t.src),
+    ...[...Object.values(POLO_COLOUR_FOLDER), 'yellow'].flatMap(c =>
+      ['wheel1','wheel2','wheel3'].flatMap(w =>
+        Array.from({length: 36}, (_, i) =>
+          `assets/media/idpolo/exterior/rotation/${c}/${w}/frame-${String(i).padStart(2,'0')}.png`)
+      )
+    ), ...ID7_ROT_FRAMES.flat(),
+    'assets/media/id7/interior/id7-interior-view.webp'
+  ].forEach(s => { const i = new Image(); i.src = s; });
 
-  if (selectedModel === 'id7') media.classList.add('id7-mode');
   buildColorGrid(0.5);
   buildWheelGrid(0.5);
   carImg.className = 'draggable';
