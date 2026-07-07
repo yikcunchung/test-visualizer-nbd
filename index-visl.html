@@ -1837,6 +1837,34 @@ function preloadAllFrames() {
     _preloadCombo(GC_ROT_FRAMES, `grandcalifornia|0|0`);
   }, 1000);
 }
+function preloadColorCombo(colorIdx) {
+  if (selectedModel === 'id7') {
+    const row = ID7_ROT_FRAMES[colorIdx] ?? ID7_ROT_FRAMES[0];
+    const frames = row[selectedWheel] ?? row[0];
+    if (frames) _preloadCombo(frames, `id7|${colorIdx}|${selectedWheel}`);
+  } else if (selectedModel === 'idpolo') {
+    const colour = POLO_COLOUR_FOLDER[POLO_THUMBS[colorIdx]?.name] ?? 'yellow';
+    const wheel  = `wheel${selectedWheel + 1}`;
+    _preloadCombo(
+      Array.from({length: 36}, (_, i) =>
+        `assets/media/idpolo/exterior/rotation/${colour}/${wheel}/frame-${String(i).padStart(2,'0')}.webp`),
+      `idpolo|${colorIdx}|${selectedWheel}`);
+  }
+}
+function preloadWheelCombo(wheelIdx) {
+  if (selectedModel === 'id7') {
+    const row = ID7_ROT_FRAMES[selectedColor] ?? ID7_ROT_FRAMES[0];
+    const frames = row[wheelIdx];
+    if (frames) _preloadCombo(frames, `id7|${selectedColor}|${wheelIdx}`);
+  } else if (selectedModel === 'idpolo') {
+    const colour = POLO_COLOUR_FOLDER[POLO_THUMBS[selectedColor]?.name] ?? 'yellow';
+    const wheel  = `wheel${wheelIdx + 1}`;
+    _preloadCombo(
+      Array.from({length: 36}, (_, i) =>
+        `assets/media/idpolo/exterior/rotation/${colour}/${wheel}/frame-${String(i).padStart(2,'0')}.webp`),
+      `idpolo|${selectedColor}|${wheelIdx}`);
+  }
+}
 
 function updateCarImage() {
   const frames = activeFrames();
@@ -1973,7 +2001,9 @@ function scrollSwatchIntoView(grid, idx) {
 function buildColorGrid(revealDelay = 0) {
   colorGrid.innerHTML = '';
   currentThumbs().forEach((t, i) => {
-    colorGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedColor, selectColor));
+    const btn = makeSwatchBtn(t.src, t.name, i, i === selectedColor, selectColor);
+    btn.addEventListener('pointerenter', () => preloadColorCombo(i), { passive: true });
+    colorGrid.appendChild(btn);
   });
   revealSwatches(colorGrid, revealDelay);
 }
@@ -1981,6 +2011,7 @@ function buildColorGrid(revealDelay = 0) {
 function selectColor(idx) {
   selectedColor = idx;
   rotation = (rotFrame / frameCount()) * 360;
+  if (!_fCache.has(`${selectedModel}|${idx}|${selectedWheel}`)) { rotFrame = 0; rotation = 0; }
   refreshWheelAvailability();
   [colorGrid, mColorGrid].forEach(g =>
     g.querySelectorAll('.btn-swatch').forEach((b, i) =>
@@ -1992,13 +2023,18 @@ function selectColor(idx) {
   updateCarImage();
   scrollSwatchIntoView(colorGrid, idx);
   preloadActiveFrames();
+  [idx - 1, idx + 1].forEach(i => {
+    if (i >= 0 && i < currentThumbs().length) preloadColorCombo(i);
+  });
 }
 
 // ── Build wheel grid ──
 function buildWheelGrid(revealDelay = 0) {
   wheelGrid.innerHTML = '';
   currentWheels().forEach((t, i) => {
-    wheelGrid.appendChild(makeSwatchBtn(t.src, t.name, i, i === selectedWheel, selectWheel));
+    const btn = makeSwatchBtn(t.src, t.name, i, i === selectedWheel, selectWheel);
+    btn.addEventListener('pointerenter', () => preloadWheelCombo(i), { passive: true });
+    wheelGrid.appendChild(btn);
   });
   refreshWheelAvailability();
   revealSwatches(wheelGrid, revealDelay);
@@ -2078,6 +2114,7 @@ function updateBBConstraint() {
 function selectWheel(idx) {
   selectedWheel = idx;
   rotation = (rotFrame / frameCount()) * 360;
+  if (!_fCache.has(`${selectedModel}|${selectedColor}|${idx}`)) { rotFrame = 0; rotation = 0; }
   [wheelGrid, mWheelGrid].forEach(g =>
     g.querySelectorAll('.btn-swatch').forEach((b, i) =>
       b.className = 'btn-swatch' + (i === idx ? ' selected' : '')));
@@ -2086,6 +2123,9 @@ function selectWheel(idx) {
   updateCarImage();
   scrollSwatchIntoView(wheelGrid, idx);
   preloadActiveFrames();
+  [idx - 1, idx + 1].forEach(i => {
+    if (i >= 0 && i < currentWheels().length) preloadWheelCombo(i);
+  });
 }
 
 // ── Materials (interior) ──
