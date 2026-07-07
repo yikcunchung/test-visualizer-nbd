@@ -1835,7 +1835,7 @@ function preloadAllFrames() {
       row.forEach((frames, wi) => { if (frames) _preloadCombo(frames, `id7|${ci}|${wi}`); });
     });
     _preloadCombo(GC_ROT_FRAMES, `grandcalifornia|0|0`);
-  }, 1000);
+  }, 100);
 }
 function preloadColorCombo(colorIdx) {
   if (selectedModel === 'id7') {
@@ -1865,6 +1865,10 @@ function preloadWheelCombo(wheelIdx) {
       `idpolo|${selectedColor}|${wheelIdx}`);
   }
 }
+
+// Kick off frame downloads immediately on page load so they're warm before the user reaches the visualizer
+preloadActiveFrames();
+setTimeout(preloadAllFrames, 200);
 
 function updateCarImage() {
   const frames = activeFrames();
@@ -2626,8 +2630,7 @@ const PANO_STEP = 0.1745;
   window.updateBBArrows = updateBBArrows;
 })();
 
-
-
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
