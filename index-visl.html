@@ -804,24 +804,11 @@ body.in-fullscreen #img-car { will-change: transform; }
 .btn-info .icon-info svg path { fill: #293043; transition: fill 0.2s ease; }
 .btn-info:hover .icon-info svg path { fill: #ccbdab; }
 
-/* ── Focus states — visualizer ── */
-/* Dark bg: vis buttons, touch controls, disclaimer close */
-#visualizer .vis-btn:focus-visible,
-#visualizer .touch-ctrl-btn:focus-visible,
-#visualizer .btn-close:focus-visible {
-  outline: 2px solid #C86C03;
-}
-/* Light bg: swatches, scroll arrows, model select, info button */
-#visualizer .btn-swatch:focus-visible,
-#visualizer .btn-swatch.selected:focus-visible,
-#visualizer .swatch-arrow:focus-visible,
-#visualizer .btn-info:focus-visible {
-  outline: 2px solid #C86C03;
-}
-#visualizer .select-native:focus-visible {
-  outline: 2px solid #C86C03;
-  border-color: #C86C03;
-}
+/* ── Focus states ── */
+:focus-visible { outline: 2px solid #C86C03; }
+.btn-swatch:focus-visible,
+.btn-swatch.selected:focus-visible { outline: none; box-shadow: 0 0 0 2px #C86C03; }
+.select-native:focus-visible { outline: 2px solid #C86C03; border-color: #C86C03; }
 
 /* ── DISCLAIMER PANEL ── */
 #disclaimer {
