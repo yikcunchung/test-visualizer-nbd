@@ -2593,6 +2593,12 @@ window.addEventListener('scroll', () => {
 
 
 // ── Arrow key rotation / pano pan ──
+document.addEventListener('mousedown', ({ target }) => {
+  if (!target.closest('a, button, input, select, textarea, [tabindex]')) {
+    document.activeElement?.blur();
+  }
+});
+
 document.addEventListener('keydown', e => {
   const tag = document.activeElement?.tagName;
   if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
