@@ -431,6 +431,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   position: relative; overflow: hidden;
   border-radius: 20px;
   animation: visFadeIn 0.3s ease 0s both;
+  z-index: 1;
 }
 @keyframes visFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -445,18 +446,24 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   will-change: transform;
   opacity: 1;
 }
-#img-car.draggable { cursor: default; }
+#img-car.draggable { cursor: inherit; }
 #img-car.dragging  { cursor: default; }
 @media (hover: hover) { #media:hover #img-car:not(.dragging) { transform: scale(1.03); } }
 #media.interior-mode:hover #img-car  { transform: none; }
-#media { -webkit-tap-highlight-color: transparent; }
+#media { -webkit-tap-highlight-color: transparent; cursor: zoom-in; touch-action: manipulation; }
+#media:focus-visible { outline: 3px solid #C86C03; border-radius: 20px; }
+#media.zoomed { cursor: zoom-out; }
+#media.zoomed #img-car { transform: scale(1.4); }
+#media.zoomed #image-interior { transform: scale(1.4); }
+@media (hover: hover) { #media.zoomed:hover #img-car { transform: scale(1.4); } }
+@media (hover: hover) { #media.zoomed:hover #image-interior { transform: scale(1.4); } }
 
 /* Interior pano canvas — opacity crossfade, no display toggle */
 #image-interior {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   opacity: 0; pointer-events: none;
-  cursor: default; touch-action: none;
+  cursor: inherit; touch-action: none;
   z-index: 2;
   transform-origin: center center;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -466,6 +473,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 #media.interior-mode #hint-rotate  { display: none; }
 
 #media.interior-mode:hover #image-interior { transform: scale(1.03); }
+#media.zoomed.interior-mode #image-interior { transform: scale(1.4); }
 
 /* ID.7 dark rotate pill */
 
@@ -1444,7 +1452,7 @@ body.in-fullscreen #img-car { will-change: transform; }
     <div id="visualizer">
 
     <!-- VISUALIZER -->
-    <div id="media">
+    <div id="media" role="button" tabindex="0" aria-label="Zoom car image">
       <img id="img-car" alt="VW ID. Polo" draggable="false">
 
       <!-- Accessibility button (bottom-right) -->
@@ -1788,6 +1796,7 @@ let selectedMaterial = 0;
 let rotFrame         = 0;
 let rotation         = 0;
 let isDragging       = false;
+let isZoomed         = false;
 let startX           = 0;
 let startY           = 0;
 let pillDismissed    = false;
@@ -2019,6 +2028,20 @@ function endDrag() {
   isDragging = false;
   media.classList.remove('is-rotating');
 }
+
+let ptrDownX = 0, ptrDownY = 0;
+media.addEventListener('pointerdown', e => {
+  if (e.target.closest('button')) return;
+  ptrDownX = e.clientX;
+  ptrDownY = e.clientY;
+  media.setPointerCapture(e.pointerId);
+});
+media.addEventListener('pointerup', e => {
+  if (e.target.closest('button')) return;
+  if (Math.hypot(e.clientX - ptrDownX, e.clientY - ptrDownY) > 10) return;
+  isZoomed = !isZoomed;
+  media.classList.toggle('zoomed', isZoomed);
+});
 
 // ── Rotate helpers ──
 function stepLeft()  { rotFrame = ((rotFrame - 1) + frameCount()) % frameCount(); rotation -= 360 / frameCount(); updateCarImage(); rotatePill.classList.add('hidden'); pillDismissed = true; }
@@ -2676,6 +2699,11 @@ document.addEventListener('keydown', e => {
   } else {
     if (e.key === 'ArrowLeft')  stepLeft();
     if (e.key === 'ArrowRight') stepRight();
+  }
+  if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === media) {
+    e.preventDefault();
+    isZoomed = !isZoomed;
+    media.classList.toggle('zoomed', isZoomed);
   }
 });
 
