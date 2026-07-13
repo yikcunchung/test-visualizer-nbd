@@ -104,16 +104,20 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 
 /* ── TOPBAR INVERTED ── */
 #topbar.inverted {
-  background: linear-gradient(180deg,
-    rgba(0,0,0,0.85)  0%,
-    rgba(0,0,0,0.64) 29.9%,
-    rgba(0,0,0,0.44) 51.4%,
-    rgba(0,0,0,0.36) 61.6%,
-    rgba(0,0,0,0.24) 71.8%,
-    rgba(0,0,0,0.08) 82.2%,
-    rgba(0,0,0,0.06) 89.7%,
-    rgba(0,0,0,0)    93.4%);
+  background: transparent;
 }
+.topbar-shim {
+  --shim: linear-gradient(rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0));
+  display: none;
+  position: absolute;
+  z-index: -1;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 128px;
+  background: var(--shim);
+}
+#topbar.inverted .topbar-shim { display: block; }
 #topbar.inverted .topbar-tab        { color: white; font-weight: 400; }
 #topbar.inverted .topbar-dealer-text { color: white; }
 #topbar.inverted svg path           { fill: white; }
@@ -427,6 +431,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   position: relative; overflow: hidden;
   border-radius: 20px;
   animation: visFadeIn 0.3s ease 0s both;
+  z-index: 1;
 }
 @keyframes visFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -441,18 +446,24 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   will-change: transform;
   opacity: 1;
 }
-#img-car.draggable { cursor: default; }
+#img-car.draggable { cursor: inherit; }
 #img-car.dragging  { cursor: default; }
 @media (hover: hover) { #media:hover #img-car:not(.dragging) { transform: scale(1.03); } }
 #media.interior-mode:hover #img-car  { transform: none; }
-#media { -webkit-tap-highlight-color: transparent; }
+#media { -webkit-tap-highlight-color: transparent; cursor: zoom-in; touch-action: manipulation; }
+#media:focus-visible { outline: 3px solid #C86C03; border-radius: 20px; }
+#media.zoomed { cursor: zoom-out; }
+#media.zoomed #img-car { transform: scale(1.4); }
+#media.zoomed #image-interior { transform: scale(1.4); }
+@media (hover: hover) { #media.zoomed:hover #img-car { transform: scale(1.4); } }
+@media (hover: hover) { #media.zoomed:hover #image-interior { transform: scale(1.4); } }
 
 /* Interior pano canvas — opacity crossfade, no display toggle */
 #image-interior {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   opacity: 0; pointer-events: none;
-  cursor: default; touch-action: none;
+  cursor: inherit; touch-action: none;
   z-index: 2;
   transform-origin: center center;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -462,6 +473,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 #media.interior-mode #hint-rotate  { display: none; }
 
 #media.interior-mode:hover #image-interior { transform: scale(1.03); }
+#media.zoomed.interior-mode #image-interior { transform: scale(1.4); }
 
 /* ID.7 dark rotate pill */
 
@@ -477,12 +489,11 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   border: none; cursor: pointer; padding: 0;
   display: flex; align-items: center; justify-content: center;
   outline: none; -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.15s ease;
 }
 #media.touch-dragging .vis-btn { opacity: 0; pointer-events: none; }
 
 #btn-a11y {
-  bottom: 16px; right: 16px;
+  top: 16px; right: 16px;
   width: 32px; height: 32px;
   background: white; border-radius: 100px;
   border: 2px solid #1B2236;
@@ -493,7 +504,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 #btn-a11y.active { background: #CCBDAB; }
 #btn-a11y.active svg path { fill: #1B2236; }
 #touch-ctrl-bar {
-  position: absolute; bottom: 16px; right: 56px;
+  position: absolute; top: 16px; right: 56px;
   display: flex; gap: 8px; align-items: center; z-index: 5;
   pointer-events: none;
 }
@@ -506,10 +517,10 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 #touch-ctrl-bar.visible .touch-ctrl-btn { opacity: 1; transform: translateX(0); }
-#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 80ms; }
-#media.interior-mode #touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 240ms; }
-#media.interior-mode #touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(2) { transition-delay: 160ms; }
-#media.interior-mode #touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(3) { transition-delay: 80ms; }
+#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 240ms; }
+#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(2) { transition-delay: 160ms; }
+#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(3) { transition-delay: 80ms; }
+#touch-ctrl-bar.visible .touch-ctrl-btn:nth-child(4) { transition-delay: 0ms; }
 #touch-ctrl-bar .interior-only { display: none; }
 #media.interior-mode #touch-ctrl-bar .interior-only { display: flex; }
 
@@ -927,7 +938,21 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   #subnav { display: none; }
   #showroom { padding-top: 46px; padding-bottom: 0; overflow-x: hidden; }
   #page-layout { padding: 16px; gap: 16px; flex: none; }
-  #stage { width: calc(100% + 32px); margin-left: -16px; margin-right: -16px; margin-top: -16px; }
+  /* Stage mobile layout */
+  #stage { height: 90dvh; margin: 0 -16px; width: calc(100% + 32px); }
+  #media-stage {
+    right: auto; bottom: auto;
+    width: 100%; height: 50dvh;
+  }
+  #wrapper-header {
+    top: 0; padding: 32px 16px;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 24%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 100%);
+  }
+  .wrapper-label { text-align: center; }
+  .label-headline { font-size: 56px; }
+  .label-subline { font-size: 20px; }
+  .btn-group { flex-direction: column; gap: 12px; align-items: stretch; }
+  .btn-stage { width: 100%; }
   #visualizer { flex-direction: column; gap: 0; align-items: stretch; height: calc(100dvh - 46px - 76px); }
   #media { flex: 1; min-height: 0; width: 100%; transition: none; }
   #sidebar-sm { flex: none; overflow-y: auto; overflow-x: hidden; }
@@ -936,6 +961,12 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   #showroom::after { content: ''; display: block; height: calc(76px + env(safe-area-inset-bottom)); flex-shrink: 0; }
   .label-swatch { min-height: 0; }
   #img-car { inset: 0; width: 100%; height: 100%; object-position: center 24%; }
+  #btn-interior { bottom: 12px; left: 12px; }
+  #btn-a11y { top: 12px; right: 12px; }
+  #touch-ctrl-bar { top: 12px; right: 56px; flex-direction: row; }
+  #touch-ctrl-bar .touch-ctrl-btn { transform: translateX(8px); }
+  #touch-ctrl-bar.visible .touch-ctrl-btn { transform: translateX(0); }
+  #media.touch-dragging #touch-ctrl-bar { opacity: 0; pointer-events: none; }
   .label-rotate { top: 47%; }
   .hint-turntable { width: 80vw; top: 51%; }
 }
@@ -987,6 +1018,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 
   <!-- TOP BAR -->
   <div id="topbar" class="inverted">
+    <div class="topbar-shim"></div>
     <div class="topbar-container">
       <div class="topbar-left">
         <div class="topbar-logo-col">
@@ -1060,8 +1092,8 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
           <p class="label-subline">Exceptional range, faster charging and intuitive technology.</p>
         </div>
         <div class="btn-group">
-          <button class="btn-stage btn-secondary">Browse available ID.7 stock</button>
           <button class="btn-stage btn-primary">Build your ID.7</button>
+          <button class="btn-stage btn-secondary">Browse available ID.7 stock</button>
         </div>
       </div>
     </div>

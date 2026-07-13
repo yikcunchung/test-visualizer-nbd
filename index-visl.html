@@ -492,7 +492,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 }
 
 #btn-a11y {
-  bottom: 16px; right: 16px;
+  top: 16px; right: 16px;
   width: 32px; height: 32px;
   background: white; border-radius: 100px;
   border: 2px solid #1B2236;
@@ -503,7 +503,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 #btn-a11y.active { background: #CCBDAB; }
 #btn-a11y.active svg path { fill: #1B2236; }
 #btn-a11y-group {
-  position: absolute; bottom: 16px; right: 56px;
+  position: absolute; top: 16px; right: 56px;
   display: flex; gap: 8px; align-items: center; z-index: 5;
   pointer-events: none;
 }
@@ -1246,9 +1246,9 @@ body.in-fullscreen #img-car { will-change: transform; }
   #select-model { align-self: flex-start; }
   #select-model .select-wrap { width: 230px; }
   #btn-interior { bottom: 12px; left: 12px; }
-  #btn-a11y { bottom: 12px; right: 12px; }
-  #btn-fullscreen { top: 12px; right: 12px; }
-  #btn-a11y-group { bottom: 12px; right: 56px; flex-direction: row; }
+  #btn-a11y { top: 12px; right: 12px; }
+  #btn-fullscreen { top: auto; bottom: 12px; right: 12px; }
+  #btn-a11y-group { top: 12px; right: 56px; flex-direction: row; }
   #btn-a11y-group .touch-ctrl-btn { transform: translateX(8px); }
   #btn-a11y-group.visible .touch-ctrl-btn { transform: translateX(0); }
   #media.is-rotating .vis-btn,
