@@ -453,6 +453,7 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 #media { -webkit-tap-highlight-color: transparent; cursor: zoom-in; touch-action: manipulation; }
 #media:focus-visible { outline: 3px solid #C86C03; border-radius: 20px; }
 #media.zoomed { cursor: zoom-out; }
+#media.is-rotating { cursor: grabbing !important; }
 #media.zoomed #img-car { transform: scale(1.4); }
 #media.zoomed #image-interior { transform: scale(1.4); }
 @media (hover: hover) { #media.zoomed:hover #img-car { transform: scale(1.4); } }
@@ -478,13 +479,13 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 /* ID.7 dark rotate pill */
 
 
-/* btn-interior icon toggle */
-#btn-interior .icon-int-mode { display: none; }
-#media.interior-mode #btn-interior .icon-ext-mode { display: none; }
-#media.interior-mode #btn-interior .icon-int-mode { display: flex; align-items: center; justify-content: center; }
+/* btn-toggle-view icon toggle */
+#btn-toggle-view .icon-int-mode { display: none; }
+#media.interior-mode #btn-toggle-view .icon-ext-mode { display: none; }
+#media.interior-mode #btn-toggle-view .icon-int-mode { display: flex; align-items: center; justify-content: center; }
 
 /* ── Overlaid icon buttons ── */
-.vis-btn {
+.vis-btn, .btn-toggle-view {
   position: absolute; z-index: 5;
   border: none; cursor: pointer; padding: 0;
   display: flex; align-items: center; justify-content: center;
@@ -523,13 +524,13 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
 #btn-a11y-group .interior-only { display: none; }
 #media.interior-mode #btn-a11y-group .interior-only { display: flex; }
 
-#btn-interior {
+#btn-toggle-view {
   bottom: 16px; left: 16px;
   width: 46px; height: 46px;
   background: white; border-radius: 100px;
   border: 2px solid #1B2236;
 }
-#btn-interior svg { width: 24px; height: 24px; display: block; }
+#btn-toggle-view svg { width: 24px; height: 24px; display: block; }
 
 #btn-fullscreen {
   top: 16px; right: 16px;
@@ -576,7 +577,7 @@ body.in-fullscreen #btn-a11y { top: 16px; right: 60px; bottom: auto; left: auto;
 body.in-fullscreen #btn-a11y-group { top: 16px; right: 104px; bottom: auto; left: auto; flex-direction: row; gap: 12px; }
 body.in-fullscreen #btn-a11y-group .touch-ctrl-btn { transform: translateX(8px); }
 body.in-fullscreen #btn-a11y-group.visible .touch-ctrl-btn { transform: translateX(0); }
-body.in-fullscreen #btn-interior { top: 16px; left: 16px; bottom: auto; right: auto; }
+body.in-fullscreen #btn-toggle-view { top: 16px; left: 16px; bottom: auto; right: auto; }
 body.in-fullscreen #selector-colour,
 body.in-fullscreen #selector-wheel,
 body.in-fullscreen #selector-material { margin-bottom: 0; }
@@ -590,6 +591,8 @@ body.in-fullscreen #img-car { will-change: transform; }
 #hint-rotate {
   position: absolute; inset: 0;
   background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.64) 0%, rgba(0, 0, 0, 0.80) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 5; pointer-events: none;
 }
 #hint-rotate.hidden { display: none; }
@@ -814,8 +817,8 @@ body.in-fullscreen #img-car { will-change: transform; }
 
 /* ── Focus states ── */
 :focus-visible { outline: 2px solid #C86C03; }
-.btn-swatch:focus-visible,
-.btn-swatch.selected:focus-visible { outline: none; box-shadow: 0 0 0 2px #C86C03; }
+.btn-swatch:focus-visible         { outline: 2px solid #C86C03; outline-offset: -1px; }
+.btn-swatch.selected:focus-visible { outline: 2px solid #C86C03; outline-offset: 0; }
 .select-native:focus-visible { outline: 2px solid #C86C03; border-color: #C86C03; }
 
 /* ── DISCLAIMER PANEL ── */
@@ -1135,7 +1138,7 @@ body.in-fullscreen #img-car { will-change: transform; }
 }
 @media (min-width: 960px) {
   #sidebar      { animation: slideUpFade 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both; }
-  #btn-interior { animation: dissolveFade 0.35s ease 0.55s both; }
+  #btn-toggle-view { animation: dissolveFade 0.35s ease 0.55s both; }
   #btn-a11y     { animation: dissolveFade 0.35s ease 0.60s both; }
 }
 
@@ -1147,6 +1150,8 @@ body.in-fullscreen #img-car { will-change: transform; }
   height: calc(100dvh - 52px - 76px);
   position: relative;
   z-index: 1;
+  width: 100dvw;
+  margin-left: calc(50% - 50dvw);
 }
 #page-layout { gap: 12px; padding-top: 0; padding-bottom: 0; }
 #img-car { inset: 0; width: 100%; height: 100%; object-position: center 16%; }
@@ -1245,13 +1250,14 @@ body.in-fullscreen #img-car { will-change: transform; }
   body:not(.in-fullscreen) .bb-section { flex-shrink: 0; width: auto !important; }
   #select-model { align-self: flex-start; }
   #select-model .select-wrap { width: 230px; }
-  #btn-interior { bottom: 12px; left: 12px; }
+  #btn-toggle-view { bottom: 12px; left: 12px; }
   #btn-a11y { top: 12px; right: 12px; }
   #btn-fullscreen { top: auto; bottom: 12px; right: 12px; }
   #btn-a11y-group { top: 12px; right: 56px; flex-direction: row; }
   #btn-a11y-group .touch-ctrl-btn { transform: translateX(8px); }
   #btn-a11y-group.visible .touch-ctrl-btn { transform: translateX(0); }
   #media.is-rotating .vis-btn,
+  #media.is-rotating .btn-toggle-view,
   #media.is-rotating #btn-a11y-group { opacity: 0; pointer-events: none; }
   body.in-fullscreen #media.is-rotating ~ #bottombar {
     backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -1456,12 +1462,12 @@ body.in-fullscreen #img-car { will-change: transform; }
       <img id="img-car" alt="VW ID. Polo" draggable="false">
 
       <!-- Accessibility button (bottom-right) -->
-      <button class="vis-btn" id="btn-a11y" title="Accessibility" aria-label="Accessibility">
+      <button class="vis-btn" id="btn-a11y" title="Display accessibility buttons" aria-label="Display accessibility buttons">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.94308 7.87513L4.67346 11.514C4.64225 11.6052 4.5938 11.689 4.53095 11.7605C4.4681 11.832 4.39212 11.8898 4.30747 11.9304C4.18031 11.9923 4.03831 12.0136 3.89947 11.9916C3.76063 11.9696 3.63119 11.9054 3.52758 11.8071C3.42396 11.7087 3.35082 11.5807 3.31743 11.4392C3.28403 11.2977 3.29189 11.1491 3.34 11.0122L4.22519 8.4696C4.29544 8.27827 4.35094 8.08146 4.39117 7.88102C4.42694 7.67751 4.45251 7.47222 4.46777 7.26596C4.50181 6.89369 4.52593 6.49051 4.54437 6.10352C4.56281 5.71654 4.57558 5.34132 4.58551 5.03085C4.59828 4.64386 4.49756 4.61884 4.19824 4.54527L4.13582 4.53056L1.5824 4.03174C1.49056 4.01494 1.40282 3.97952 1.3242 3.92751C1.24558 3.87549 1.17761 3.80791 1.1242 3.72862C1.04484 3.60851 1.00164 3.46668 1.00005 3.32108C0.998454 3.17548 1.03855 3.03266 1.11526 2.91072C1.19196 2.78877 1.30183 2.69317 1.43095 2.63603C1.56006 2.57889 1.70262 2.56278 1.84058 2.58973L4.58409 3.12386C4.69332 3.13416 4.79971 3.14741 4.91178 3.16065C5.24939 3.20863 5.58957 3.23468 5.93032 3.23863C6.35448 3.23004 6.77786 3.19713 7.19852 3.14005C7.32619 3.12533 7.44677 3.10915 7.56735 3.09738L10.1562 2.59415C10.3399 2.55464 10.5312 2.5922 10.6882 2.69862C10.766 2.75324 10.8326 2.82336 10.8841 2.9049C10.9356 2.98644 10.9709 3.07778 10.9881 3.17362C11.0052 3.26945 11.0039 3.36786 10.984 3.46314C10.9642 3.55842 10.9263 3.64866 10.8726 3.72862C10.8199 3.80841 10.7526 3.87664 10.6745 3.92941C10.5963 3.98218 10.5089 4.01845 10.4173 4.03615L7.94327 4.51879C7.86099 4.53791 7.78722 4.55116 7.72197 4.56146C7.46379 4.60707 7.33612 4.63062 7.35172 5.01172C7.36307 5.28982 7.3957 5.62236 7.43826 5.96962C7.48791 6.37721 7.55316 6.80981 7.62125 7.20563C7.66523 7.46607 7.70637 7.67502 7.76311 7.87513C7.81985 8.07525 7.87517 8.27978 7.96029 8.52551L8.82704 11.0122C8.87515 11.1491 8.88301 11.2977 8.84962 11.4392C8.81622 11.5807 8.74308 11.7087 8.63947 11.8071C8.53585 11.9054 8.40642 11.9696 8.26757 11.9916C8.12873 12.0136 7.98673 11.9923 7.85957 11.9304C7.77492 11.8898 7.69894 11.832 7.63609 11.7605C7.57324 11.689 7.52479 11.6052 7.49358 11.514L6.2197 7.88249L6.07785 7.61322L5.93599 7.87513H5.94308ZM5.99841 6.92648e-07C6.28822 -0.000254866 6.56914 0.103734 6.79332 0.294248C7.01749 0.484762 7.17105 0.750012 7.22781 1.0448C7.28457 1.33959 7.24103 1.64567 7.10461 1.91089C6.96819 2.17611 6.74733 2.38406 6.47966 2.4993C6.21199 2.61454 5.91408 2.62994 5.63669 2.54287C5.35931 2.45581 5.11961 2.27167 4.95844 2.02184C4.79727 1.772 4.7246 1.47193 4.75283 1.17275C4.78105 0.873566 4.90842 0.593794 5.11322 0.381103C5.22924 0.260159 5.36718 0.16422 5.5191 0.0988132C5.67102 0.0334064 5.83392 -0.000175874 5.99841 6.92648e-07Z" fill="#1B2236"/></svg>
       </button>
 
       <!-- Touch controls bar (slides in when a11y active) -->
-      <div id="btn-a11y-group">
+      <div id="btn-a11y-group" inert>
         <button class="touch-ctrl-btn" id="btn-rot-left" title="Rotate left" aria-label="Rotate left"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#tc-cl)"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16345 0 16 0C24.8366 0 32 7.16345 32 16Z" fill="white"/><path d="M12 16C11.9983 15.5607 12.1668 15.1378 12.47 14.82L17.07 10L18 10.94L13.39 15.76C13.2678 15.8967 13.2678 16.1033 13.39 16.24L18 21.06L17.07 22L12.47 17.18C12.1685 16.861 12.0004 16.4389 12 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-cl"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16345 0 16 0C24.8366 0 32 7.16345 32 16Z" fill="white"/></clipPath></defs></svg></button>
         <button class="touch-ctrl-btn" id="btn-rot-right" title="Rotate right" aria-label="Rotate right"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#tc-cr)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20 16C20.0017 16.4393 19.8332 16.8622 19.53 17.18L14.93 22L14 21.06L18.61 16.24C18.7322 16.1033 18.7322 15.8967 18.61 15.76L14 10.94L14.93 10L19.53 14.82C19.8315 15.139 19.9996 15.5611 20 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-cr"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
         <button class="touch-ctrl-btn interior-only" id="btn-tilt-up" title="Tilt up" aria-label="Tilt up"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#ti-u)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20.7837 19.0923L16.0371 14.1304L15.9941 14.0845L15.9546 14.1255L11.2168 19.0913L10.2549 18.1733L14.9888 13.2114C15.2384 12.906 15.606 12.721 16 12.7026C16.3929 12.7213 16.7586 12.9085 17.0034 13.2163L21.7446 18.1723L20.7837 19.0923Z" fill="#1B2236"/></g><defs><clipPath id="ti-u"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
@@ -1469,7 +1475,7 @@ body.in-fullscreen #img-car { will-change: transform; }
       </div>
 
       <!-- Interior button (bottom-left) -->
-      <button class="vis-btn" id="btn-interior" title="Interior view" aria-label="Interior view">
+      <button class="btn-toggle-view" id="btn-toggle-view" title="Toggle interior view" aria-label="Toggle interior view">
         <!-- Exterior mode: show interior 360° icon (from Figma 24px/interior 360) -->
         <div class="icon-ext-mode">
           <svg width="24" height="24" viewBox="10 10 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.8918 24.061C12.5124 24.2838 11.6301 24.8951 11.6301 25.77C11.6307 27.4994 15.5036 29.2876 21.9836 29.2876C22.2949 29.2876 22.5994 29.2802 22.9026 29.2719C22.565 28.9366 22.1257 28.5066 21.5403 27.9448L22.4612 26.9858C25.0062 29.4258 25.0129 29.518 25.0354 29.8198C25.054 30.1047 25.062 30.2338 22.8987 33.0014L21.8508 32.1831C22.3887 31.4952 22.7741 30.9878 23.0637 30.5991C22.7086 30.6104 22.3485 30.6177 21.9827 30.6177C14.9955 30.6176 10.3005 28.6691 10.3 25.77C10.3 24.2076 11.6422 23.2525 12.219 22.9145L12.8918 24.061ZM31.6272 22.9077C31.7098 22.9435 33.6106 23.8109 33.6106 25.7788C33.6103 27.7885 30.8985 29.6265 27.0149 30.2466L26.8059 28.9341C30.1874 28.3931 32.2801 26.8755 32.2805 25.7788C32.2805 24.6829 31.1347 24.1448 31.0842 24.1216L31.6272 22.9077ZM30.261 11.6665C29.9679 16.0485 29.2074 18.9897 28.4143 21.0063C27.6258 23.0112 26.7882 24.1199 26.4729 24.6665L26.2815 24.9985H17.0491L16.9016 24.5346L16.0657 21.895C15.8054 21.0729 16.2316 20.0121 17.2766 19.8823C18.515 19.7288 19.7206 19.9943 20.7629 20.1665C21.6767 20.3174 22.5132 20.4095 23.3586 20.2427V19.9546C23.3586 19.4738 23.5666 19.0072 23.7756 18.6128C23.9807 18.2259 24.2877 17.7366 24.5315 17.3081C25.0569 16.3847 25.5295 15.3538 25.5295 14.1196C25.5295 13.6463 25.5108 13.1695 25.4875 12.7632C25.433 11.8065 26.184 10.9575 27.1741 10.9575H30.3079L30.261 11.6665ZM27.1741 12.2876C26.9801 12.2876 26.8021 12.4617 26.8147 12.687C26.8388 13.1096 26.8596 13.6133 26.8596 14.1196C26.8596 15.7046 26.2466 16.9814 25.6868 17.9653C25.388 18.4904 25.1523 18.8549 24.9504 19.2358C24.7527 19.6091 24.6887 19.8251 24.6887 19.9546V21.2466L24.2239 21.393C22.8969 21.8116 21.6551 21.6622 20.5461 21.479C19.3986 21.2894 18.4377 21.079 17.4407 21.2026C17.4003 21.2076 17.3718 21.2245 17.3479 21.268C17.3196 21.3196 17.3055 21.4028 17.3342 21.4936L18.0227 23.6684H25.5276C25.9386 23.0173 26.5502 22.1102 27.176 20.519C27.8702 18.7539 28.5651 16.1588 28.8811 12.2876H27.1741Z" fill="#1B2236"/></svg>
@@ -1493,7 +1499,7 @@ body.in-fullscreen #img-car { will-change: transform; }
       <canvas id="image-interior"></canvas>
 
       <!-- Fullscreen button (top-right, mobile only) -->
-      <button class="vis-btn" id="btn-fullscreen" title="Fullscreen" aria-label="Fullscreen">
+      <button class="vis-btn" id="btn-fullscreen" title="Enter fullscreen mode" aria-label="Enter fullscreen mode">
         <span class="icon-fs-enter">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.6651 10.3348H4.00006V11.6649H1.07526L0.968811 11.6591C0.818216 11.6423 0.675794 11.5916 0.542053 11.4579C0.408354 11.3242 0.357612 11.1817 0.340881 11.0311L0.335022 10.9003V7.99988H1.6651V10.3348ZM11.6651 7.99988V10.9003L11.6592 11.0311C11.6425 11.1817 11.5917 11.3242 11.4581 11.4579C11.3244 11.5916 11.1819 11.6423 11.0313 11.6591L10.9249 11.6649H8.00006V10.3348H10.335V7.99988H11.6651ZM4.00006 1.66492H1.6651V3.99988H0.335022V1.10046L0.340881 0.968628C0.357634 0.818097 0.408364 0.675559 0.542053 0.54187C0.675766 0.4082 0.818251 0.357427 0.968811 0.340698L1.07526 0.334839H4.00006V1.66492ZM11.0313 0.340698C11.1819 0.357434 11.3244 0.408184 11.4581 0.54187C11.5918 0.675562 11.6425 0.818094 11.6592 0.968628L11.6651 1.10046V3.99988H10.335V1.66492H8.00006V0.334839H10.9249L11.0313 0.340698Z" fill="#1B2236"/></svg>
         </span>
@@ -1591,7 +1597,7 @@ body.in-fullscreen #img-car { will-change: transform; }
             </svg>
           </div>
         </div>
-        <button class="btn-info" id="btn-info" aria-label="Model information">
+        <button class="btn-info" id="btn-info" aria-label="Show model information">
           <span class="icon-info">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M12 1C18.374 1 23 5.626 23 12C23 18.374 18.374 23 12 23C5.626 23 1 18.374 1 12C1 5.626 5.626 1 12 1ZM12 2.33008C6.397 2.33008 2.33008 6.397 2.33008 12C2.33008 17.603 6.397 21.6699 12 21.6699C17.603 21.6699 21.6699 17.603 21.6699 12C21.6699 6.397 17.603 2.33008 12 2.33008ZM12.7832 15.6562L15.3857 15.6553V16.9854L8.41895 16.9863V15.6562H11.4531V11.3369H9.41406V10.0068H12.7832V15.6562ZM12 6.49316C12.4419 6.49316 12.7743 6.78789 12.7744 7.30371C12.7744 7.81971 12.442 8.11523 12 8.11523C11.558 8.11523 11.2256 7.81971 11.2256 7.30371C11.2257 6.78789 11.5581 6.49316 12 6.49316Z" fill="#293043"/>
@@ -2352,6 +2358,8 @@ function stopAutoRotate() {
 }
 media.addEventListener('mousedown', stopAutoRotate);
 
+const btnToggleView = document.getElementById('btn-toggle-view');
+
 function enterInterior() {
   animateBBWidth(() => {
     interiorMode = true;
@@ -2361,6 +2369,8 @@ function enterInterior() {
     buildMaterialGrid();
     revealSwatches(document.getElementById('grid-material'));
   });
+  btnToggleView.setAttribute('aria-label', 'Toggle exterior view');
+  btnToggleView.setAttribute('title', 'Toggle exterior view');
   pano.start();
   startAutoRotate();
 }
@@ -2374,10 +2384,12 @@ function exitInterior() {
     media.parentElement.classList.remove('interior-mode');
     document.getElementById('bottombar').classList.remove('interior-mode');
   });
+  btnToggleView.setAttribute('aria-label', 'Toggle interior view');
+  btnToggleView.setAttribute('title', 'Toggle interior view');
   pano.reset();
 }
 
-document.getElementById('btn-interior').addEventListener('click', () => {
+document.getElementById('btn-toggle-view').addEventListener('click', () => {
   if (interiorMode) exitInterior(); else enterInterior();
 });
 
@@ -2715,6 +2727,7 @@ const PANO_STEP = 0.1745;
   btn.addEventListener('click', () => {
     const active = btn.classList.toggle('active');
     bar.classList.toggle('visible', active);
+    bar.inert = !active;
   });
   document.getElementById('btn-rot-left').addEventListener('click',  () => interiorMode ? pano.pan(-PANO_STEP, 0) : stepLeft());
   document.getElementById('btn-rot-right').addEventListener('click', () => interiorMode ? pano.pan( PANO_STEP, 0) : stepRight());
