@@ -507,20 +507,33 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   position: absolute; top: 16px; right: 56px;
   display: flex; gap: 8px; align-items: center; z-index: 5;
   pointer-events: none;
+  opacity: 0; transform: scale(0.8); transform-origin: right center;
+  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
 }
-#btn-a11y-group.visible { pointer-events: auto; }
+#btn-a11y-group.visible {
+  pointer-events: auto;
+  opacity: 1; transform: scale(1);
+  transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 #btn-a11y-group .touch-ctrl-btn {
   width: 32px; height: 32px; flex-shrink: 0;
   border: 2px solid #1B2236; background: white; border-radius: 50%; overflow: hidden; cursor: pointer; padding: 0;
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transform: translateX(8px);
-  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0; transform: scale(0.5);
+  transition: opacity 0.1s ease-in, transform 0.1s ease-in;
 }
-#btn-a11y-group.visible .touch-ctrl-btn { opacity: 1; transform: translateX(0); }
-#btn-a11y-group.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 240ms; }
-#btn-a11y-group.visible .touch-ctrl-btn:nth-child(2) { transition-delay: 160ms; }
-#btn-a11y-group.visible .touch-ctrl-btn:nth-child(3) { transition-delay: 80ms; }
+#btn-a11y-group.visible .touch-ctrl-btn {
+  opacity: 1; transform: scale(1);
+  transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 #btn-a11y-group.visible .touch-ctrl-btn:nth-child(4) { transition-delay: 0ms; }
+#btn-a11y-group.visible .touch-ctrl-btn:nth-child(3) { transition-delay: 30ms; }
+#btn-a11y-group.visible .touch-ctrl-btn:nth-child(6) { transition-delay: 0ms; }
+#btn-a11y-group.visible .touch-ctrl-btn:nth-child(5) { transition-delay: 30ms; }
+#btn-a11y-group.visible .touch-ctrl-btn:nth-child(2) { transition-delay: 60ms; }
+#btn-a11y-group.visible .touch-ctrl-btn:nth-child(1) { transition-delay: 90ms; }
+#btn-a11y-group.visible .touch-ctrl-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+#btn-rot-left { margin-left: 20px; }
 #btn-a11y-group .interior-only { display: none; }
 #media.interior-mode #btn-a11y-group .interior-only { display: flex; }
 
@@ -591,8 +604,8 @@ body.in-fullscreen #img-car { will-change: transform; }
 #hint-rotate {
   position: absolute; inset: 0;
   background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.64) 0%, rgba(0, 0, 0, 0.80) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 5; pointer-events: none;
 }
 #hint-rotate.hidden { display: none; }
@@ -1468,6 +1481,8 @@ body.in-fullscreen #img-car { will-change: transform; }
 
       <!-- Touch controls bar (slides in when a11y active) -->
       <div id="btn-a11y-group" inert>
+        <button class="touch-ctrl-btn" id="btn-zoom-in" title="Zoom in" aria-label="Zoom in"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.25 0C8.46176 -0.000201288 10.5 2.35051 10.5 5.25C10.5 6.47643 10.1336 7.60338 9.46973 8.49707L12 11.0303L11.5303 11.501L11.0596 11.9707L8.53809 9.44629C7.67682 10.1076 6.56151 10.4999 5.25 10.5C2.03835 10.5002 0.000149098 8.15033 0 5.25098C0 2.35148 2.03824 0.000201741 5.25 0ZM5.25 1.33008C2.82481 1.33023 1.33008 3.03288 1.33008 5.25098C1.33026 7.46888 2.82496 9.17007 5.25 9.16992C7.67519 9.16977 9.16992 7.46809 9.16992 5.25C9.16988 3.03195 7.67516 1.32993 5.25 1.33008ZM5.89941 4.58008H7.66504V5.91016H5.89941V7.67578H4.56934V5.91016H2.83496V4.58008H4.56934V2.8457H5.89941V4.58008Z" fill="#1B2236"/></svg></button>
+        <button class="touch-ctrl-btn" id="btn-zoom-out" title="Zoom out" aria-label="Zoom out" disabled><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5.25 6.10352e-05C8.46176 -0.000140253 10.5 2.35057 10.5 5.25006C10.5 6.47649 10.1336 7.60344 9.46973 8.49713L12 11.0303L11.5303 11.501L11.0596 11.9708L8.53809 9.44635C7.67684 10.1075 6.56143 10.5 5.25 10.5001C2.03849 10.5001 0.000149094 8.15031 0 5.25104C0 2.35162 2.03838 0.000381913 5.25 6.10352e-05ZM5.25 1.33014C2.82495 1.33041 1.33008 3.03302 1.33008 5.25104C1.33026 7.46886 2.8251 9.17002 5.25 9.16998C7.67519 9.16983 9.16992 7.46816 9.16992 5.25006C9.16988 3.03201 7.67516 1.32999 5.25 1.33014ZM7.66504 5.92584H2.83496V4.59576H7.66504V5.92584Z" fill="#1B2236"/></svg></button>
         <button class="touch-ctrl-btn" id="btn-rot-left" title="Rotate left" aria-label="Rotate left"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#tc-cl)"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16345 0 16 0C24.8366 0 32 7.16345 32 16Z" fill="white"/><path d="M12 16C11.9983 15.5607 12.1668 15.1378 12.47 14.82L17.07 10L18 10.94L13.39 15.76C13.2678 15.8967 13.2678 16.1033 13.39 16.24L18 21.06L17.07 22L12.47 17.18C12.1685 16.861 12.0004 16.4389 12 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-cl"><path d="M32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16C0 7.16344 7.16345 0 16 0C24.8366 0 32 7.16345 32 16Z" fill="white"/></clipPath></defs></svg></button>
         <button class="touch-ctrl-btn" id="btn-rot-right" title="Rotate right" aria-label="Rotate right"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#tc-cr)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20 16C20.0017 16.4393 19.8332 16.8622 19.53 17.18L14.93 22L14 21.06L18.61 16.24C18.7322 16.1033 18.7322 15.8967 18.61 15.76L14 10.94L14.93 10L19.53 14.82C19.8315 15.139 19.9996 15.5611 20 16Z" fill="#1B2236"/></g><defs><clipPath id="tc-cr"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
         <button class="touch-ctrl-btn interior-only" id="btn-tilt-up" title="Tilt up" aria-label="Tilt up"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><g clip-path="url(#ti-u)"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/><path d="M20.7837 19.0923L16.0371 14.1304L15.9941 14.0845L15.9546 14.1255L11.2168 19.0913L10.2549 18.1733L14.9888 13.2114C15.2384 12.906 15.606 12.721 16 12.7026C16.3929 12.7213 16.7586 12.9085 17.0034 13.2163L21.7446 18.1723L20.7837 19.0923Z" fill="#1B2236"/></g><defs><clipPath id="ti-u"><path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="white"/></clipPath></defs></svg></button>
@@ -2047,6 +2062,24 @@ media.addEventListener('pointerup', e => {
   if (Math.hypot(e.clientX - ptrDownX, e.clientY - ptrDownY) > 10) return;
   isZoomed = !isZoomed;
   media.classList.toggle('zoomed', isZoomed);
+  syncZoomBtns();
+});
+
+const btnZoomIn  = document.getElementById('btn-zoom-in');
+const btnZoomOut = document.getElementById('btn-zoom-out');
+function syncZoomBtns() {
+  btnZoomIn.disabled  = isZoomed;
+  btnZoomOut.disabled = !isZoomed;
+}
+btnZoomIn.addEventListener('click', () => {
+  isZoomed = true;
+  media.classList.add('zoomed');
+  syncZoomBtns();
+});
+btnZoomOut.addEventListener('click', () => {
+  isZoomed = false;
+  media.classList.remove('zoomed');
+  syncZoomBtns();
 });
 
 // ── Rotate helpers ──
