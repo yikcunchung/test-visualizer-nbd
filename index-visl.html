@@ -743,6 +743,7 @@ body.in-fullscreen #img-car { will-change: transform; }
   scrollbar-width: none;
 }
 #grid-colour, #grid-wheel, #grid-material { width: 100%; }
+#grid-colour, #grid-wheel { padding: 8px 8px 8px 4px !important; }
 
 /* When sections together exceed container height: split evenly, grids scroll */
 #selector-group.constrained .accordion { flex: 1 1 0; }
@@ -758,17 +759,16 @@ body.in-fullscreen #img-car { will-change: transform; }
   border-radius: 50%;
 }
 .btn-swatch.selected { outline: none; }
-.stroke-selected { display: none; position: absolute; border-radius: 999999px; border: 3px solid #997f67; inset: 0; z-index: 10; pointer-events: none; }
-.btn-swatch.selected .stroke-selected { display: block; }
 .stroke       { position: absolute; inset: 1px; border-radius: 100%; border: 1px solid #949494; overflow: hidden; }
-.btn-swatch.selected .stroke { border-color: transparent; }
-.img-swatch { position: absolute; inset: 0; border-radius: 100%; overflow: hidden; }
-#grid-wheel .img-swatch, #grid-material .img-swatch { background: #fff; }
+.btn-swatch:hover .stroke { inset: 0px; border: 2px solid #997f67; }
+.btn-swatch.selected .stroke { inset: -1px; border: 3px solid #997f67; }
+.img-swatch { position: absolute; inset: 1px; border-radius: 100%; overflow: hidden; }
 .img-swatch       { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-.btn-swatch.selected div.img-swatch { box-shadow: 0 2px 4px 0 var(--shadow-small, rgba(49, 25, 2, 0.30)); }
+.btn-swatch:hover { box-shadow: 0 2px 4px 0 var(--shadow-small, rgba(49, 25, 2, 0.60)); border-radius: 50%; }
 .stroke-inset    { display: none; }
 .checkmark { position: absolute; z-index: 20; pointer-events: none; top: -12.5%; right: -12.5%; bottom: 62.5%; left: 62.5%; display: none; }
 .btn-swatch.selected .checkmark { display: block; }
+.fill-tick { position: absolute; width: 22px; height: 22px; aspect-ratio: 1/1; background: #ffffff; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .btn-swatch.selected .stroke-selected { box-shadow: 0 2px 4px 0 var(--shadow-small, rgba(49, 25, 2, 0.30)); }
 .badge { position: absolute; inset: 0; }
 .badge svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
@@ -1193,7 +1193,7 @@ body.in-fullscreen #img-car { will-change: transform; }
   background: rgba(255, 255, 255, 0);
   backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);
   box-shadow: 0 12px 24px 0 rgba(49, 25, 2, 0);
-  border-radius: 12px; padding: 12px 16px 12px;
+  border-radius: 12px; padding: 8px 12px 12px 12px;
   position: relative;
   overflow: hidden;
   animation: slideUpFade 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both;
@@ -1203,12 +1203,12 @@ body.in-fullscreen #img-car { will-change: transform; }
   flex: 0 0 auto;
 }
 .bb-section {
-  display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 0; flex-shrink: 0; min-width: 0;
 }
 .bb-section.interior-only { display: none; }
 #wrapper-selector {
   display: flex; flex-direction: row; align-items: flex-start;
-  gap: 40px;
+  gap: 48px;
 }
 #bottombar.interior-mode .bb-section.interior-only { display: flex; }
 #bottombar.interior-mode .bb-section.exterior-only { display: none; }
@@ -1255,10 +1255,8 @@ body.in-fullscreen #img-car { will-change: transform; }
     isolation: auto;
     animation: none;
   }
-  #wrapper-selector { display: flex; flex-direction: column; gap: 0; align-items: stretch; }
-  #selector-group { display: flex; flex-direction: column; gap: 0; align-items: stretch; }
-  #selector-colour   { margin-bottom: 20px; }
-  #selector-wheel    { margin-bottom: 16px; }
+  #wrapper-selector { display: flex; flex-direction: column; gap: 24px; align-items: stretch; }
+  #selector-group { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
   #selector-material { margin-bottom: 16px; }
   body:not(.in-fullscreen) .bb-section { flex-shrink: 0; width: auto !important; }
   #select-model { align-self: flex-start; }
@@ -1377,8 +1375,8 @@ body.in-fullscreen #img-car { will-change: transform; }
           <p class="label-subline">Exceptional range, faster charging and intuitive technology.</p>
         </div>
         <div class="btn-group">
-          <button class="btn-stage btn-primary">Build your ID.7</button>
-          <button class="btn-stage btn-secondary">Browse available ID.7 stock</button>
+          <button class="btn-stage btn-secondary">Build your ID.7</button>
+          <button class="btn-stage btn-primary">Browse available ID.7 stock</button>
         </div>
       </div>
     </div>
@@ -2106,7 +2104,6 @@ function makeSwatchBtn(src, alt, idx, isSelected, onClick) {
   const btn = document.createElement('button');
   btn.className = 'btn-swatch' + (isSelected ? ' selected' : '');
   btn.innerHTML = `
-    <div class="stroke-selected"></div>
     <div class="stroke">
       <div class="img-swatch">
         <img class="img-swatch" src="${src}" alt="${alt}" loading="eager" decoding="sync">
@@ -2114,11 +2111,11 @@ function makeSwatchBtn(src, alt, idx, isSelected, onClick) {
       <div class="stroke-inset"></div>
     </div>
     <div class="checkmark">
+      <div class="fill-tick"></div>
       <div class="badge">
-        <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#997f67"/></svg>
-      </div>
-      <div class="tick">
-        <svg viewBox="0 0 10.234 7.24"><path d="M3.631 7.24C3.236 7.24 2.87 7.082 2.599 6.796L2.598 6.795L0 4.028L0.961 3.097L3.577 5.872C3.577 5.872 3.608 5.904 3.63 5.902C3.652 5.901 3.669 5.886 3.669 5.886L9.234 0L10.234 0.908L4.603 6.854C4.339 7.103 3.994 7.24 3.631 7.24Z" fill="white"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+          <path d="M12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12C0 5.37258 5.37258 0 12 0ZM10.8047 14.665C10.8047 14.665 10.7842 14.6834 10.7578 14.6846C10.7319 14.6868 10.6956 14.6497 10.6943 14.6484L7.55469 11.3184L6.40234 12.4355L9.51953 15.7559L9.52051 15.7568C9.84562 16.0999 10.2849 16.2899 10.7588 16.29C11.1944 16.29 11.609 16.1259 11.9258 15.8271L18.6826 8.69141L17.4824 7.60156L10.8047 14.665Z" fill="#997F67"/>
+        </svg>
       </div>
     </div>`;
   btn.addEventListener('click', () => onClick(idx));
@@ -2143,21 +2140,13 @@ function revealSwatches(grid, baseDelay = 0) {
 function scrollSwatchIntoView(grid, idx) {
   const scrollMax = grid.scrollWidth - grid.clientWidth;
   if (scrollMax <= 8) return;
-  const total = grid.querySelectorAll('.btn-swatch').length;
-  if (!total) return;
-  const edge = Math.min(6, Math.floor(total / 2));
-  if (idx < edge) { grid.scrollTo({ left: 0, behavior: 'smooth' }); return; }
-  if (idx >= total - edge) { grid.scrollTo({ left: scrollMax, behavior: 'smooth' }); return; }
-  const fadeW = 56;
+  const btn = grid.querySelectorAll('.btn-swatch')[idx];
+  if (!btn) return;
   const gridX = grid.getBoundingClientRect().left;
-  const btn   = grid.querySelectorAll('.btn-swatch')[idx];
-  const r     = btn.getBoundingClientRect();
-  const bL    = r.left  - gridX + grid.scrollLeft;
-  const bR    = r.right - gridX + grid.scrollLeft;
-  const viewL = grid.scrollLeft + fadeW;
-  const viewR = grid.scrollLeft + grid.clientWidth - fadeW;
-  if (bL < viewL)       grid.scrollTo({ left: bL - fadeW, behavior: 'smooth' });
-  else if (bR > viewR)  grid.scrollTo({ left: bR - grid.clientWidth + fadeW, behavior: 'smooth' });
+  const r = btn.getBoundingClientRect();
+  const bCenter = (r.left + r.right) / 2 - gridX + grid.scrollLeft;
+  const target = Math.max(0, Math.min(scrollMax, bCenter - grid.clientWidth / 2));
+  grid.scrollTo({ left: target, behavior: 'smooth' });
 }
 
 function buildColorGrid(revealDelay = 0) {
