@@ -634,24 +634,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   to   { transform: translateX(-50%) translateY(0); }
 }
 
-/* ── RIGHT SIDEBAR ── */
-#sidebar {
-  width: 196px; flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 12px 24px rgba(49, 25, 2, 0.08);
-  border-radius: 12px;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  gap: 24px;
-  padding: 16px;
-  overflow: clip;
-  transition: height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@media (min-width: 2560px) {
-  #sidebar { width: 250px; }
-}
 
 #selector-group {
   min-height: 0;
@@ -659,8 +641,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   gap: 24px;
   overflow: clip;
 }
-
-.accordion { display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; min-height: 0; overflow: clip; }
 
 .header {
   display: flex; align-items: center; justify-content: space-between;
@@ -682,48 +662,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   pointer-events: none;
 }
 .btn-header svg { display: block; width: 22px; height: auto; }
-.accordion.collapsed .btn-header { transform: scaleY(1); } /* closed = arrow down */
-
-/* Collapse wrapper — grid-template-rows avoids per-frame layout recalc */
-.wrapper-grid {
-  display: grid;
-  grid-template-rows: 1fr;
-  overflow: hidden;
-  transition: grid-template-rows 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.accordion.collapsed .wrapper-grid {
-  grid-template-rows: 0fr;
-  pointer-events: none;
-}
-
-.body {
-  position: relative;
-  display: flex; flex-direction: column; gap: 10px;
-  min-height: 0;
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.accordion.collapsed .body {
-  opacity: 0;
-  transform: translateY(-12px);
-}
-.vscroll {
-  position: absolute;
-  right: 1px; top: 0;
-  width: 4px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-.vscroll.visible { opacity: 1; }
-.vscroll-thumb {
-  position: absolute;
-  width: 4px;
-  background: #c8cad0;
-  border-radius: 2px;
-}
 
 .label-swatch {
   font-family: 'VW Text', 'Inter', sans-serif;
@@ -744,14 +682,6 @@ body.in-fullscreen #img-car { will-change: transform; }
 }
 #grid-colour, #grid-wheel, #grid-material { width: 100%; }
 #grid-colour, #grid-wheel { padding: 8px 8px 8px 4px !important; }
-
-/* When sections together exceed container height: split evenly, grids scroll */
-#selector-group.constrained .accordion { flex: 1 1 0; }
-#selector-group.constrained .accordion.collapsed { flex: 0 0 auto; }
-#selector-group.constrained .wrapper-grid { flex: 1 0 0; min-height: 0; }
-#selector-group.constrained .accordion.collapsed .wrapper-grid { flex: none; }
-#selector-group.constrained .body { height: 100%; }
-#selector-group.constrained .grid { flex: 1 0 0; min-height: 0; }
 
 /* Swatch button */
 .btn-swatch {
@@ -774,11 +704,6 @@ body.in-fullscreen #img-car { will-change: transform; }
 .badge svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
 .tick   { position: absolute; inset: 34.71% 26.82% 35.13% 30.54%; }
 .tick svg { position: absolute; display: block; inset: 0; width: 100%; height: 100%; }
-
-/* Sidebar interior/exterior mode visibility */
-.accordion.interior-only { display: none; }
-#sidebar.interior-mode .accordion.interior-only { display: flex; flex-direction: column; gap: 8px; }
-#sidebar.interior-mode .exterior-only { display: none !important; }
 
 .select-wrap {
   position: relative; height: 50px; flex-shrink: 0;
@@ -1074,7 +999,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   #page-layout { padding: 0 16px; gap: 0; flex: none; }
   #visualizer { flex-direction: column; gap: 0; align-items: stretch; }
   #media { flex: none; width: 100%; transition: none; }
-  #sidebar { display: none; }
 
   /* Stage mobile layout */
   #stage { height: 90dvh; margin: 0 -16px; width: calc(100% + 32px); }
@@ -1132,11 +1056,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes bbPanelSlideUp {
-  from { opacity: 0; transform: translate(-50%, 16px); }
-  to   { opacity: 1; transform: translate(-50%, 0); }
-}
-
 @keyframes scaleFade {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
   to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -1150,7 +1069,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   to   { opacity: 1; }
 }
 @media (min-width: 960px) {
-  #sidebar      { animation: slideUpFade 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both; }
   #btn-toggle-view { animation: dissolveFade 0.35s ease 0.55s both; }
   #btn-a11y     { animation: dissolveFade 0.35s ease 0.60s both; }
 }
@@ -1179,8 +1097,6 @@ body.in-fullscreen #img-car { will-change: transform; }
   #visualizer { height: auto; }
 }
 
-
-#sidebar  { display: none !important; }
 
 /* ── BOTTOM BAR PANEL ── */
 #bottombar {
@@ -1912,9 +1828,6 @@ const pano = (() => {
 // Redraw canvas whenever #media resizes (e.g. bottombar collapse animation)
 new ResizeObserver(() => { if (interiorMode) pano.draw(); }).observe(media);
 
-// ── Accordion constraint ── (no-op in bottom bar layout)
-function updateAccordionConstraint() {}
-
 // ── Model helpers ──
 function currentThumbs() {
   if (selectedModel === 'id7') return ID7_THUMBS;
@@ -2297,7 +2210,6 @@ function buildMaterialGrid() {
   });
   if (nameEl) nameEl.textContent = MATERIAL_IMGS[selectedMaterial].name;
   revealSwatches(grid);
-  requestAnimationFrame(updateAccordionConstraint);
 }
 
 function selectMaterial(idx) {
@@ -2422,35 +2334,6 @@ document.getElementById('btn-fullscreen').addEventListener('click', () => {
 });
 
 window.addEventListener('resize', () => { if (interiorMode) pano.draw(); updateBBConstraint(); });
-
-// ── Custom grid scrollbars (macOS overlay scrollbars ignore CSS :hover) ──
-document.querySelectorAll('.grid').forEach(grid => {
-  const body = grid.closest('.body');
-  if (!body) return;
-
-  const bar   = document.createElement('div');
-  const thumb = document.createElement('div');
-  bar.className   = 'vscroll';
-  thumb.className = 'vscroll-thumb';
-  bar.appendChild(thumb);
-  body.appendChild(bar);
-
-  function update() {
-    const { scrollTop, scrollHeight, clientHeight } = grid;
-    if (scrollHeight <= clientHeight) { bar.style.display = 'none'; return; }
-    bar.style.display  = '';
-    bar.style.top      = grid.offsetTop + 'px';
-    bar.style.height   = clientHeight + 'px';
-    const thumbH       = Math.max(clientHeight / scrollHeight * clientHeight, 20);
-    thumb.style.height = thumbH + 'px';
-    thumb.style.top    = scrollTop / (scrollHeight - clientHeight) * (clientHeight - thumbH) + 'px';
-  }
-
-  grid.addEventListener('scroll', update);
-  new ResizeObserver(update).observe(grid);
-  grid.addEventListener('mouseenter', () => { update(); bar.classList.add('visible'); });
-  grid.addEventListener('mouseleave', () => bar.classList.remove('visible'));
-});
 
 // ── Staged preload ──
 // Stage 1: swatch thumbnails — stored in module-level array to prevent GC of decoded refs
