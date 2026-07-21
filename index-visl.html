@@ -542,8 +542,13 @@ html, body { width: 100%; min-height: 100%; background: #f6f5f2; }
   width: 46px; height: 46px;
   background: white; border-radius: 100px;
   border: 2px solid #1B2236;
+  transition: background 0.2s;
 }
 #btn-toggle-view svg { width: 24px; height: 24px; display: block; }
+@media (hover: hover) {
+  #btn-a11y:hover { background: #CCBDAB; }
+  #btn-toggle-view:hover { background: #CCBDAB; }
+}
 
 #btn-fullscreen {
   top: 16px; right: 16px;
@@ -2252,31 +2257,85 @@ function animateBBWidth(fn) {
   const colourSec = document.getElementById('selector-colour');
   const wheelSec  = document.getElementById('selector-wheel');
   const sm        = document.getElementById('select-model');
-  const pW0  = panel.offsetWidth;
-  const cW0  = colourSec.offsetWidth;
-  const wW0  = wheelSec.offsetWidth;
-  const smY0 = sm.getBoundingClientRect().top;
+
+  const pW0   = panel.offsetWidth;
+  const cW0   = colourSec.offsetWidth;
+  const wW0   = wheelSec.offsetWidth;
+  const smY0  = sm.getBoundingClientRect().top;
+  const cLeft = colourSec.offsetLeft, cTop = colourSec.offsetTop;
+  const wLeft = wheelSec.offsetLeft,  wTop = wheelSec.offsetTop;
+
   fn();
   updateBBConstraint();
+
   const pW1  = panel.offsetWidth;
   const cW1  = colourSec.offsetWidth;
   const wW1  = wheelSec.offsetWidth;
   const smY1 = sm.getBoundingClientRect().top;
-  const cfg = { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'none' };
+
+  const collapsing = new Set();
+  for (const [sec, w0, left, top] of [
+    [colourSec, cW0, cLeft, cTop],
+    [wheelSec,  wW0, wLeft, wTop],
+  ]) {
+    if (w0 > 0 && getComputedStyle(sec).display === 'none') {
+      sec.style.display  = 'flex';
+      sec.style.position = 'absolute';
+      sec.style.left     = left + 'px';
+      sec.style.top      = top  + 'px';
+      sec.style.width    = w0   + 'px';
+      sec.style.overflow = 'hidden';
+      sec.style.opacity  = '0';
+      collapsing.add(sec);
+    }
+  }
+  if (collapsing.size > 0) panel.style.width = pW0 + 'px';
+
+  const cfg = { duration: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' };
   const smDeltaY = smY0 - smY1;
   if (smDeltaY !== 0 && !document.body.classList.contains('in-fullscreen')) {
-    sm.animate([{ transform: `translateY(${smDeltaY}px)` }, { transform: 'translateY(0)' }], cfg);
+    sm.animate([{ transform: `translateY(${smDeltaY}px)` }, { transform: 'translateY(0)' }], { ...cfg, fill: 'none' });
   }
   if (pW1 !== pW0) {
     bbAnimating = true;
+    const expanding = new Set();
     const anims = [panel.animate([{ width: pW0 + 'px' }, { width: pW1 + 'px' }], cfg)];
-    if (cW1 !== cW0) anims.push(colourSec.animate([{ width: cW0 + 'px' }, { width: cW1 + 'px' }], cfg));
-    if (wW1 !== wW0) anims.push(wheelSec.animate([{ width: wW0 + 'px' }, { width: wW1 + 'px' }], cfg));
+    if (collapsing.size === 0) {
+      for (const [sec, w0, w1] of [[colourSec, cW0, cW1], [wheelSec, wW0, wW1]]) {
+        if (w0 === 0 && w1 > 0) { sec.style.opacity = '0'; expanding.add(sec); }
+      }
+      if (cW1 !== cW0) anims.push(colourSec.animate(
+        expanding.has(colourSec)
+          ? [{ width: '0px', opacity: 1 }, { width: cW1 + 'px', opacity: 1 }]
+          : [{ width: cW0 + 'px' }, { width: cW1 + 'px' }], cfg));
+      if (wW1 !== wW0) anims.push(wheelSec.animate(
+        expanding.has(wheelSec)
+          ? [{ width: '0px', opacity: 1 }, { width: wW1 + 'px', opacity: 1 }]
+          : [{ width: wW0 + 'px' }, { width: wW1 + 'px' }], cfg));
+    } else {
+      for (const [sec, w0] of [[colourSec, cW0], [wheelSec, wW0]]) {
+        if (collapsing.has(sec) && w0 > 0)
+          anims.push(sec.animate([{ width: w0 + 'px' }, { width: '0px' }], cfg));
+      }
+    }
     Promise.all(anims.map(a => a.finished)).then(() => {
+      for (const sec of collapsing) {
+        sec.style.display = sec.style.position = sec.style.left =
+          sec.style.top = sec.style.width = sec.style.overflow = sec.style.opacity = '';
+      }
+      for (const sec of expanding) sec.style.opacity = '';
+      panel.style.width = '';
+      anims.forEach(a => a.cancel());
       bbAnimating = false;
       updateBBConstraint();
       updateBBArrows();
     });
+  } else {
+    for (const sec of collapsing) {
+      sec.style.display = sec.style.position = sec.style.left =
+        sec.style.top = sec.style.width = sec.style.overflow = '';
+    }
+    panel.style.width = '';
   }
 }
 
